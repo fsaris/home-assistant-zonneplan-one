@@ -1,0 +1,16 @@
+{
+  "domain": "zonneplan_one",
+  "name": "Zonneplan ONE",
+  "config_flow": true,
+  "documentation": "https://github.com/fsaris/home-assistant-zonneplan-one",
+  "requirements": [],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "dependencies": [
+    "http"
+  ],
+  "codeowners": [
+    "@fsaris"
+  ]
+}

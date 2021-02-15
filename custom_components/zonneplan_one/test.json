@@ -1,0 +1,29 @@
+{'uuid': '5c331bc5-e5e0-4256-84d8-9ab046cac2f5',
+    'ean': None,
+    'market_segment': 'electricity',
+     'contracts': [
+        {'uuid': '7272559a-adb8-4d55-8122-97db3f5e0fef', 'label': 'PV Installatie',
+            'type': 'pv_installation',
+             'start_date': '2021-01-21T23: 00: 00.000000Z',
+             'end_date': '2031-01-21T23: 00: 00.000000Z',
+              'details': None,
+              'meta': {
+                  'identifier': 'R5S2402J2046E39374',
+                   'name': 'Zonneplan ONE',
+                    'panel_count': 16,
+                    'panel_type': 'DMEGC',
+                     'panel_wp': 325,
+                      'first_measured_at': '2021-01-22T13: 45: 56.000000Z',
+                      'last_measured_at': '2021-02-14T16: 10: 00.000000Z',
+                       'last_measured_power_value': 58,
+                        'highest_measured_power_value': 6760,
+                        'highest_power_measured_at': '2021-01-30T23: 00: 00.000000Z',
+                         'total_power_measured': 65760,
+                         'sunrise': '2021-02-14T06: 48: 51.000000Z',
+                         'sunset': '2021-02-14T16: 51: 05.000000Z',
+                          'network': {'name': 'Vodafone', 'status': 'Uitstekend', 'color': 'excellent'
+                }, 'sgn_serial_number': '861123050172475', 'module_firmware_version': 'v3.0.3', 'inverter_firmware_version': 'v1.171', 'show_in_contract_screen': False
+            }
+        }
+    ]
+}
