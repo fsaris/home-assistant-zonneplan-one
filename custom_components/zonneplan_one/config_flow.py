@@ -91,11 +91,12 @@ class ZonneplanLoginFlowHandler(
         self.logger.info("fetch_password %s", user_input)
         if user_input is not None:
             self.external_data = {"email": self._email, "uuid": self._token}
-            self.logger.debug("next step")
+            self.logger.debug("next step %s", self.external_data)
             return await self.async_step_creation()
 
         return self.async_show_form(step_id="fetch_password")
 
     async def async_oauth_create_entry(self, data: dict) -> dict:
         """Create an entry for the flow."""
+        self.logger.info("Create entry: %s", self._email)
         return self.async_create_entry(title=self._email, data=data)

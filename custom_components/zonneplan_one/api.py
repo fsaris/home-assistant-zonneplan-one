@@ -89,9 +89,13 @@ class ZonneplanOAuth2Implementation(
 
     async def async_resolve_external_data(self, external_data: Any) -> dict:
         """Resolve external data to tokens."""
-        return await self._api.async_get_temp_pass(
+        token = await self._api.async_get_temp_pass(
             external_data["email"], external_data["uuid"]
         )
+        if not token:
+            raise Exception("Could not get token")
+
+        return token
 
     async def _async_refresh_token(self, token: dict) -> dict:
         """Refresh a token."""
