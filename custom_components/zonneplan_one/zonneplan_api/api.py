@@ -86,7 +86,7 @@ class ZonneplanApi:
         return await self._async_request_new_token(grant_params)
 
     async def _async_request_new_token(self, grant_params):
-        _LOGGER.debug("_async_request_new_token: %s", grant_params)
+        _LOGGER.info("_async_request_new_token: %s", grant_params)
         try:
             async with aiohttp.ClientSession() as session:
                 with async_timeout.timeout(10):
