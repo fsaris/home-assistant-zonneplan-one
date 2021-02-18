@@ -87,27 +87,27 @@ class ZonneplanApi:
 
     async def _async_request_new_token(self, grant_params):
         _LOGGER.info("_async_request_new_token: %s", grant_params)
-        try:
-            async with aiohttp.ClientSession() as session:
-                with async_timeout.timeout(10):
-                    response = await session.post(
-                        OAUTH2_TOKEN_URI,
-                        headers=self._request_headers,
-                        json=grant_params,
-                        allow_redirects=True,
+
+        async with aiohttp.ClientSession() as session:
+            with async_timeout.timeout(10):
+                async with session.post(
+                    OAUTH2_TOKEN_URI,
+                    headers=self._request_headers,
+                    json=grant_params,
+                    allow_redirects=True,
+                ) as response:
+
+                    _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
+                    _LOGGER.info("ZonneplanAPI response status: %s", response.status)
+
+                    response.raise_for_status()
+                    _LOGGER.info("_async_request_new_token: get json from response")
+                    response_json = await response.json()
+                    _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
+                    _LOGGER.info(
+                        "_async_request_new_token: new token valid till %s [%d]",
+                        response_json["expires_in"],
+                        int(response_json["expires_in"]),
                     )
 
-        except (asyncio.TimeoutError, aiohttp.ClientError):
-            _LOGGER.error("Timeout calling ZonneplanAPI to get auth token")
-            return None
-
-        _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.info("ZonneplanAPI response status: %s", response.status)
-
-        response.raise_for_status()
-
-        _LOGGER.info("_async_request_new_token: get json from response")
-        response_json = await response.json()
-        _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
-        _LOGGER.info("_async_request_new_token: new token valid till %s [%d]", response_json["expires_in"], int(response_json["expires_in"]))
         return response_json
