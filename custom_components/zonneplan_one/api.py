@@ -93,13 +93,19 @@ class ZonneplanOAuth2Implementation(
             external_data["email"], external_data["uuid"]
         )
         if not token:
+            _LOGGER.error("Could not get token")
             raise Exception("Could not get token")
 
         return token
 
     async def _async_refresh_token(self, token: dict) -> dict:
         """Refresh a token."""
-        return await self._api.async_refresh_token(token)
+        new_token = await self._api.async_refresh_token(token)
+
+        if not new_token:
+            raise Exception("Could not get new token")
+
+        return new_token
 
     async def async_generate_authorize_url(self, flow_id: str) -> str:
         """Generate a url for the user to authorize."""

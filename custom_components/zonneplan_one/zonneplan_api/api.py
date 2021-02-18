@@ -102,11 +102,11 @@ class ZonneplanApi:
             return None
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+        _LOGGER.info("ZonneplanAPI response status: %s", response.status)
 
         response.raise_for_status()
 
         response_json = await response.json()
         _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
-
+        _LOGGER.info("_async_request_new_token: new token valid till %s [%d]", response_json["expires_in"], int(response_json["expires_in"]))
         return response_json

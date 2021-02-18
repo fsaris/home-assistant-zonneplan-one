@@ -32,12 +32,12 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> None:
         """Fetch the latest status."""
         result = self.data
-
+        _LOGGER.info("_async_update_data: start")
         # Get all info of all connections (part of your account info)
         accounts = await self.api.async_get_user_accounts()
         if not accounts:
             return result
-
+        _LOGGER.info("_async_update_data: parse addresses")
         # Flatten all found connections
         for address_group in accounts["address_groups"]:
             for connection in address_group["connections"]:
@@ -49,12 +49,15 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 result[connection["uuid"]]["connection"] = connection
                 result[connection["uuid"]]["address"] = address_group["address"]
 
+        _LOGGER.info("_async_update_data: fetch live data")
+
         # Update last live data for each connection
         for uuid, connection in result.items():
             live_data = await self.api.async_get_live_data(uuid)
             if live_data:
                 result[uuid]["live_data"] = live_data
 
+        _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
 
         return result
