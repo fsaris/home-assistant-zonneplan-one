@@ -106,6 +106,7 @@ class ZonneplanApi:
 
         response.raise_for_status()
 
+        _LOGGER.info("_async_request_new_token: get json from response")
         response_json = await response.json()
         _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
         _LOGGER.info("_async_request_new_token: new token valid till %s [%d]", response_json["expires_in"], int(response_json["expires_in"]))
