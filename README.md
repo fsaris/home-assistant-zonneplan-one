@@ -3,6 +3,8 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![stability-wip](https://img.shields.io/badge/stability-beta-red.svg?style=for-the-badge&color=red)
 
+![Zonneplan ONE](./images/logo.png)
+
 ## Current features
 - Sensor for current power
 - Sensor for total yield today
