@@ -7,11 +7,11 @@
         "description": "Provide your e-mail address to get a login mail",
         "data": {
           "email": "Email address"
-        },
-        "fetch_password": {
-          "title": "Validate login",
-          "description": "Check your mailbox and click on the link from Zonneplan. After that click button here"
         }
+      },
+      "fetch_password": {
+        "title": "Validate login",
+        "description": "Check your mailbox and click on the link from Zonneplan. After that click button here"
       }
     },
     "abort": {
