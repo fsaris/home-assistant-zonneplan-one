@@ -13,7 +13,7 @@ from . import api, config_flow
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import DOMAIN
 
-PLATFORMS = ["binary_sensor", "sensor"]
+PLATFORMS = ["sensor"]
 
 _LOGGER = logging.getLogger(__name__)
 
