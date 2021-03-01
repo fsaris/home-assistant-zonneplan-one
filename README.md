@@ -3,7 +3,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![stability-wip](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
 
-![Zonneplan ONE](./images/logo.png)
+![Zonneplan ONE](https://github.com/fsaris/home-assistant-zonneplan-one/raw/main/images/logo.png)
 
 ## Current features
 - Sensor for current power
