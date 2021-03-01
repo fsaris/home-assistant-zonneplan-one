@@ -4,11 +4,12 @@
   "version": "0.0.1",
   "config_flow": true,
   "documentation": "https://github.com/fsaris/home-assistant-zonneplan-one",
+  "issue_tracker": "https://github.com/fsaris/home-assistant-zonneplan-one/issues",
   "requirements": [],
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},
-  "dependencies": [
+  "after_dependencies": [
     "http"
   ],
   "codeowners": [
