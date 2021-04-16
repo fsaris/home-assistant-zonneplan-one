@@ -15,7 +15,7 @@ SENSOR_TYPES = {
     "highest_measured_power_value": [
         "pv_installation",
         "pv_installation.meta.highest_measured_power_value",
-        "Highest yield",
+        "Highest yield value",
         POWER_WATT,
         "mdi:solar-power",
         False,
