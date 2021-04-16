@@ -45,17 +45,29 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     result[connection["uuid"]] = {
                         "uuid": connection["uuid"],
                         "live_data": {},
+                        "electricity": {},
+                        "gas": {},
                     }
-                result[connection["uuid"]]["connection"] = connection
-                result[connection["uuid"]]["address"] = address_group["address"]
+                for contract in connection["contracts"]:
+                    result[connection["uuid"]][contract["type"]] = contract
 
         _LOGGER.info("_async_update_data: fetch live data")
 
         # Update last live data for each connection
         for uuid, connection in result.items():
-            live_data = await self.api.async_get_live_data(uuid)
-            if live_data:
-                result[uuid]["live_data"] = live_data
+            if "pv_installation" in connection:
+                live_data = await self.api.async_get(
+                    uuid, "/pv_installation/charts/live"
+                )
+                if live_data:
+                    result[uuid]["live_data"] = live_data[0]
+            if "p1_installation" in connection:
+                electricity = await self.api.async_get(uuid, "/electricity-delivered")
+                if electricity:
+                    result[uuid]["electricity"] = electricity
+                gas = await self.api.async_get(uuid, "/gas")
+                if gas:
+                    result[uuid]["gas"] = gas
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)

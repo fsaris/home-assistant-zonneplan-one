@@ -47,12 +47,11 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return response_json["data"]
 
-    async def async_get_live_data(self, connection_uuid: str) -> dict:
+    async def async_get(self, connection_uuid: str, path: str) -> dict:
+        _LOGGER.info("fetch: %s", path)
         response = await self._oauth_session.async_request(
             "GET",
-            "https://app-api.zonneplan.nl/connections/"
-            + connection_uuid
-            + "/pv_installation/charts/live",
+            "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
             # headers=self._request_headers,
         )
 
@@ -65,7 +64,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
 
-        return response_json["data"][0]
+        return response_json["data"]
 
 
 class ZonneplanOAuth2Implementation(
