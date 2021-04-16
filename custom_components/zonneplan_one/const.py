@@ -136,7 +136,7 @@ SENSOR_TYPES = {
     "gas_last_measured_value": [
         "p1_installation",
         "gas.contracts.0.meta.gas_last_measured_value",
-        "Gas last measured",
+        "Gas last measured value",
         VOLUME_CUBIC_METERS,
         "mdi:gas-cylinder",
         True,
