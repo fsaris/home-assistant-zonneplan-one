@@ -1,27 +1,37 @@
 # Zonneplan ONE component for Home Assistant
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://hacs.xyz/)
-![stability-wip](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz/)
+![stability-stable](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
 
 ![Zonneplan ONE](https://github.com/fsaris/home-assistant-zonneplan-one/raw/main/images/logo.png)
 
 ## Current features
-- Sensor for current power
-- Sensor for total yield today
-- Sensor for total yield overall
-- Sensor for highest power value overall
-
+- Support for Solar inverter + P1 device
+- Solar inverter sensors:
+   - Highest yield _(default disabled)_
+   - Highest yield _(default disabled)_
+   - Yield total
+   - Yield today  
+   - First measured _(default disabled)_
+   - Last measured value
+   - Last measured   
+- P1 device sensors: (when available)
+   - Electricity today
+   - Electricity delivery
+   - Electricity production
+   - Electricity average
+   - Electricity first measured _(default disabled)_
+   - Electricity last measured
+   - Electricity last measured production
+   - Gas today
+   - Gas last measured value
+   - Gas first measured _(default disabled)_
+   - Gas last measured
 ## Installation
 
 ### Install with HACS (recommended)
 
 Do you have [HACS](https://hacs.xyz/) installed?
-1. Add **AwoX** as custom repository.
-   1. Go to: `HACS` -> `Integrations` -> Click menu in right top -> Custom repositories
-   1. A modal opens
-   1. Fill https://github.com/fsaris/home-assistant-zonneplan-one in the input in the footer of the modal
-   1. Select `integration` in category select box
-   1. Click **Add**
 1. Search integrations for **Zonneplan ONE**
 1. Click `Install`
 1. Restart Home Assistant
@@ -38,6 +48,27 @@ Do you have [HACS](https://hacs.xyz/) installed?
 1. Click on `+ Add integration`
 1. Search for and select `Zonneplan ONE`
 1. Enter you `emailaddress` you also use in the **Zonneplan ONE** app
-1. You will get a email to verify the login.
+1. You will get an email to verify the login.
 1. Click "Save"
 1. Enjoy
+
+
+### Installing main/beta version using HACS
+1. Go to `HACS` => `Integratrions`
+1. Click on the three dots icon in right bottom of the **Zonneplan ONE** card
+1. Click `Reinstall`
+1. Make sure `Show beta versions` is checked
+1. Select version `main`
+1. Click install and restart HA
+
+### Troubleshooting
+
+If you run into issues during setup or when entries do not update anymore please increase logging and provide them when creating an issue:
+
+Add `custom_components.zonneplan_one: debug` to the logger config in you `configuration.yaml`:
+
+```
+logger:
+  logs:
+    custom_components.zonneplan_one: debug
+```
