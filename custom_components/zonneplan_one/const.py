@@ -135,7 +135,7 @@ SENSOR_TYPES = {
     ],
     "gas_last_measured_value": [
         "p1_installation",
-        "gas.contracts.0.meta.gas_last_measured_value",
+        "p1_installation.meta.gas_last_measured_value",
         "Gas last measured value",
         VOLUME_CUBIC_METERS,
         "mdi:gas-cylinder",
@@ -143,7 +143,7 @@ SENSOR_TYPES = {
     ],
     "gas_first_measured_at": [
         "p1_installation",
-        "gas.contracts.0.meta.gas_first_measured_at",
+        "p1_installation.meta.gas_first_measured_at",
         "Gas first measured",
         "date_time",
         "mdi:calendar-clock",
@@ -151,7 +151,7 @@ SENSOR_TYPES = {
     ],
     "gas_last_measured_at": [
         "p1_installation",
-        "gas.contracts.0.meta.gas_last_measured_at",
+        "p1_installation.meta.gas_last_measured_at",
         "Gas last measured",
         "date_time",
         "mdi:calendar-clock",

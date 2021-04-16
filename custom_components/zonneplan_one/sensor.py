@@ -29,11 +29,14 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
 
     entities = []
     for uuid, connection in coordinator.connections.items():
+        pv_installation = coordinator.getConnectionValue(uuid, "pv_installation")
+        p1_installation = coordinator.getConnectionValue(uuid, "p1_installation")
         _LOGGER.debug("Setup sensors for connnection %s", uuid)
         for sensor_key in SENSOR_TYPES:
-            if SENSOR_TYPES[sensor_key][0] == "pv_installation":
+
+            if SENSOR_TYPES[sensor_key][0] == "pv_installation" and pv_installation:
                 entities.append(ZonneplanPvSensor(uuid, sensor_key, coordinator))
-            if SENSOR_TYPES[sensor_key][0] == "p1_installation":
+            if SENSOR_TYPES[sensor_key][0] == "p1_installation" and p1_installation:
                 entities.append(ZonneplanP1Sensor(uuid, sensor_key, coordinator))
 
     async_add_entities(entities)
@@ -131,6 +134,11 @@ class ZonneplanPvSensor(ZonneplanSensor):
 
 
 class ZonneplanP1Sensor(ZonneplanSensor):
+    @property
+    def name(self):
+        """Return the name."""
+        return "Zonneplan P1 " + self._label
+
     @property
     def device_info(self):
         """Return the device information."""
