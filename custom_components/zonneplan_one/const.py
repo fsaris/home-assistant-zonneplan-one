@@ -20,8 +20,8 @@ SENSOR_TYPES = {
     "highest_power_measured_at": [
         "connection.contracts.0.meta.highest_power_measured_at",
         "Highest yield at",
-        "date_time",
-        "mdi:calendar-clock",
+        "date",
+        "mdi:calendar",
         False,
     ],
     "total_power_measured": [

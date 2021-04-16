@@ -1,5 +1,6 @@
 """Zonneplan Sensor"""
 import dateutil.parser
+import dateutil.tz
 from typing import Optional
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import (
@@ -13,6 +14,11 @@ from .coordinator import ZonneplanUpdateCoordinator
 from .const import DOMAIN, SENSOR_TYPES
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def convert_date(timestamp: str, format: str) -> str:
+    to_zone = dateutil.tz.gettz("Europe/Amsterdam")
+    return dateutil.parser.parse(timestamp).astimezone(to_zone).strftime(format)
 
 
 async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_entities):
@@ -60,7 +66,10 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        if self._unit_of_measurement == "date_time":
+        if (
+            self._unit_of_measurement == "date_time"
+            or self._unit_of_measurement == "date"
+        ):
             return None
         return self._unit_of_measurement
 
@@ -77,7 +86,9 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
         if self._unit_of_measurement == ENERGY_KILO_WATT_HOUR:
             value = value / 1000
         if self._unit_of_measurement == "date_time":
-            value = dateutil.parser.parse(value)
+            value = convert_date(value, "%Y-%m-%d %H:%M:%S")
+        if self._unit_of_measurement == "date":
+            value = convert_date(value, "%Y-%m-%d")
         return value
 
     @property
