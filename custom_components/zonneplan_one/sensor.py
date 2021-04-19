@@ -1,6 +1,4 @@
 """Zonneplan Sensor"""
-import dateutil.parser
-import dateutil.tz
 from typing import Optional
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import (
@@ -8,17 +6,16 @@ from homeassistant.helpers.update_coordinator import (
 )
 import logging
 from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.const import ENERGY_KILO_WATT_HOUR
+from homeassistant.const import (
+    DEVICE_CLASS_TIMESTAMP,
+    ENERGY_KILO_WATT_HOUR,
+    VOLUME_CUBIC_METERS,
+)
 
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import DOMAIN, SENSOR_TYPES
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def convert_date(timestamp: str, format: str) -> str:
-    to_zone = dateutil.tz.gettz("Europe/Amsterdam")
-    return dateutil.parser.parse(timestamp).astimezone(to_zone).strftime(format)
 
 
 async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_entities):
@@ -34,9 +31,15 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
         _LOGGER.debug("Setup sensors for connnection %s", uuid)
         for sensor_key in SENSOR_TYPES:
 
-            if SENSOR_TYPES[sensor_key][0] == "pv_installation" and pv_installation:
+            if (
+                SENSOR_TYPES[sensor_key].get("type") == "pv_installation"
+                and pv_installation
+            ):
                 entities.append(ZonneplanPvSensor(uuid, sensor_key, coordinator))
-            if SENSOR_TYPES[sensor_key][0] == "p1_installation" and p1_installation:
+            if (
+                SENSOR_TYPES[sensor_key].get("type") == "p1_installation"
+                and p1_installation
+            ):
                 entities.append(ZonneplanP1Sensor(uuid, sensor_key, coordinator))
 
     async_add_entities(entities)
@@ -52,16 +55,14 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
         super().__init__(coordinator)
         self._connection_uuid = connection_uuid
         self._sensor_key = sensor_key
-        self._type = SENSOR_TYPES[sensor_key][0]
-        self._data_key = SENSOR_TYPES[self._sensor_key][1]
-        self._label = SENSOR_TYPES[self._sensor_key][2]
-        self._unit_of_measurement = SENSOR_TYPES[self._sensor_key][3]
-        self._icon = SENSOR_TYPES[self._sensor_key][4]
+        self._type = SENSOR_TYPES[sensor_key].get("type")
+        self._data_key = SENSOR_TYPES[self._sensor_key].get("key")
+        self._label = SENSOR_TYPES[self._sensor_key].get("label")
+        self._unit_of_measurement = SENSOR_TYPES[self._sensor_key].get("unit")
+        self._icon = SENSOR_TYPES[self._sensor_key].get("icon")
+        self._device_class = SENSOR_TYPES[self._sensor_key].get("device_class")
         self._enabled_by_default = False
-        if (
-            len(SENSOR_TYPES[self._sensor_key]) > 5
-            and SENSOR_TYPES[self._sensor_key][5]
-        ):
+        if SENSOR_TYPES[self._sensor_key].get("default_enabled"):
             self._enabled_by_default = True
 
     @property
@@ -72,11 +73,6 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        if (
-            self._unit_of_measurement == "date_time"
-            or self._unit_of_measurement == "date"
-        ):
-            return None
         return self._unit_of_measurement
 
     @property
@@ -91,16 +87,20 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
         )
         if self._unit_of_measurement == ENERGY_KILO_WATT_HOUR:
             value = value / 1000
-        if self._unit_of_measurement == "date_time":
-            value = convert_date(value, "%Y-%m-%d %H:%M:%S")
-        if self._unit_of_measurement == "date":
-            value = convert_date(value, "%Y-%m-%d")
+        if self._unit_of_measurement == VOLUME_CUBIC_METERS:
+            value = value / 1000
+
         return value
 
     @property
     def icon(self):
         """Return the sensor icon."""
         return self._icon
+
+    @property
+    def device_class(self):
+        """Return the sensor device_class."""
+        return self._device_class
 
     @property
     def entity_registry_enabled_default(self) -> bool:

@@ -17,14 +17,14 @@
    - Last measured   
 - P1 device sensors: (when available)
    - Electricity today
-   - Electricity delivery
+   - Electricity consumption
    - Electricity production
    - Electricity average
    - Electricity first measured _(default disabled)_
    - Electricity last measured
    - Electricity last measured production
-   - Gas today
-   - Gas last measured value
+   - Gas consumption today
+   - Gas last measured consumption
    - Gas first measured _(default disabled)_
    - Gas last measured
 ## Installation
