@@ -85,6 +85,10 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
         value = self.coordinator.getConnectionValue(
             self._connection_uuid, self._data_key
         )
+        # No value or 0 then we don't need to convert the value
+        if not value:
+            return value
+
         if self._unit_of_measurement == ENERGY_KILO_WATT_HOUR:
             value = value / 1000
         if self._unit_of_measurement == VOLUME_CUBIC_METERS:
