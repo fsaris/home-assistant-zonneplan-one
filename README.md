@@ -6,8 +6,8 @@
 Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
 
 ## Current features
-- Support for Solar inverter + P1 device
-- Solar inverter sensors:
+- Support for Zonneplan ONE + Connect
+- Zonneplan ONE (Solar inverter) sensors:
    - Highest yield _(default disabled)_
    - Highest yield _(default disabled)_
    - Yield total
@@ -15,7 +15,7 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - First measured _(default disabled)_
    - Last measured value
    - Last measured
-- P1 device sensors: (when available)
+- Zonneplan Connect (P1 reader) sensors: (when available)
    - Electricity today
    - Electricity today low tariff _(default disabled)_
    - Electricity today normal tariff _(default disabled)_
