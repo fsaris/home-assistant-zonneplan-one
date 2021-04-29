@@ -11,12 +11,15 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Highest yield _(default disabled)_
    - Highest yield _(default disabled)_
    - Yield total
-   - Yield today  
+   - Yield today
    - First measured _(default disabled)_
    - Last measured value
-   - Last measured   
+   - Last measured
 - P1 device sensors: (when available)
    - Electricity today
+   - Electricity today low tariff _(default disabled)_
+   - Electricity today normal tariff _(default disabled)_
+   - Electricity today high tariff _(default disabled)_
    - Electricity consumption
    - Electricity production
    - Electricity average (average use over the last 5min)
