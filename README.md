@@ -1,4 +1,4 @@
-# Zonneplan ONE component for Home Assistant
+# Zonneplan ONE integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
