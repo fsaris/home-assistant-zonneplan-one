@@ -1,7 +1,7 @@
 {
   "domain": "zonneplan_one",
   "name": "Zonneplan ONE",
-  "version": "0.0.3-dev",
+  "version": "0.0.3",
   "config_flow": true,
   "documentation": "https://github.com/fsaris/home-assistant-zonneplan-one",
   "issue_tracker": "https://github.com/fsaris/home-assistant-zonneplan-one/issues",
