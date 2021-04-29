@@ -14,5 +14,6 @@
   ],
   "codeowners": [
     "@fsaris"
-  ]
+  ],
+  "iot_class": "cloud_polling",
 }
