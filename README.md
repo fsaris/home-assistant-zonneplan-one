@@ -3,7 +3,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
 
-![Zonneplan ONE](https://github.com/fsaris/home-assistant-zonneplan-one/raw/main/images/logo.png)
+Unofficial integration for Zonneplan ONE solar inverter + P1 connect
 
 ## Current features
 - Support for Solar inverter + P1 device
@@ -19,7 +19,7 @@
    - Electricity today
    - Electricity consumption
    - Electricity production
-   - Electricity average
+   - Electricity average (average use over the last 5min)
    - Electricity first measured _(default disabled)_
    - Electricity last measured
    - Electricity last measured production
@@ -27,6 +27,7 @@
    - Gas last measured consumption
    - Gas first measured _(default disabled)_
    - Gas last measured
+
 ## Installation
 
 ### Install with HACS (recommended)
