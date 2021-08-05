@@ -6,11 +6,15 @@ from homeassistant.helpers.update_coordinator import (
 )
 import logging
 from homeassistant.helpers.typing import HomeAssistantType
+from homeassistant.components.sensor import (
+    STATE_CLASS_MEASUREMENT,
+)
 from homeassistant.const import (
     DEVICE_CLASS_TIMESTAMP,
     ENERGY_KILO_WATT_HOUR,
     VOLUME_CUBIC_METERS,
 )
+import homeassistant.util.dt as dt_util
 
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import DOMAIN, SENSOR_TYPES
@@ -61,6 +65,8 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
         self._unit_of_measurement = SENSOR_TYPES[self._sensor_key].get("unit")
         self._icon = SENSOR_TYPES[self._sensor_key].get("icon")
         self._device_class = SENSOR_TYPES[self._sensor_key].get("device_class")
+        self._state_class = SENSOR_TYPES[self._sensor_key].get("state_class")
+        self._last_reset_data_key = SENSOR_TYPES[self._sensor_key].get("last_reset_key")
         self._enabled_by_default = False
         if SENSOR_TYPES[self._sensor_key].get("default_enabled"):
             self._enabled_by_default = True
@@ -105,6 +111,19 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
     def device_class(self):
         """Return the sensor device_class."""
         return self._device_class
+
+    @property
+    def state_class(self):
+        return self._state_class
+
+    @property
+    def last_reset(self):
+        if self._last_reset_data_key:
+            return self.coordinator.getConnectionValue(
+                self._connection_uuid, self._last_reset_data_key
+            )
+        elif self._state_class == STATE_CLASS_MEASUREMENT:
+            return dt_util.now().today()
 
     @property
     def entity_registry_enabled_default(self) -> bool:
