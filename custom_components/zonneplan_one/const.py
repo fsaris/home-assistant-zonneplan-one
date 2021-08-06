@@ -77,6 +77,7 @@ SENSOR_TYPES = {
         "icon": "mdi:solar-power",
         "default_enabled": True,
         "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset_today_key": "live_data.date",
     },
     # P1
     "electricity_total_today": {
@@ -87,6 +88,7 @@ SENSOR_TYPES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "default_enabled": True,
         "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset_today_key": "electricity.measurement_groups.0.date",
     },
     "electricity_total_today_low_tariff": {
         "type": "p1_installation",
@@ -96,6 +98,7 @@ SENSOR_TYPES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "default_enabled": False,
         "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset_today_key": "electricity.measurement_groups.0.date",
     },
     "electricity_total_today_normal_tariff": {
         "type": "p1_installation",
@@ -105,6 +108,7 @@ SENSOR_TYPES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "default_enabled": False,
         "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset_today_key": "electricity.measurement_groups.0.date",
     },
     "electricity_total_today_high_tariff": {
         "type": "p1_installation",
@@ -114,6 +118,7 @@ SENSOR_TYPES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "default_enabled": False,
         "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset_today_key": "electricity.measurement_groups.0.date",
     },
     "electricity_last_measured_delivery_value": {
         "type": "p1_installation",
@@ -174,6 +179,7 @@ SENSOR_TYPES = {
         "icon": "mdi:fire",
         "default_enabled": True,
         "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset_today_key": "gas.measurement_groups.0.date",
     },
     "gas_last_measured_value": {
         "type": "p1_installation",
@@ -183,7 +189,7 @@ SENSOR_TYPES = {
         "icon": "mdi:fire",
         "default_enabled": True,
         "state_class": STATE_CLASS_MEASUREMENT,
-        "last_reset_key": "p1_installation.meta.gas_last_measured_at",
+        "last_reset_key": "p1_installation.meta.gas_first_measured_at",
     },
     "gas_first_measured_at": {
         "type": "p1_installation",

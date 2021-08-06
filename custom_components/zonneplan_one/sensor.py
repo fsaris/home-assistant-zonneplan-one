@@ -1,4 +1,5 @@
 """Zonneplan Sensor"""
+from datetime import datetime, tzinfo
 from typing import Optional
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import (
@@ -8,6 +9,7 @@ import logging
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
+    SensorEntity,
 )
 from homeassistant.const import (
     DEVICE_CLASS_TIMESTAMP,
@@ -15,6 +17,7 @@ from homeassistant.const import (
     VOLUME_CUBIC_METERS,
 )
 import homeassistant.util.dt as dt_util
+import pytz
 
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import DOMAIN, SENSOR_TYPES
@@ -49,7 +52,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
     async_add_entities(entities)
 
 
-class ZonneplanSensor(CoordinatorEntity, Entity):
+class ZonneplanSensor(CoordinatorEntity, SensorEntity):
     """Abstract class for a zonneplan sensor."""
 
     def __init__(
@@ -66,6 +69,9 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
         self._icon = SENSOR_TYPES[self._sensor_key].get("icon")
         self._device_class = SENSOR_TYPES[self._sensor_key].get("device_class")
         self._state_class = SENSOR_TYPES[self._sensor_key].get("state_class")
+        self._last_reset_today_data_key = SENSOR_TYPES[self._sensor_key].get(
+            "last_reset_today_key"
+        )
         self._last_reset_data_key = SENSOR_TYPES[self._sensor_key].get("last_reset_key")
         self._enabled_by_default = False
         if SENSOR_TYPES[self._sensor_key].get("default_enabled"):
@@ -113,17 +119,34 @@ class ZonneplanSensor(CoordinatorEntity, Entity):
         return self._device_class
 
     @property
-    def state_class(self):
+    def state_class(self) -> any:
         return self._state_class
 
     @property
     def last_reset(self):
         if self._last_reset_data_key:
-            return self.coordinator.getConnectionValue(
+            value = self.coordinator.getConnectionValue(
                 self._connection_uuid, self._last_reset_data_key
             )
-        elif self._state_class == STATE_CLASS_MEASUREMENT:
-            return dt_util.now().today()
+            if value:
+                return dt_util.parse_datetime(value)
+
+        elif self._last_reset_today_data_key:
+            value = self.coordinator.getConnectionValue(
+                self._connection_uuid, self._last_reset_today_data_key
+            )
+            if value:
+                return (
+                    dt_util.parse_datetime(value)
+                    # Dates are received in UTC timezone but are to be treadted as "Europe/Amsterdam"
+                    # else we are talking about the wrong midnight
+                    # '2021-08-05T22:00:00.000000Z' would be 2021-08-05 but is 2021-08-06
+                    .astimezone(pytz.timezone("Europe/Amsterdam")).replace(
+                        hour=0, minute=0, second=0, microsecond=0
+                    )
+                )
+
+        return None
 
     @property
     def entity_registry_enabled_default(self) -> bool:
