@@ -1,18 +1,14 @@
 """Zonneplan Sensor"""
-from datetime import datetime, tzinfo
 from typing import Optional
-from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
 import logging
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.components.sensor import (
-    STATE_CLASS_MEASUREMENT,
     SensorEntity,
 )
 from homeassistant.const import (
-    DEVICE_CLASS_TIMESTAMP,
     ENERGY_KILO_WATT_HOUR,
     VOLUME_CUBIC_METERS,
 )
