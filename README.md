@@ -8,28 +8,28 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
 ## Current features
 - Support for Zonneplan ONE + Connect
 - Zonneplan ONE (Solar inverter) sensors:
-   - Highest yield _(default disabled)_
-   - Highest yield _(default disabled)_
-   - Yield total
-   - Yield today
-   - First measured _(default disabled)_
-   - Last measured value
-   - Last measured
+   - Highest yield value: `W` _(default disabled)_
+   - Highest yield: `date` _(default disabled)_
+   - Yield total: `kWh` _(can be used as entity on Energy Dashboard)_
+   - Yield today: `kWh` _(can be used as entity on Energy Dashboard)_
+   - First measured: `date` _(default disabled)_
+   - Last measured value: `W`
+   - Last measured: `date`
 - Zonneplan Connect (P1 reader) sensors: (when available)
-   - Electricity today
-   - Electricity today low tariff _(default disabled)_
-   - Electricity today normal tariff _(default disabled)_
-   - Electricity today high tariff _(default disabled)_
-   - Electricity consumption
-   - Electricity production
-   - Electricity average (average use over the last 5min)
-   - Electricity first measured _(default disabled)_
-   - Electricity last measured
-   - Electricity last measured production
-   - Gas consumption today
-   - Gas last measured consumption
-   - Gas first measured _(default disabled)_
-   - Gas last measured
+   - Electricity today: `kWh` _(can be used as entity on Energy Dashboard)_
+   - Electricity today low tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
+   - Electricity today normal tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
+   - Electricity today high tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
+   - Electricity consumption: `W`
+   - Electricity production: `W`
+   - Electricity average: `W` (average use over the last 5min)
+   - Electricity first measured: `date` _(default disabled)_
+   - Electricity last measured: `date`
+   - Electricity last measured production: `date`
+   - Gas consumption today: `m³`
+   - Gas last measured consumption: `m³`
+   - Gas first measured: `date` _(default disabled)_
+   - Gas last measured: `date`
 
 ## Installation
 
