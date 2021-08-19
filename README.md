@@ -56,6 +56,23 @@ Do you have [HACS](https://hacs.xyz/) installed?
 1. Click "Save"
 1. Enjoy
 
+## Have production available for HA `Energy Dashboard`
+
+Currently the API doesn't provide the current production in `kWh`. But to have the `Energy Dashboard` complete you need this value.
+
+As a work-arround you can let HA calculate a engery value from the power values that's available.
+
+For that you need to create a `integration` sensor. Add next lines to `configuration.yaml`:
+
+```
+sensor:
+  - platform: integration
+    source: sensor.zonneplan_p1_electricity_production
+    name: electricity_production
+    unit: kWh
+    unit_prefix: k
+    round: 2
+```
 
 ### Installing main/beta version using HACS
 1. Go to `HACS` => `Integratrions`
