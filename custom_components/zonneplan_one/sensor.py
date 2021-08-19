@@ -1,5 +1,7 @@
 """Zonneplan Sensor"""
 from typing import Optional
+
+from voluptuous.validators import Number
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
@@ -16,7 +18,13 @@ import homeassistant.util.dt as dt_util
 import pytz
 
 from .coordinator import ZonneplanUpdateCoordinator
-from .const import DOMAIN, SENSOR_TYPES
+from .const import (
+    DOMAIN,
+    P1_INSTALL,
+    PV_INSTALL,
+    SENSOR_TYPES,
+    ZonneplanSensorEntityDescription,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,22 +37,56 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
 
     entities = []
     for uuid, connection in coordinator.connections.items():
-        pv_installation = coordinator.getConnectionValue(uuid, "pv_installation")
-        p1_installation = coordinator.getConnectionValue(uuid, "p1_installation")
+        pv_installations = coordinator.getConnectionValue(uuid, "pv_installation")
+        p1_installations = coordinator.getConnectionValue(uuid, "p1_installation")
         _LOGGER.debug("Setup sensors for connnection %s", uuid)
-        for sensor_key in SENSOR_TYPES:
 
-            if (
-                SENSOR_TYPES[sensor_key].get("type") == "pv_installation"
-                and pv_installation
-            ):
-                entities.append(ZonneplanPvSensor(uuid, sensor_key, coordinator))
-            if (
-                SENSOR_TYPES[sensor_key].get("type") == "p1_installation"
-                and p1_installation
-            ):
-                entities.append(ZonneplanP1Sensor(uuid, sensor_key, coordinator))
+        if pv_installations:
+            for install_index in range(len(pv_installations)):
+                for sensor_key in SENSOR_TYPES[PV_INSTALL]["install"]:
+                    entities.append(
+                        ZonneplanPvSensor(
+                            uuid,
+                            sensor_key,
+                            coordinator,
+                            install_index,
+                            SENSOR_TYPES[PV_INSTALL]["install"][sensor_key],
+                        )
+                    )
 
+            for sensor_key in SENSOR_TYPES[PV_INSTALL]["totals"]:
+                entities.append(
+                    ZonneplanPvSensor(
+                        uuid,
+                        sensor_key,
+                        coordinator,
+                        -1,
+                        SENSOR_TYPES[PV_INSTALL]["totals"][sensor_key],
+                    )
+                )
+
+        if p1_installations:
+            for install_index in range(len(p1_installations)):
+                for sensor_key in SENSOR_TYPES[P1_INSTALL]["install"]:
+                    entities.append(
+                        ZonneplanP1Sensor(
+                            uuid,
+                            sensor_key,
+                            coordinator,
+                            install_index,
+                            SENSOR_TYPES[P1_INSTALL]["install"][sensor_key],
+                        )
+                    )
+            for sensor_key in SENSOR_TYPES[P1_INSTALL]["totals"]:
+                entities.append(
+                    ZonneplanP1Sensor(
+                        uuid,
+                        sensor_key,
+                        coordinator,
+                        -1,
+                        SENSOR_TYPES[P1_INSTALL]["totals"][sensor_key],
+                    )
+                )
     async_add_entities(entities)
 
 
@@ -52,84 +94,75 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
     """Abstract class for a zonneplan sensor."""
 
     def __init__(
-        self, connection_uuid, sensor_key: str, coordinator: ZonneplanUpdateCoordinator
+        self,
+        connection_uuid,
+        sensor_key: str,
+        coordinator: ZonneplanUpdateCoordinator,
+        install_index: Number,
+        description: ZonneplanSensorEntityDescription,
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._connection_uuid = connection_uuid
         self._sensor_key = sensor_key
-        self._type = SENSOR_TYPES[sensor_key].get("type")
-        self._data_key = SENSOR_TYPES[self._sensor_key].get("key")
-        self._label = SENSOR_TYPES[self._sensor_key].get("label")
-        self._unit_of_measurement = SENSOR_TYPES[self._sensor_key].get("unit")
-        self._icon = SENSOR_TYPES[self._sensor_key].get("icon")
-        self._device_class = SENSOR_TYPES[self._sensor_key].get("device_class")
-        self._state_class = SENSOR_TYPES[self._sensor_key].get("state_class")
-        self._last_reset_today_data_key = SENSOR_TYPES[self._sensor_key].get(
-            "last_reset_today_key"
-        )
-        self._last_reset_data_key = SENSOR_TYPES[self._sensor_key].get("last_reset_key")
-        self._enabled_by_default = False
-        if SENSOR_TYPES[self._sensor_key].get("default_enabled"):
-            self._enabled_by_default = True
+        self._install_index = install_index
+        self.entity_description = description
+
+    @property
+    def install_uuid(self) -> str:
+        """Return a install ID."""
+        return self._connection_uuid
 
     @property
     def unique_id(self) -> Optional[str]:
         """Return a unique ID."""
-        return self._connection_uuid + "_" + self._sensor_key
+        return self.install_uuid + "_" + self._sensor_key
 
     @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement."""
-        return self._unit_of_measurement
+    def name(self) -> str:
+        """Return the name of the entity."""
 
-    @property
-    def name(self):
-        """Return the name."""
-        return "Zonneplan " + self._label
+        name = self.entity_description.name
+        if self._install_index > 0:
+            name += " (" + str(self._install_index + 1) + ")"
+
+        return name
 
     @property
     def state(self):
         value = self.coordinator.getConnectionValue(
-            self._connection_uuid, self._data_key
+            self._connection_uuid,
+            self.entity_description.key.format(install_index=self._install_index),
         )
         # No value or 0 then we don't need to convert the value
         if not value:
             return value
 
-        if self._unit_of_measurement == ENERGY_KILO_WATT_HOUR:
+        if self.unit_of_measurement == ENERGY_KILO_WATT_HOUR:
             value = value / 1000
-        if self._unit_of_measurement == VOLUME_CUBIC_METERS:
+        if self.unit_of_measurement == VOLUME_CUBIC_METERS:
             value = value / 1000
 
         return value
 
     @property
-    def icon(self):
-        """Return the sensor icon."""
-        return self._icon
-
-    @property
-    def device_class(self):
-        """Return the sensor device_class."""
-        return self._device_class
-
-    @property
-    def state_class(self) -> any:
-        return self._state_class
-
-    @property
     def last_reset(self):
-        if self._last_reset_data_key:
+        if self.entity_description.last_reset_key:
             value = self.coordinator.getConnectionValue(
-                self._connection_uuid, self._last_reset_data_key
+                self._connection_uuid,
+                self.entity_description.last_reset_key.format(
+                    install_index=self._install_index
+                ),
             )
             if value:
                 return dt_util.parse_datetime(value)
 
-        elif self._last_reset_today_data_key:
+        elif self.entity_description.last_reset_today_key:
             value = self.coordinator.getConnectionValue(
-                self._connection_uuid, self._last_reset_today_data_key
+                self._connection_uuid,
+                self.entity_description.last_reset_today_key.format(
+                    install_index=self._install_index
+                ),
             )
             if value:
                 return (
@@ -144,58 +177,111 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
 
         return None
 
-    @property
-    def entity_registry_enabled_default(self) -> bool:
-        """Return if the entity should be enabled when first added to the entity registry."""
-        return self._enabled_by_default
-
 
 class ZonneplanPvSensor(ZonneplanSensor):
     @property
+    def install_uuid(self) -> str:
+        """Return a install ID."""
+        if self._install_index < 0:
+            return self._connection_uuid
+        else:
+            return self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.uuid".format(
+                    install_index=self._install_index
+                ),
+            )
+
+    @property
     def device_info(self):
         """Return the device information."""
-        return {
-            "identifiers": {(DOMAIN, self._connection_uuid, self._type)},
-            "name": self.coordinator.getConnectionValue(
-                self._connection_uuid, "pv_installation.meta.name"
-            ),
-            "model": self.coordinator.getConnectionValue(
-                self._connection_uuid, "pv_installation.meta.name"
-            ),
+        device_info = {
+            "identifiers": {(DOMAIN, self._connection_uuid, PV_INSTALL)},
             "manufacturer": "Zonneplan",
-            "sw_version": self.coordinator.getConnectionValue(
+            "name": self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "pv_installation.meta.module_firmware_version",
-            )
-            + " - "
-            + self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "pv_installation.meta.inverter_firmware_version",
+                "pv_installation.0.label",
             ),
         }
+
+        if self._install_index >= 0:
+            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["name"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.meta.name".format(
+                    install_index=self._install_index
+                ),
+            )
+            device_info["model"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.meta.name".format(
+                    install_index=self._install_index
+                ),
+            )
+            device_info["sw_version"] = (
+                self.coordinator.getConnectionValue(
+                    self._connection_uuid,
+                    "pv_installation.{install_index}.meta.module_firmware_version".format(
+                        install_index=self._install_index
+                    ),
+                )
+                + " - "
+                + self.coordinator.getConnectionValue(
+                    self._connection_uuid,
+                    "pv_installation.{install_index}.meta.inverter_firmware_version".format(
+                        install_index=self._install_index
+                    ),
+                )
+            )
+
+        return device_info
 
 
 class ZonneplanP1Sensor(ZonneplanSensor):
     @property
-    def name(self):
-        """Return the name."""
-        return "Zonneplan P1 " + self._label
+    def install_uuid(self) -> str:
+        """Return a install ID."""
+        if self._install_index < 0:
+            return self._connection_uuid
+        else:
+            return self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "p1_installation.{install_index}.uuid".format(
+                    install_index=self._install_index
+                ),
+            )
 
     @property
     def device_info(self):
         """Return the device information."""
-        return {
-            "identifiers": {(DOMAIN, self._connection_uuid, self._type)},
-            "name": self.coordinator.getConnectionValue(
-                self._connection_uuid, "p1_installation.label"
-            ),
-            "model": self.coordinator.getConnectionValue(
-                self._connection_uuid, "p1_installation.meta.sgn_serial_number"
-            ),
+        device_info = {
+            "identifiers": {(DOMAIN, self._connection_uuid, P1_INSTALL)},
             "manufacturer": "Zonneplan",
-            "sw_version": self.coordinator.getConnectionValue(
+            "name": self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "p1_installation.meta.sgn_firmware",
+                "p1_installation.0.label",
             ),
-            "via_device": (DOMAIN, self._connection_uuid, "pv_installation"),
         }
+
+        if self._install_index >= 0:
+            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["name"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "p1_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            )
+            device_info["model"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "p1_installation.{install_index}.meta.sgn_serial_number".format(
+                    install_index=self._install_index
+                ),
+            )
+            device_info["sw_version"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "p1_installation.{install_index}.meta.sgn_firmware".format(
+                    install_index=self._install_index
+                ),
+            )
+
+        return device_info

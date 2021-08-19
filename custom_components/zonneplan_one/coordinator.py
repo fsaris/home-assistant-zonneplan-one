@@ -49,7 +49,9 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                         "gas": {},
                     }
                 for contract in connection["contracts"]:
-                    result[connection["uuid"]][contract["type"]] = contract
+                    if not contract["type"] in result[connection["uuid"]]:
+                        result[connection["uuid"]][contract["type"]] = []
+                    result[connection["uuid"]][contract["type"]].append(contract)
 
         _LOGGER.info("_async_update_data: fetch live data")
 
@@ -89,16 +91,16 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 key = int(key)
                 if not type(rv) is list or len(rv) < key:
                     _LOGGER.warning(
-                        "Could not find %d of %s in %s %s",
+                        "Could not find %d of %s",
                         key,
                         value_path,
-                        rv,
-                        type(rv),
                     )
+                    _LOGGER.debug(" in %s %s", rv, type(rv))
                     return None
 
             elif not key in rv:
-                _LOGGER.warning("Could not find %s of %s in %s", key, value_path, rv)
+                _LOGGER.warning("Could not find %s of %s", key, value_path)
+                _LOGGER.debug("in %s", rv)
                 return None
             rv = rv[key]
 
