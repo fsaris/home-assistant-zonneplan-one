@@ -93,6 +93,8 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
 class ZonneplanSensor(CoordinatorEntity, SensorEntity):
     """Abstract class for a zonneplan sensor."""
 
+    coordinator: ZonneplanUpdateCoordinator
+
     def __init__(
         self,
         connection_uuid,
