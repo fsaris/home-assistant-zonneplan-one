@@ -31,7 +31,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> None:
         """Fetch the latest status."""
-        result = self.data
+        result = {}
         _LOGGER.info("_async_update_data: start")
         # Get all info of all connections (part of your account info)
         accounts = await self.api.async_get_user_accounts()
