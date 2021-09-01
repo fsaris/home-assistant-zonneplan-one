@@ -93,6 +93,8 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
 class ZonneplanSensor(CoordinatorEntity, SensorEntity):
     """Abstract class for a zonneplan sensor."""
 
+    coordinator: ZonneplanUpdateCoordinator
+
     def __init__(
         self,
         connection_uuid,
@@ -129,7 +131,7 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
         return name
 
     @property
-    def state(self):
+    def native_value(self):
         value = self.coordinator.getConnectionValue(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index),
@@ -138,44 +140,12 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
         if not value:
             return value
 
-        if self.unit_of_measurement == ENERGY_KILO_WATT_HOUR:
+        if self.native_unit_of_measurement == ENERGY_KILO_WATT_HOUR:
             value = value / 1000
-        if self.unit_of_measurement == VOLUME_CUBIC_METERS:
+        if self.native_unit_of_measurement == VOLUME_CUBIC_METERS:
             value = value / 1000
 
         return value
-
-    @property
-    def last_reset(self):
-        if self.entity_description.last_reset_key:
-            value = self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                self.entity_description.last_reset_key.format(
-                    install_index=self._install_index
-                ),
-            )
-            if value:
-                return dt_util.parse_datetime(value)
-
-        elif self.entity_description.last_reset_today_key:
-            value = self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                self.entity_description.last_reset_today_key.format(
-                    install_index=self._install_index
-                ),
-            )
-            if value:
-                return (
-                    dt_util.parse_datetime(value)
-                    # Dates are received in UTC timezone but are to be treadted as "Europe/Amsterdam"
-                    # else we are talking about the wrong midnight
-                    # '2021-08-05T22:00:00.000000Z' would be 2021-08-05 but is 2021-08-06
-                    .astimezone(pytz.timezone("Europe/Amsterdam")).replace(
-                        hour=0, minute=0, second=0, microsecond=0
-                    )
-                )
-
-        return None
 
 
 class ZonneplanPvSensor(ZonneplanSensor):
