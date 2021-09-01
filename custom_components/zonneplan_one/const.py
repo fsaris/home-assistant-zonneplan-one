@@ -185,7 +185,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 native_unit_of_measurement=VOLUME_CUBIC_METERS,
                 device_class=DEVICE_CLASS_GAS,
                 entity_registry_enabled_default=True,
-                state_class=STATE_CLASS_TOTAL_INCREASING,
+                state_class=STATE_CLASS_MEASUREMENT,
             ),
             "gas_first_measured_at": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.gas_first_measured_at",
