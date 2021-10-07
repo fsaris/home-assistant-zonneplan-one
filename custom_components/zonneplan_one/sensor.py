@@ -189,19 +189,23 @@ class ZonneplanPvSensor(ZonneplanSensor):
                 ),
             )
             device_info["sw_version"] = (
+                    str(
+                        self.coordinator.getConnectionValue(
+                            self._connection_uuid,
+                            "pv_installation.{install_index}.meta.module_firmware_version".format(
+                                install_index=self._install_index
+                            ),
+                        )
+                        or "unknown")
+                    + " - "
+                    + str(
                 self.coordinator.getConnectionValue(
-                    self._connection_uuid,
-                    "pv_installation.{install_index}.meta.module_firmware_version".format(
-                        install_index=self._install_index
-                    ),
-                )
-                + " - "
-                + self.coordinator.getConnectionValue(
                     self._connection_uuid,
                     "pv_installation.{install_index}.meta.inverter_firmware_version".format(
                         install_index=self._install_index
                     ),
                 )
+                or "unknown")
             )
 
         return device_info
