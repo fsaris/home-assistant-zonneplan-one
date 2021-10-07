@@ -94,7 +94,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     P1_INSTALL: {
         "totals": {
             "electricity_total_today": ZonneplanSensorEntityDescription(
-                key="electricity.measurement_groups.0.total",
+                key="electricity_data.measurement_groups.0.total",
                 name="Zonneplan P1 electricity consumption today",
                 native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
                 device_class=DEVICE_CLASS_ENERGY,
@@ -102,7 +102,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=STATE_CLASS_TOTAL_INCREASING,
             ),
             "electricity_total_today_low_tariff": ZonneplanSensorEntityDescription(
-                key="electricity.measurement_groups.0.meta.low_tariff_group",
+                key="electricity_data.measurement_groups.0.meta.low_tariff_group",
                 name="Zonneplan P1 electricity consumption today low tariff",
                 native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
                 device_class=DEVICE_CLASS_ENERGY,
@@ -110,7 +110,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=STATE_CLASS_TOTAL_INCREASING,
             ),
             "electricity_total_today_normal_tariff": ZonneplanSensorEntityDescription(
-                key="electricity.measurement_groups.0.meta.normal_tariff_group",
+                key="electricity_data.measurement_groups.0.meta.normal_tariff_group",
                 name="Zonneplan P1 electricity consumption today normal tariff",
                 native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
                 device_class=DEVICE_CLASS_ENERGY,
@@ -118,7 +118,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=STATE_CLASS_TOTAL_INCREASING,
             ),
             "electricity_total_today_high_tariff": ZonneplanSensorEntityDescription(
-                key="electricity.measurement_groups.0.meta.high_tariff_group",
+                key="electricity_data.measurement_groups.0.meta.high_tariff_group",
                 name="Zonneplan P1 electricity consumption today high tariff",
                 native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
                 device_class=DEVICE_CLASS_ENERGY,
@@ -126,7 +126,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=STATE_CLASS_TOTAL_INCREASING,
             ),
             "gas_total_today": ZonneplanSensorEntityDescription(
-                key="gas.measurement_groups.0.total",
+                key="gas_data.measurement_groups.0.total",
                 name="Zonneplan P1 gas consumption today",
                 native_unit_of_measurement=VOLUME_CUBIC_METERS,
                 device_class=DEVICE_CLASS_GAS,
