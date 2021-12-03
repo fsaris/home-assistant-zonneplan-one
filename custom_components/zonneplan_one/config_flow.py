@@ -37,6 +37,21 @@ class ZonneplanLoginFlowHandler(
         """Return logger."""
         return logging.getLogger(__name__)
 
+    async def async_step_reauth(self, user_input=None):
+        """Perform reauth upon an API authentication error."""
+        _LOGGER.debug("reauth %s", user_input)
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(self, user_input=None):
+        """Dialog that informs the user that reauth is required."""
+        if user_input is None:
+            return self.async_show_form(
+                step_id="reauth_confirm",
+                data_schema=vol.Schema({}),
+                last_step=False,
+            )
+        return await self.async_step_user()
+
     async def async_step_user(self, user_input=None):
         """Handle a flow start."""
         await self.async_set_unique_id(DOMAIN)
@@ -58,6 +73,11 @@ class ZonneplanLoginFlowHandler(
         errors = {}
 
         self.logger.info("step_auth %s", user_input)
+
+        # Use email from existing config on re-auth
+        existing_entry = await self.async_set_unique_id(DOMAIN)
+        if existing_entry and "email" in existing_entry.data:
+            user_input = {CONF_EMAIL: existing_entry.data["email"]}
 
         if user_input and CONF_EMAIL in user_input:
             try:
@@ -82,6 +102,7 @@ class ZonneplanLoginFlowHandler(
                         vol.Required(CONF_EMAIL, default=""): str,
                     }
                 ),
+                last_step=False,
                 errors=errors,
             )
 
@@ -94,9 +115,25 @@ class ZonneplanLoginFlowHandler(
             self.logger.debug("next step %s", self.external_data)
             return await self.async_step_creation()
 
-        return self.async_show_form(step_id="fetch_password")
+        return self.async_show_form(
+            step_id="fetch_password",
+            data_schema=vol.Schema({}),
+            last_step=False,
+        )
 
     async def async_oauth_create_entry(self, data: dict) -> dict:
-        """Create an entry for the flow."""
-        self.logger.info("Create entry: %s", self._email)
-        return self.async_create_entry(title=self._email, data=data)
+        """Create an oauth config entry or update existing entry for reauth."""
+
+        data["email"] = self._email
+
+        existing_entry = await self.async_set_unique_id(DOMAIN)
+        if existing_entry:
+            self.logger.info(
+                "Update entry [%s]: %s", existing_entry.entry_id, data["email"]
+            )
+            self.hass.config_entries.async_update_entry(existing_entry, data=data)
+            await self.hass.config_entries.async_reload(existing_entry.entry_id)
+            return self.async_abort(reason="reauth_successful")
+
+        self.logger.info("Create entry: %s", data["email"])
+        return self.async_create_entry(title=data["email"], data=data)

@@ -2,8 +2,11 @@
 from datetime import timedelta
 import logging
 
+from aiohttp.client_exceptions import ClientResponseError
+
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .api import AsyncConfigEntryAuth
 from .const import DOMAIN
@@ -29,8 +32,14 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         self.data: dict = {}
         self.api: AsyncConfigEntryAuth = api
 
-    async def _async_update_data(self) -> None:
+    async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
+        try:
+            return await self._fetch_data()
+        except ClientResponseError as e:
+            raise ConfigEntryAuthFailed from e
+
+    async def _fetch_data(self) -> dict:
         result = {}
         _LOGGER.info("_async_update_data: start")
         # Get all info of all connections (part of your account info)

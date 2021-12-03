@@ -89,7 +89,7 @@ class ZonneplanApi:
         _LOGGER.info("_async_request_new_token: %s", grant_params)
 
         async with aiohttp.ClientSession() as session:
-            with async_timeout.timeout(10):
+            with async_timeout.timeout(30):
                 async with session.post(
                     OAUTH2_TOKEN_URI,
                     headers=self._request_headers,

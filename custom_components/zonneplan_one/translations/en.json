@@ -4,28 +4,31 @@
     "step": {
       "auth": {
         "title": "Request login token",
-        "description": "Provide your e-mail address to get a login mail",
+        "description": "Provide your email address to get a login mail",
         "data": {
           "email": "Email address"
         }
       },
       "fetch_password": {
         "title": "Validate login",
-        "description": "Check your mailbox and click on the link from Zonneplan. After that click button here"
+        "description": "Check your mailbox and click on the link from Zonneplan. After that proceed here by clicking **Next**."
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate Integration",
+        "description": "The Zonneplan ONE integration needs to re-authenticate your account"
       }
     },
     "abort": {
       "failed_to_authenticate": "Failed to successful authenticate",
       "authorize_url_timeout": "Timeout generating authorize URL.",
-      "missing_configuration": "The component is not configured. Please follow the documentation.",
-      "no_url_available": "No URL available. For information about this error, [check the help section]({docs_url})"
+      "reauth_successful": "Re-authentication was successful"
     },
     "create_entry": {
       "default": "Successfully authenticated"
     },
     "error": {
-      "failed_to_request_login": "Failed to request login link (check logs)",
-      "no_password": "No password received yet (did you follow the link from the email?)"
+      "failed_to_request_login": "Failed to request login link *(check logs)*",
+      "no_password": "No password received yet *(did you follow the link from the email?)*"
     }
   }
 }

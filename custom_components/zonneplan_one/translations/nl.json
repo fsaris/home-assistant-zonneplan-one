@@ -1,0 +1,34 @@
+{
+  "title": "Zonneplan ONE",
+  "config": {
+    "step": {
+      "auth": {
+        "title": "Login link opvragen",
+        "description": "Vul je e-mailadres in om Zonneplan om een login link te kunnen vragen",
+        "data": {
+          "email": "E-mailadres"
+        }
+      },
+      "fetch_password": {
+        "title": "Controleer login",
+        "description": "Controleer je mailbox op een mail van Zonneplan en klik op de link in die mail *(kan enkele minuten duren voordat de mail binnenkomt)*. Ga hier vervolgens verder door op **VOLGENDE** te klikken."
+      },
+      "reauth_confirm": {
+        "title": "Verifieer opnieuw je Zonnneplan ONE login",
+        "description": "Herauthenticatie van je account is nodig. Ga verder om Zonneplan om een nieuwe login mail op te vragen."
+      }
+    },
+    "abort": {
+      "failed_to_authenticate": "Inloggen is mislukt",
+      "authorize_url_timeout": "Time-out tijdens genereren autorisatie url.",
+      "reauth_successful": "Herauthenticatie was succesvol"
+    },
+    "create_entry": {
+      "default": "Inloggen gelukt"
+    },
+    "error": {
+      "failed_to_request_login": "Het opvragen van een login link ging mis *(controleer de logs)*",
+      "no_password": "Nog een wachtwoord ontvangen *(heb je op de link uit de mail van Zonnneplen geklikt?)*"
+    }
+  }
+}
