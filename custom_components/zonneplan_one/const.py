@@ -54,7 +54,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             value_factor=0.1,
-            unit_of_measurement="%",
+            native_unit_of_measurement="%",
         ),
         "current_tariff_group": ZonneplanSensorEntityDescription(
             key="summary_data.usage.type",
@@ -65,7 +65,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Current tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
-            unit_of_measurement=CURRENCY_EURO,
+            native_unit_of_measurement=CURRENCY_EURO,
         ),
         "status_message": ZonneplanSensorEntityDescription(
             key="summary_data.usage.status_message",
