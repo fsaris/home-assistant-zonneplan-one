@@ -1,12 +1,15 @@
 """Constants for the Zonneplan ONE integration."""
 from __future__ import annotations
 from dataclasses import dataclass
+
+from voluptuous.validators import Number
 from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
     STATE_CLASS_TOTAL_INCREASING,
     SensorEntityDescription,
 )
 from homeassistant.const import (
+    CURRENCY_EURO,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_GAS,
     DEVICE_CLASS_POWER,
@@ -18,6 +21,7 @@ from homeassistant.const import (
 
 DOMAIN = "zonneplan_one"
 
+SUMMARY = "summary_data"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
 
@@ -27,10 +31,58 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     """A class that describes Zoonneplan sensor entities."""
 
     entity_registry_enabled_default: bool = False
+    value_factor: Number = None
 
 
 """Available sensors"""
 SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
+    SUMMARY: {
+        "usage": ZonneplanSensorEntityDescription(
+            key="summary_data.usage.value",
+            name="Current usage",
+            native_unit_of_measurement=POWER_WATT,
+            device_class=DEVICE_CLASS_POWER,
+            state_class=STATE_CLASS_MEASUREMENT,
+            entity_registry_enabled_default=True,
+        ),
+        "usage_measured_at": ZonneplanSensorEntityDescription(
+            key="summary_data.usage.measured_at",
+            name="Current usage measured at",
+            device_class=DEVICE_CLASS_TIMESTAMP,
+            icon="mdi:calendar-clock",
+        ),
+        "sustainability_score": ZonneplanSensorEntityDescription(
+            key="summary_data.usage.sustainability_score",
+            name="Sustainability score",
+            icon="mdi:leaf-circle-outline",
+            state_class=STATE_CLASS_MEASUREMENT,
+            entity_registry_enabled_default=True,
+            value_factor=0.1,
+            unit_of_measurement="%",
+        ),
+        "current_tariff_group": ZonneplanSensorEntityDescription(
+            key="summary_data.usage.type",
+            name="Current tariff group",
+        ),
+        "current_tariff": ZonneplanSensorEntityDescription(
+            key="summary_data.price_per_hour.0.price",
+            name="Current tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            unit_of_measurement=CURRENCY_EURO,
+        ),
+        "status_message": ZonneplanSensorEntityDescription(
+            key="summary_data.usage.status_message",
+            name="Status message",
+            icon="mdi:message-text-outline",
+        ),
+        "status_tip": ZonneplanSensorEntityDescription(
+            key="summary_data.usage.status_tip",
+            name="Status tip",
+            icon="mdi:message-text-outline",
+            entity_registry_enabled_default=True,
+        ),
+    },
     PV_INSTALL: {
         "install": {
             "highest_measured_power_value": ZonneplanSensorEntityDescription(

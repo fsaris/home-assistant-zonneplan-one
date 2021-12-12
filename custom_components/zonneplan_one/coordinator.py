@@ -56,6 +56,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                         "live_data": {},
                         "electricity_data": {},
                         "gas_data": {},
+                        "summary_data": {},
                     }
                 for contract in connection["contracts"]:
                     if not contract["type"] in result[connection["uuid"]]:
@@ -79,6 +80,10 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 gas = await self.api.async_get(uuid, "/gas")
                 if gas:
                     result[uuid]["gas_data"] = gas
+
+            summary = await self.api.async_get(uuid, "/summary")
+            if summary:
+                result[uuid]["summary_data"] = summary
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
