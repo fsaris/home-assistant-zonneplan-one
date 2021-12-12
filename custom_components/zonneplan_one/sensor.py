@@ -11,12 +11,8 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
 )
-from homeassistant.const import (
-    ENERGY_KILO_WATT_HOUR,
-    VOLUME_CUBIC_METERS,
-)
+
 import homeassistant.util.dt as dt_util
-import pytz
 
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import (
