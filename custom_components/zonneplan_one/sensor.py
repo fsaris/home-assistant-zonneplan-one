@@ -167,12 +167,9 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
 
         if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
             value = dt_util.parse_datetime(value)
+
         if self.entity_description.value_factor:
             value = value * self.entity_description.value_factor
-        if self.native_unit_of_measurement == ENERGY_KILO_WATT_HOUR:
-            value = value / 1000
-        if self.native_unit_of_measurement == VOLUME_CUBIC_METERS:
-            value = value / 1000
 
         return value
 
