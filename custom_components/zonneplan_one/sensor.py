@@ -8,14 +8,11 @@ from homeassistant.helpers.update_coordinator import (
 import logging
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
 )
-from homeassistant.const import (
-    ENERGY_KILO_WATT_HOUR,
-    VOLUME_CUBIC_METERS,
-)
+
 import homeassistant.util.dt as dt_util
-import pytz
 
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import (
@@ -164,12 +161,11 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
         if not value:
             return value
 
+        if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
+            value = dt_util.parse_datetime(value)
+
         if self.entity_description.value_factor:
             value = value * self.entity_description.value_factor
-        if self.native_unit_of_measurement == ENERGY_KILO_WATT_HOUR:
-            value = value / 1000
-        if self.native_unit_of_measurement == VOLUME_CUBIC_METERS:
-            value = value / 1000
 
         return value
 
