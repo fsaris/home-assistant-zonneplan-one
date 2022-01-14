@@ -63,10 +63,18 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         ),
         "current_tariff": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.0.price",
-            name="Zonneplan current tariff",
+            name="Zonneplan current electricity tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
+        "current_tariff_gas": ZonneplanSensorEntityDescription(
+            key="gas_data.measurement_groups.0.meta.price",
+            name="Zonneplan current gas tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{VOLUME_CUBIC_METERS}",
             state_class=SensorStateClass.MEASUREMENT,
         ),
         "status_message": ZonneplanSensorEntityDescription(
