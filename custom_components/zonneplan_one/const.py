@@ -325,15 +325,6 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 icon="mdi:calendar-clock",
                 entity_registry_enabled_default=True,
             ),
-            "gas_last_measured_value": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.gas_last_measured_value",
-                name="Zonneplan P1 gas last measured consumption",
-                native_unit_of_measurement=VOLUME_CUBIC_METERS,
-                value_factor=0.001,
-                device_class=SensorDeviceClass.GAS,
-                entity_registry_enabled_default=True,
-                state_class=SensorStateClass.MEASUREMENT,
-            ),
             "gas_first_measured_at": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.gas_first_measured_at",
                 name="Zonneplan P1 gas first measured",
