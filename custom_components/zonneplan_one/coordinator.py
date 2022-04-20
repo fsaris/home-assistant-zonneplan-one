@@ -1,5 +1,6 @@
 """Zonneplan DataUpdateCoordinator"""
 from datetime import timedelta
+from http import HTTPStatus
 import logging
 
 from aiohttp.client_exceptions import ClientResponseError
@@ -37,7 +38,9 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         try:
             return await self._fetch_data()
         except ClientResponseError as e:
-            raise ConfigEntryAuthFailed from e
+            if e.status == HTTPStatus.UNAUTHORIZED:
+                raise ConfigEntryAuthFailed from e
+            raise e
 
     async def _fetch_data(self) -> dict:
         result = {}
