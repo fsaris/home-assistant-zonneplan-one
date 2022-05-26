@@ -2,8 +2,5 @@
   "name": "Zonneplan ONE",
   "homeassistant": "2021.12.0",
   "render_readme": true,
-  "iot_class": [
-    "Cloud Polling"
-  ],
   "country": "NL"
 }
