@@ -22,6 +22,8 @@ SUMMARY = "summary_data"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
 
+NONE_IS_ZERO = 'none-is-zero'
+NONE_USE_PREVIOUS = 'none-is-zero'
 
 @dataclass
 class ZonneplanSensorEntityDescription(SensorEntityDescription):
@@ -29,6 +31,7 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
 
     entity_registry_enabled_default: bool = False
     value_factor: Number = None
+    none_value_behaviour: String = ''
 
 
 """Available sensors"""
@@ -76,6 +79,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{VOLUME_CUBIC_METERS}",
             state_class=SensorStateClass.MEASUREMENT,
+            none_value_behaviour=NONE_USE_PREVIOUS,
         ),
         "status_message": ZonneplanSensorEntityDescription(
             key="summary_data.usage.status_message",
@@ -296,6 +300,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 device_class=SensorDeviceClass.POWER,
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.MEASUREMENT,
+                none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_last_measured_production_value": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.electricity_last_measured_production_value",
@@ -304,6 +309,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 device_class=SensorDeviceClass.POWER,
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.MEASUREMENT,
+                none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_last_measured_average_value": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.electricity_last_measured_average_value",
@@ -312,6 +318,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 device_class=SensorDeviceClass.POWER,
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.MEASUREMENT,
+                none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_first_measured_at": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.electricity_first_measured_at",

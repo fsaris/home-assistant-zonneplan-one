@@ -6,6 +6,7 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
 import logging
+from homeassistant.core import callback
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -19,6 +20,8 @@ from .const import (
     DOMAIN,
     P1_INSTALL,
     PV_INSTALL,
+    NONE_IS_ZERO,
+    NONE_USE_PREVIOUS,
     SENSOR_TYPES,
     SUMMARY,
     ZonneplanSensorEntityDescription,
@@ -122,9 +125,11 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
         self._install_index = install_index
         self.entity_description = description
 
+        self._attr_native_value = self._value_from_coordinator()
+
     @property
     def install_uuid(self) -> str:
-        """Return a install ID."""
+        """Return install ID."""
         return self._connection_uuid
 
     @property
@@ -151,29 +156,38 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
             "name": "Usage",
         }
 
-    @property
-    def native_value(self):
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        value = self._value_from_coordinator()
+
+        if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
+            return
+
+        self._attr_native_value = value
+        self.async_write_ha_state()
+
+    def _value_from_coordinator(self):
         value = self.coordinator.getConnectionValue(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index),
         )
-        # No value or 0 then we don't need to convert the value
-        if not value:
-            return value
+        if value is None and self.entity_description.none_value_behaviour == NONE_IS_ZERO:
+            value = 0
 
-        if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
-            value = dt_util.parse_datetime(value)
+        # Converting value is only needed when value isn't None or 0
+        if value:
+            if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
+                value = dt_util.parse_datetime(value)
 
-        if self.entity_description.value_factor:
-            value = value * self.entity_description.value_factor
+            if self.entity_description.value_factor:
+                value = value * self.entity_description.value_factor
 
         return value
-
 
 class ZonneplanPvSensor(ZonneplanSensor):
     @property
     def install_uuid(self) -> str:
-        """Return a install ID."""
+        """Return install ID."""
         if self._install_index < 0:
             return self._connection_uuid
         else:
@@ -238,7 +252,7 @@ class ZonneplanPvSensor(ZonneplanSensor):
 class ZonneplanP1Sensor(ZonneplanSensor):
     @property
     def install_uuid(self) -> str:
-        """Return a install ID."""
+        """Return install ID."""
         if self._install_index < 0:
             return self._connection_uuid
         else:

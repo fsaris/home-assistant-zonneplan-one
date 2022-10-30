@@ -49,7 +49,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN][entry.entry_id] = zonneplanApi
 
     coordinator = ZonneplanUpdateCoordinator(hass, zonneplanApi)
-    await coordinator.async_refresh()
+    await coordinator.async_config_entry_first_refresh()
+
+    # await coordinator.async_refresh()
 
     hass.data[DOMAIN][entry.entry_id] = {
         "api": zonneplanApi,
