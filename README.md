@@ -8,8 +8,6 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
 ## Current features
 - Support for Zonneplan ONE + Connect
 - Zonneplan ONE (Solar inverter) sensors:
-   - Highest yield value: `W` _(default disabled)_
-   - Highest yield: `date` _(default disabled)_
    - Yield total: `kWh` _(can be used as entity on Energy Dashboard)_
    - Yield today: `kWh` _(can be used as entity on Energy Dashboard)_
    - First measured: `date` _(default disabled)_
