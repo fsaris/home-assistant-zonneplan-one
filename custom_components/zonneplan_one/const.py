@@ -184,20 +184,6 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     },
     PV_INSTALL: {
         "install": {
-            "highest_measured_power_value": ZonneplanSensorEntityDescription(
-                key="pv_installation.{install_index}.meta.highest_measured_power_value",
-                name="Zonneplan highest yield value",
-                native_unit_of_measurement=POWER_WATT,
-                device_class=SensorDeviceClass.POWER,
-                icon="mdi:solar-power",
-                state_class=SensorStateClass.MEASUREMENT,
-            ),
-            "highest_power_measured_at": ZonneplanSensorEntityDescription(
-                key="pv_installation.{install_index}.meta.highest_power_measured_at",
-                name="Zonneplan highest yield",
-                device_class=SensorDeviceClass.TIMESTAMP,
-                icon="mdi:calendar",
-            ),
             "total_power_measured": ZonneplanSensorEntityDescription(
                 key="pv_installation.{install_index}.meta.total_power_measured",
                 name="Zonneplan yield total",
