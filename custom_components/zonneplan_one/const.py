@@ -27,7 +27,7 @@ NONE_USE_PREVIOUS = 'none-is-zero'
 
 @dataclass
 class ZonneplanSensorEntityDescription(SensorEntityDescription):
-    """A class that describes Zoonneplan sensor entities."""
+    """A class that describes Zonneplan sensor entities."""
 
     entity_registry_enabled_default: bool = False
     value_factor: Number = None
@@ -65,7 +65,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Zonneplan current tariff group",
         ),
         "current_tariff": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.0.price",
+            key="summary_data.price_per_hour.24.price",
             name="Zonneplan current electricity tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
@@ -93,92 +93,92 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             entity_registry_enabled_default=True,
         ),
         "forcast_tariff_1": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.1.price",
+            key="summary_data.price_per_hour.25.price",
             name="Zonneplan forcast tariff hour 1",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_2": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.2.price",
+            key="summary_data.price_per_hour.26.price",
             name="Zonneplan forcast tariff hour 2",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_3": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.3.price",
+            key="summary_data.price_per_hour.27.price",
             name="Zonneplan forcast tariff hour 3",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_4": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.4.price",
+            key="summary_data.price_per_hour.28.price",
             name="Zonneplan forcast tariff hour 4",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_5": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.5.price",
+            key="summary_data.price_per_hour.29.price",
             name="Zonneplan forcast tariff hour 5",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_6": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.6.price",
+            key="summary_data.price_per_hour.30.price",
             name="Zonneplan forcast tariff hour 6",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_7": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.7.price",
+            key="summary_data.price_per_hour.31.price",
             name="Zonneplan forcast tariff hour 7",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_8": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.8.price",
+            key="summary_data.price_per_hour.32.price",
             name="Zonneplan forcast tariff hour 8",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
         ),
         "forcast_tariff_group_1": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.1.tariff_group",
+            key="summary_data.price_per_hour.25.tariff_group",
             name="Zonneplan forcast tariff group hour 1",
             icon="mdi:cash",
         ),
         "forcast_tariff_group_2": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.2.tariff_group",
+            key="summary_data.price_per_hour.26.tariff_group",
             name="Zonneplan forcast tariff group hour 2",
         ),
         "forcast_tariff_group_3": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.3.tariff_group",
+            key="summary_data.price_per_hour.27.tariff_group",
             name="Zonneplan forcast tariff group hour 3",
         ),
         "forcast_tariff_group_4": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.4.tariff_group",
+            key="summary_data.price_per_hour.28.tariff_group",
             name="Zonneplan forcast tariff group hour 4",
         ),
         "forcast_tariff_group_5": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.5.tariff_group",
+            key="summary_data.price_per_hour.29.tariff_group",
             name="Zonneplan forcast tariff group hour 5",
         ),
         "forcast_tariff_group_6": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.6.tariff_group",
+            key="summary_data.price_per_hour.30.tariff_group",
             name="Zonneplan forcast tariff group hour 6",
         ),
         "forcast_tariff_group_7": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.7.tariff_group",
+            key="summary_data.price_per_hour.31.tariff_group",
             name="Zonneplan forcast tariff group hour 7",
         ),
         "forcast_tariff_group_8": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.8.tariff_group",
+            key="summary_data.price_per_hour.32.tariff_group",
             name="Zonneplan forcast tariff group hour 8",
         ),
     },
