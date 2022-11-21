@@ -160,18 +160,20 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         value = self._value_from_coordinator()
 
-        _LOGGER.debug(f'Update {self.name}: {value}')
         if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
             return
+
+        _LOGGER.debug(f'Update {self.name}: {value}')
 
         self._attr_native_value = value
         self.async_write_ha_state()
 
     def _value_from_coordinator(self):
-        value = self.coordinator.getConnectionValue(
+        raw_value = value = self.coordinator.getConnectionValue(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index),
         )
+
         if value is None and self.entity_description.none_value_behaviour == NONE_IS_ZERO:
             value = 0
 
@@ -182,6 +184,8 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
 
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
+
+        _LOGGER.debug(f'Value {self.name}: {value} [{raw_value}]')
 
         return value
 
