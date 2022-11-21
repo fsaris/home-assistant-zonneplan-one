@@ -163,6 +163,13 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
         if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
             return
 
+        if self.entity_description.daily_update_hour is not None and (state := self.hass.states.get(self.entity_id)):
+            update_today = dt_util.now().replace(hour=self.entity_description.daily_update_hour, minute=0, second=0, microsecond=0)
+            _LOGGER.debug(f'Last update {self.name}: {dt_util.as_local(state.last_updated)} < {update_today}')
+            if state.last_updated and dt_util.as_local(state.last_updated) > update_today:
+                _LOGGER.info(f'Skip update {self.name} until {self.entity_description.daily_update_hour}h')
+                return
+
         _LOGGER.debug(f'Update {self.name}: {value}')
 
         self._attr_native_value = value

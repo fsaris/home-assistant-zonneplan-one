@@ -32,6 +32,7 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     entity_registry_enabled_default: bool = False
     value_factor: Number = None
     none_value_behaviour: String = ''
+    daily_update_hour: None|Number = None
 
 
 """Available sensors"""
@@ -80,6 +81,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             native_unit_of_measurement=f"{CURRENCY_EURO}/{VOLUME_CUBIC_METERS}",
             state_class=SensorStateClass.MEASUREMENT,
             none_value_behaviour=NONE_USE_PREVIOUS,
+            daily_update_hour=6,
         ),
         "status_message": ZonneplanSensorEntityDescription(
             key="summary_data.usage.status_message",
