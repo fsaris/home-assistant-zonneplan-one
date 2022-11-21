@@ -160,6 +160,7 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         value = self._value_from_coordinator()
 
+        _LOGGER.debug(f'Update {self.name}: {value}')
         if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
             return
 
