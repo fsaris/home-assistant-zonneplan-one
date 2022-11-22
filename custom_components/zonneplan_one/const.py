@@ -23,7 +23,7 @@ PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
 
 NONE_IS_ZERO = 'none-is-zero'
-NONE_USE_PREVIOUS = 'none-is-zero'
+NONE_USE_PREVIOUS = 'none-is-previous'
 
 @dataclass
 class ZonneplanSensorEntityDescription(SensorEntityDescription):
