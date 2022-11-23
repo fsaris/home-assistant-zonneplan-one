@@ -1,6 +1,5 @@
 """Zonneplan Sensor"""
-from typing import Optional
-
+from typing import Optional, Any
 from voluptuous.validators import Number
 
 from homeassistant.helpers.update_coordinator import (
@@ -199,6 +198,23 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
             return True
 
         return False
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+
+        if not self.entity_description.attributes:
+            return
+
+        attrs = {}
+        for attribute in self.entity_description.attributes:
+            value = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                attribute.key.format(install_index=self._install_index),
+            )
+            _LOGGER.debug(f'Update {self.name}.attribute[{attribute.label}]: {value}')
+            attrs[attribute.label] = value
+
+        return attrs
 
     def _value_from_coordinator(self):
         raw_value = value = self.coordinator.getConnectionValue(

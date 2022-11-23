@@ -26,6 +26,12 @@ NONE_IS_ZERO = 'none-is-zero'
 NONE_USE_PREVIOUS = 'none-is-previous'
 
 @dataclass
+class Attribute():
+    key: String
+    label: String
+
+
+@dataclass
 class ZonneplanSensorEntityDescription(SensorEntityDescription):
     """A class that describes Zonneplan sensor entities."""
 
@@ -33,6 +39,7 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     value_factor: Number = None
     none_value_behaviour: String = ''
     daily_update_hour: None|Number = None
+    attributes: None|list[Attribute] = None
 
 
 """Available sensors"""
@@ -72,6 +79,12 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
             state_class=SensorStateClass.MEASUREMENT,
+            attributes=[
+                Attribute(
+                    key="summary_data.price_per_hour",
+                    label="forcast",
+                )
+            ],
         ),
         "current_tariff_gas": ZonneplanSensorEntityDescription(
             key="gas_data.measurement_groups.0.meta.price",
