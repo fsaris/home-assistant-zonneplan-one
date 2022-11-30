@@ -80,7 +80,6 @@ sensor:
   - platform: integration
     source: sensor.zonneplan_p1_electricity_production
     name: "Zonneplan P1 electricity production kWh"
-    unit: kWh
     unit_prefix: k
     round: 2
 ```
