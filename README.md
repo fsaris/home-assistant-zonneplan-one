@@ -82,6 +82,7 @@ sensor:
     name: "Zonneplan P1 electricity production kWh"
     unit_prefix: k
     round: 2
+    method: left
 ```
 
 ### Installing main/beta version using HACS
