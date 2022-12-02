@@ -256,6 +256,15 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.TOTAL_INCREASING,
             ),
+            "electricity_total_today_returned": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups.0.totals.p",
+                name="Zonneplan P1 electricity returned today",
+                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                value_factor=0.001,
+                device_class=SensorDeviceClass.ENERGY,
+                entity_registry_enabled_default=True,
+                state_class=SensorStateClass.TOTAL_INCREASING,
+            ),
             "electricity_total_today_low_tariff": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups.0.meta.low_tariff_group",
                 name="Zonneplan P1 electricity consumption today low tariff",
