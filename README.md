@@ -14,7 +14,8 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Last measured value: `W`
    - Last measured: `date`
 - Zonneplan Connect (P1 reader) sensors: (when available)
-   - Electricity today: `kWh` _(can be used as entity on Energy Dashboard)_
+   - Electricity consumed today: `kWh` _(can be used as entity on Energy Dashboard)_
+   - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity today low tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
    - Electricity today normal tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
    - Electricity today high tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
@@ -69,21 +70,7 @@ Do you have [HACS](https://hacs.xyz/) installed?
 `Zonneplan P1 electricity consumption today` is what you used from the grid
 
 #### Return to grid
-Currently the API doesn't provide the current production (Return to grid) in `kWh`. But to have the `Energy Dashboard` complete you need this value.
-
-As a work-arround you can let HA calculate a engery value from the power values that's available.
-
-For that you need to create a `integration` sensor. Add next lines to `configuration.yaml`:
-
-```
-sensor:
-  - platform: integration
-    source: sensor.zonneplan_p1_electricity_production
-    name: "Zonneplan P1 electricity production kWh"
-    unit_prefix: k
-    round: 2
-    method: left
-```
+`Zonneplan P1 electricity returned today` is what you returned to the grid
 
 ### Installing main/beta version using HACS
 1. Go to `HACS` => `Integratrions`
