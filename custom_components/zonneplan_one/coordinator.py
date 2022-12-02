@@ -84,9 +84,10 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 if gas:
                     result[uuid]["gas_data"] = gas
 
-            summary = await self.api.async_get(uuid, "/summary")
-            if summary:
-                result[uuid]["summary_data"] = summary
+            if "gas" in connection or "electricity" in connection:
+                summary = await self.api.async_get(uuid, "/summary")
+                if summary:
+                    result[uuid]["summary_data"] = summary
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
