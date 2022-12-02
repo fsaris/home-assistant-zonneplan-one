@@ -248,7 +248,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     P1_INSTALL: {
         "totals": {
             "electricity_total_today": ZonneplanSensorEntityDescription(
-                key="electricity_data.measurement_groups.0.total",
+                key="electricity_data.measurement_groups.0.totals.d",
                 name="Zonneplan P1 electricity consumption today",
                 native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
                 value_factor=0.001,
