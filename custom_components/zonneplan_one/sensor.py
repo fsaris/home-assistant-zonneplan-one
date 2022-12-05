@@ -200,7 +200,7 @@ class ZonneplanSensor(CoordinatorEntity, SensorEntity):
         return False
 
     @property
-    def extra_state_attributes(self) -> dict[str, Any] | None:
+    def extra_state_attributes(self):
 
         if not self.entity_description.attributes:
             return
