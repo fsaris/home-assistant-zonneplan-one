@@ -30,9 +30,9 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Gas last measured: `date`
 - Additional sensors:
    - Current Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
-     - The full Electricity forcast is available as a forcast attribute of this sensor
+     - The full Electricity forecast is available as a forecast attribute of this sensor
    - Current Zonneplan Gas tariff: `€/m³` _(default disabled)_
-   - 8 hours forcast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
+   - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
    - Current elektricity usage
    - Sustainability score
 
@@ -52,7 +52,7 @@ Do you have [HACS](https://hacs.xyz/) installed?
 2. Create another folder `zonneplan_one` in the `custom_components` folder. Copy all files from `custom_components/zonneplan_one` into the `zonneplan_one` folder.
 
 ## Setup
-1. In Home Assitant click on `Configuration`
+1. In Home Assistant click on `Configuration`
 1. Click on `Integrations`
 1. Click on `+ Add integration`
 1. Search for and select `Zonneplan ONE`
@@ -64,7 +64,7 @@ Do you have [HACS](https://hacs.xyz/) installed?
 ## Setup Energy Dashboard
 
 #### Solar production
-`Zonneplan yield total` is what you’re panels produced
+`Zonneplan yield total` is what your panels produced
 
 #### Grid consumption  
 `Zonneplan P1 electricity consumption today` is what you used from the grid
