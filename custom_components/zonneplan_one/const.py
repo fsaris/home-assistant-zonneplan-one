@@ -21,6 +21,7 @@ DOMAIN = "zonneplan_one"
 SUMMARY = "summary_data"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
+CHARGE_POINT = "charge_point"
 
 NONE_IS_ZERO = 'none-is-zero'
 NONE_USE_PREVIOUS = 'none-is-previous'
@@ -364,5 +365,28 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 entity_registry_enabled_default=True,
             ),
         },
+    },
+    CHARGE_POINT: {
+        "state": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.state",
+            name="Charge point state",
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="charge_point_data.state",
+                    label="state",
+                )
+            ],
+        ),
+        "charge_schedules.start_time": ZonneplanSensorEntityDescription(
+            key="charge_point_data.charge_schedules.start_time",
+            name="Charge point schedule start",
+            entity_registry_enabled_default=True,
+        ),
+        "charge_schedules.end_time": ZonneplanSensorEntityDescription(
+            key="charge_point_data.charge_schedules.end_time",
+            name="Charge point schedule end",
+            entity_registry_enabled_default=True,
+        ),
     },
 }

@@ -24,6 +24,7 @@ from .const import (
     NONE_USE_PREVIOUS,
     SENSOR_TYPES,
     SUMMARY,
+    CHARGE_POINT,
     ZonneplanSensorEntityDescription,
 )
 
@@ -41,6 +42,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
         pv_installations = coordinator.getConnectionValue(uuid, PV_INSTALL)
         p1_installations = coordinator.getConnectionValue(uuid, P1_INSTALL)
         summary = coordinator.getConnectionValue(uuid, SUMMARY)
+        charge_point = coordinator.getConnectionValue(uuid, CHARGE_POINT)
 
         _LOGGER.debug("Setup sensors for connnection %s", uuid)
 
@@ -102,6 +104,20 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
                         SENSOR_TYPES[P1_INSTALL]["totals"][sensor_key],
                     )
                 )
+
+        if charge_point:
+            for install_index in range(len(charge_point)):
+                for sensor_key in SENSOR_TYPES[CHARGE_POINT]:
+                    entities.append(
+                        ZonneplanChargePointSensor(
+                            uuid,
+                            sensor_key,
+                            coordinator,
+                            install_index,
+                            SENSOR_TYPES[CHARGE_POINT][sensor_key],
+                        )
+                    )
+
     async_add_entities(entities)
 
 
@@ -345,6 +361,48 @@ class ZonneplanP1Sensor(ZonneplanSensor):
             device_info["sw_version"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "p1_installation.{install_index}.meta.sgn_firmware".format(
+                    install_index=self._install_index
+                ),
+            )
+
+        return device_info
+class ZonneplanChargePointSensor(ZonneplanSensor):
+    @property
+    def install_uuid(self) -> str:
+        """Return install ID."""
+        if self._install_index < 0:
+            return self._connection_uuid
+        else:
+            return self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point.{install_index}.uuid".format(
+                    install_index=self._install_index
+                ),
+            )
+
+    @property
+    def device_info(self):
+        """Return the device information."""
+        device_info = {
+            "identifiers": {(DOMAIN, self._connection_uuid, CHARGE_POINT)},
+            "manufacturer": "Zonneplan",
+            "name": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point.0.label",
+            ),
+        }
+
+        if self._install_index >= 0:
+            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["name"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            )
+            device_info["model"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point.{install_index}.meta.sgn_serial_number".format(
                     install_index=self._install_index
                 ),
             )
