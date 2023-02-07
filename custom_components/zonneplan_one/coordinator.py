@@ -69,6 +69,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.info("_async_update_data: fetch live data")
 
         # Update last live data for each connection
+        summary_retrieved = False
         for uuid, connection in result.items():
             if "pv_installation" in connection:
                 live_data = await self.api.async_get(
@@ -84,7 +85,15 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 if gas:
                     result[uuid]["gas_data"] = gas
 
-            if "gas" in connection or "electricity" in connection:
+            # Electricity summary also contains gas data - only need to retrieve summary once
+            if "electricity" in connection:
+                summary = await self.api.async_get(uuid, "/summary")
+                if summary:
+                    result[uuid]["summary_data"] = summary
+                    summary_retrieved = True
+
+            # Prevent duplicate sensors being setup if there is also an electricity contract
+            if "gas" in connection and summary_retrieved == False:
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
