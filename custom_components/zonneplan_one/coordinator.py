@@ -28,7 +28,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=120),
+            update_interval=timedelta(seconds=300),
         )
         self.data: dict = {}
         self.api: AsyncConfigEntryAuth = api
