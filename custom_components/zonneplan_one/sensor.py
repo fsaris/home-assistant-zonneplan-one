@@ -7,6 +7,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 import logging
 from homeassistant.core import callback
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -121,7 +122,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
     async_add_entities(entities)
 
 
-class ZonneplanSensor(CoordinatorEntity, SensorEntity):
+class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
     """Abstract class for a zonneplan sensor."""
 
     coordinator: ZonneplanUpdateCoordinator

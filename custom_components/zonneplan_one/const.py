@@ -8,6 +8,9 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntityDescription,
+)
 from homeassistant.const import (
     CURRENCY_EURO,
     ENERGY_KILO_WATT_HOUR,
@@ -35,11 +38,16 @@ class Attribute():
 @dataclass
 class ZonneplanSensorEntityDescription(SensorEntityDescription):
     """A class that describes Zonneplan sensor entities."""
-
     entity_registry_enabled_default: bool = False
     value_factor: Number = None
     none_value_behaviour: String = ''
     daily_update_hour: None|Number = None
+    attributes: None|list[Attribute] = None
+
+@dataclass
+class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
+    """A class that describes Zonneplan binary sensor entities."""
+    entity_registry_enabled_default: bool = False
     attributes: None|list[Attribute] = None
 
 
@@ -378,6 +386,22 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 )
             ],
         ),
+        "power_actual": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.power_actual",
+            name="Charge point power",
+            native_unit_of_measurement=POWER_WATT,
+            device_class=SensorDeviceClass.POWER,
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
+        "energy_delivered_session": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.energy_delivered_session",
+            name="Charge point energy delivered session",
+            native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+            value_factor=0.001,
+            device_class=SensorDeviceClass.ENERGY,
+            entity_registry_enabled_default=True,
+            state_class=SensorStateClass.TOTAL_INCREASING,
+        ),
         "charge_schedules.start_time": ZonneplanSensorEntityDescription(
             key="charge_point_data.charge_schedules.start_time",
             name="Charge point schedule start",
@@ -392,5 +416,48 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             icon="mdi:calendar-clock",
             entity_registry_enabled_default=True,
         ),
+        "dynamic_load_balancing_health": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.dynamic_load_balancing_health",
+            name="Charge point schedule end",
+        ),
     },
+}
+
+BINARY_SENSORS: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
+    CHARGE_POINT: {
+        "connectivity_state": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.connectivity_state",
+            name="Charge point connectivity state",
+            entity_registry_enabled_default=True,
+        ),
+        "can_charge": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.can_charge",
+            name="Charge point can charge",
+            entity_registry_enabled_default=True,
+        ),
+        "can_schedule": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.can_schedule",
+            name="Charge point can schedule",
+            entity_registry_enabled_default=True,
+        ),
+        "charging_manually": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.charging_manually",
+            name="Charge point charging manually",
+            entity_registry_enabled_default=True,
+        ),
+        "charging_automatically": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.charging_automatically",
+            name="Charge point charging automatically",
+            entity_registry_enabled_default=True,
+        ),
+        "plug_and_charge": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.plug_and_charge",
+            name="Charge point plug and charge",
+            entity_registry_enabled_default=True,
+        ),
+        "overload_protection_active": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.overload_protection_active",
+            name="Charge point overload protection active",
+        ),
+    }
 }
