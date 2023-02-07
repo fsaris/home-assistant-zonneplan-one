@@ -381,11 +381,15 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         "charge_schedules.start_time": ZonneplanSensorEntityDescription(
             key="charge_point_data.charge_schedules.start_time",
             name="Charge point schedule start",
+            device_class=SensorDeviceClass.TIMESTAMP,
+            icon="mdi:calendar-clock",
             entity_registry_enabled_default=True,
         ),
         "charge_schedules.end_time": ZonneplanSensorEntityDescription(
             key="charge_point_data.charge_schedules.end_time",
             name="Charge point schedule end",
+            device_class=SensorDeviceClass.TIMESTAMP,
+            icon="mdi:calendar-clock",
             entity_registry_enabled_default=True,
         ),
     },
