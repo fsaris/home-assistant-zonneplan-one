@@ -102,7 +102,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if "charge_point" in connection:
                 charge_point = await self.api.async_get(uuid, "/charge-points/" + connection["charge_point"][0]["uuid"])
                 if charge_point:
-                    result[uuid]["charge_point_data"] = charge_point
+                    result[uuid]["charge_point_data"] = charge_point["contracts"][0]
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)

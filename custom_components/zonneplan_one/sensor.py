@@ -403,7 +403,7 @@ class ZonneplanChargePointSensor(ZonneplanSensor):
             )
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "charge_point.{install_index}.meta.sgn_serial_number".format(
+                "charge_point.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),
             )

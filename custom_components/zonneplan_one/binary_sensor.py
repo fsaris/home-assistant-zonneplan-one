@@ -16,6 +16,7 @@ from homeassistant.components.binary_sensor import (
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import (
     DOMAIN,
+    SENSOR_TYPES,
     CHARGE_POINT,
     ZonneplanBinarySensorEntityDescription,
 )
@@ -157,7 +158,7 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
             )
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "charge_point.{install_index}.meta.sgn_serial_number".format(
+                "charge_point.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),
             )
