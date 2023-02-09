@@ -16,7 +16,7 @@ from homeassistant.components.binary_sensor import (
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import (
     DOMAIN,
-    SENSOR_TYPES,
+    BINARY_SENSORS_TYPES,
     CHARGE_POINT,
     ZonneplanBinarySensorEntityDescription,
 )
@@ -38,14 +38,14 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
 
         if charge_point:
             for install_index in range(len(charge_point)):
-                for sensor_key in SENSOR_TYPES[CHARGE_POINT]:
+                for sensor_key in BINARY_SENSORS_TYPES[CHARGE_POINT]:
                     entities.append(
                         ZonneplanChargePointBinarySensor(
                             uuid,
                             sensor_key,
                             coordinator,
                             install_index,
-                            SENSOR_TYPES[CHARGE_POINT][sensor_key],
+                            BINARY_SENSORS_TYPES[CHARGE_POINT][sensor_key],
                         )
                     )
 
@@ -72,6 +72,8 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
         self._install_index = install_index
         self.entity_description = description
 
+        self._attr_is_on = self._value_from_coordinator()
+
     @property
     def install_uuid(self) -> str:
         """Return install ID."""
@@ -95,16 +97,20 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
+
+        self._attr_is_on = self._value_from_coordinator()
+
+        super()._handle_coordinator_update()
+
+    def _value_from_coordinator(self) -> bool:
         is_on = self.coordinator.getConnectionValue(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index),
         )
 
-        self._attr_is_on = False
-        if is_on:
-            self._attr_is_on = True
+        _LOGGER.debug("update binary sensor %s [%s]", self.name, is_on)
+        return bool(is_on)
 
-        super()._handle_coordinator_update()
     @property
     def extra_state_attributes(self):
 

@@ -383,7 +383,11 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 Attribute(
                     key="charge_point_data.state",
                     label="state",
-                )
+                ),
+                Attribute(
+                    key="charge_point_data.charge_schedules",
+                    label="charge schedules",
+                ),
             ],
         ),
         "power_actual": ZonneplanSensorEntityDescription(
@@ -403,15 +407,15 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             state_class=SensorStateClass.TOTAL_INCREASING,
         ),
         "charge_schedules.start_time": ZonneplanSensorEntityDescription(
-            key="charge_point_data.charge_schedules.start_time",
-            name="Charge point schedule start",
+            key="charge_point_data.charge_schedules.0.start_time",
+            name="Charge point next schedule start",
             device_class=SensorDeviceClass.TIMESTAMP,
             icon="mdi:calendar-clock",
             entity_registry_enabled_default=True,
         ),
         "charge_schedules.end_time": ZonneplanSensorEntityDescription(
-            key="charge_point_data.charge_schedules.end_time",
-            name="Charge point schedule end",
+            key="charge_point_data.charge_schedules.0.end_time",
+            name="Charge point next schedule end",
             device_class=SensorDeviceClass.TIMESTAMP,
             icon="mdi:calendar-clock",
             entity_registry_enabled_default=True,
@@ -423,7 +427,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     },
 }
 
-BINARY_SENSORS: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
+BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
     CHARGE_POINT: {
         "connectivity_state": ZonneplanBinarySensorEntityDescription(
             key="charge_point_data.state.connectivity_state",
