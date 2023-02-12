@@ -15,6 +15,16 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
+def getGasPriceFromSummary(summary) -> int | None:
+    if not "price_per_hour" in summary:
+        return None
+
+    for hour in summary["price_per_hour"]:
+        if "gas_price" in hour:
+           return hour["gas_price"]
+
+    return None
+
 class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     """Zonneplan status update coordinator"""
 
@@ -91,6 +101,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
+                    result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
                     summary_retrieved = True
 
             # Prevent duplicate sensors being setup if there is also an electricity contract
@@ -98,6 +109,8 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
+                    result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
+                    summary_retrieved = True
 
             if "charge_point" in connection:
                 charge_point = await self.api.async_get(uuid, "/charge-points/" + connection["charge_point"][0]["uuid"])

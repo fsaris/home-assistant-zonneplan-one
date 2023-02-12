@@ -96,7 +96,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             ],
         ),
         "current_tariff_gas": ZonneplanSensorEntityDescription(
-            key="gas_data.measurement_groups.0.meta.price",
+            key="summary_data.gas_price",
             name="Zonneplan current gas tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
