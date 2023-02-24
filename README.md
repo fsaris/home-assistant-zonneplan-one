@@ -29,7 +29,7 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Gas first measured: `date` _(default disabled)_
    - Gas last measured: `date`
 - Additional sensors:
-   - Current Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
+   - Current Zonneplan Electricity tariff: `€/kWh`
      - The full Electricity forecast is available as a forecast attribute of this sensor
    - Current Zonneplan Gas tariff: `€/m³` _(default disabled)_
    - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
