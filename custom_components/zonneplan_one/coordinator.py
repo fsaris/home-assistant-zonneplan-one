@@ -135,7 +135,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         for key in keys:
             if key.isdigit():
                 key = int(key)
-                if not type(rv) is list or len(rv) < key:
+                if not type(rv) is list or len(rv) <= key:
                     _LOGGER.warning(
                         "Could not find %d of %s",
                         key,
