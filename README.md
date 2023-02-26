@@ -28,12 +28,26 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Gas consumption today: `m³`
    - Gas first measured: `date` _(default disabled)_
    - Gas last measured: `date`
-- Additional sensors:
+- Charge laadpaal: (when available)
+  - Charge point state
+  - Charge point power `W`
+  - Charge point energy delivered session `kWh`
+  - Charge point next schedule start `date`
+  - Charge point next schedule end `date`
+  - Charge point dynamic load balancing health _(default disabled)_
+  - Charge point connectivity state `on/off`
+  - Charge point can charge `on/off`
+  - Charge point can schedule `on/off`
+  - Charge point charging manually `on/off`
+  - Charge point charging automatically `on/off`
+  - Charge point plug and charge `on/off`
+  - Charge point overload protection active `on/off` _(default disabled)_
+- Additional sensors: _(available when you have a energy contract)_
    - Current Zonneplan Electricity tariff: `€/kWh`
      - The full Electricity forecast is available as a forecast attribute of this sensor
    - Current Zonneplan Gas tariff: `€/m³`
    - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
-   - Current elektricity usage
+   - Current electricity usage
    - Sustainability score
 
 ## Installation

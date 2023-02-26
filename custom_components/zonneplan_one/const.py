@@ -424,7 +424,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         ),
         "dynamic_load_balancing_health": ZonneplanSensorEntityDescription(
             key="charge_point_data.state.dynamic_load_balancing_health",
-            name="Charge point schedule end",
+            name="Charge point dynamic load balancing health",
         ),
     },
 }
