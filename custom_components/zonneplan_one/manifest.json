@@ -1,19 +1,19 @@
 {
   "domain": "zonneplan_one",
   "name": "Zonneplan ONE",
-  "version": "0.0.17b5",
-  "config_flow": true,
-  "documentation": "https://github.com/fsaris/home-assistant-zonneplan-one",
-  "issue_tracker": "https://github.com/fsaris/home-assistant-zonneplan-one/issues",
-  "requirements": [],
-  "ssdp": [],
-  "zeroconf": [],
-  "homekit": {},
   "after_dependencies": [
     "http"
   ],
   "codeowners": [
     "@fsaris"
   ],
-  "iot_class": "cloud_polling"
+  "config_flow": true,
+  "documentation": "https://github.com/fsaris/home-assistant-zonneplan-one",
+  "homekit": {},
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/fsaris/home-assistant-zonneplan-one/issues",
+  "requirements": [],
+  "ssdp": [],
+  "version": "0.0.17b5",
+  "zeroconf": []
 }

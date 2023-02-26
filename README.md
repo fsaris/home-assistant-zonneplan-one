@@ -29,9 +29,9 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Gas first measured: `date` _(default disabled)_
    - Gas last measured: `date`
 - Additional sensors:
-   - Current Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
+   - Current Zonneplan Electricity tariff: `€/kWh`
      - The full Electricity forecast is available as a forecast attribute of this sensor
-   - Current Zonneplan Gas tariff: `€/m³` _(default disabled)_
+   - Current Zonneplan Gas tariff: `€/m³`
    - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
    - Current elektricity usage
    - Sustainability score
@@ -73,7 +73,7 @@ Do you have [HACS](https://hacs.xyz/) installed?
 `Zonneplan P1 electricity returned today` is what you returned to the grid
 
 ### Installing main/beta version using HACS
-1. Go to `HACS` => `Integratrions`
+1. Go to `HACS` => `Integrations`
 1. Click on the three dots icon in right bottom of the **Zonneplan ONE** card
 1. Click `Reinstall`
 1. Make sure `Show beta versions` is checked
