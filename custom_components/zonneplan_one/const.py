@@ -8,6 +8,9 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntityDescription,
+)
 from homeassistant.const import (
     CURRENCY_EURO,
     ENERGY_KILO_WATT_HOUR,
@@ -21,6 +24,7 @@ DOMAIN = "zonneplan_one"
 SUMMARY = "summary_data"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
+CHARGE_POINT = "charge_point"
 
 NONE_IS_ZERO = 'none-is-zero'
 NONE_USE_PREVIOUS = 'none-is-previous'
@@ -34,11 +38,16 @@ class Attribute():
 @dataclass
 class ZonneplanSensorEntityDescription(SensorEntityDescription):
     """A class that describes Zonneplan sensor entities."""
-
     entity_registry_enabled_default: bool = False
     value_factor: Number = None
     none_value_behaviour: String = ''
     daily_update_hour: None|Number = None
+    attributes: None|list[Attribute] = None
+
+@dataclass
+class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
+    """A class that describes Zonneplan binary sensor entities."""
+    entity_registry_enabled_default: bool = False
     attributes: None|list[Attribute] = None
 
 
@@ -88,7 +97,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             ],
         ),
         "current_tariff_gas": ZonneplanSensorEntityDescription(
-            key="gas_data.measurement_groups.0.meta.price",
+            key="summary_data.gas_price",
             name="Zonneplan current gas tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
@@ -367,4 +376,94 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             ),
         },
     },
+    CHARGE_POINT: {
+        "state": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.state",
+            name="Charge point state",
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="charge_point_data.state",
+                    label="state",
+                ),
+                Attribute(
+                    key="charge_point_data.charge_schedules",
+                    label="charge schedules",
+                ),
+            ],
+        ),
+        "power_actual": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.power_actual",
+            name="Charge point power",
+            native_unit_of_measurement=POWER_WATT,
+            device_class=SensorDeviceClass.POWER,
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
+        "energy_delivered_session": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.energy_delivered_session",
+            name="Charge point energy delivered session",
+            native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+            value_factor=0.001,
+            device_class=SensorDeviceClass.ENERGY,
+            entity_registry_enabled_default=True,
+            state_class=SensorStateClass.TOTAL_INCREASING,
+        ),
+        "charge_schedules.start_time": ZonneplanSensorEntityDescription(
+            key="charge_point_data.charge_schedules.0.start_time",
+            name="Charge point next schedule start",
+            device_class=SensorDeviceClass.TIMESTAMP,
+            icon="mdi:calendar-clock",
+            entity_registry_enabled_default=True,
+        ),
+        "charge_schedules.end_time": ZonneplanSensorEntityDescription(
+            key="charge_point_data.charge_schedules.0.end_time",
+            name="Charge point next schedule end",
+            device_class=SensorDeviceClass.TIMESTAMP,
+            icon="mdi:calendar-clock",
+            entity_registry_enabled_default=True,
+        ),
+        "dynamic_load_balancing_health": ZonneplanSensorEntityDescription(
+            key="charge_point_data.state.dynamic_load_balancing_health",
+            name="Charge point dynamic load balancing health",
+        ),
+    },
+}
+
+BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
+    CHARGE_POINT: {
+        "connectivity_state": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.connectivity_state",
+            name="Charge point connectivity state",
+            entity_registry_enabled_default=True,
+        ),
+        "can_charge": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.can_charge",
+            name="Charge point can charge",
+            entity_registry_enabled_default=True,
+        ),
+        "can_schedule": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.can_schedule",
+            name="Charge point can schedule",
+            entity_registry_enabled_default=True,
+        ),
+        "charging_manually": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.charging_manually",
+            name="Charge point charging manually",
+            entity_registry_enabled_default=True,
+        ),
+        "charging_automatically": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.charging_automatically",
+            name="Charge point charging automatically",
+            entity_registry_enabled_default=True,
+        ),
+        "plug_and_charge": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.plug_and_charge",
+            name="Charge point plug and charge",
+            entity_registry_enabled_default=True,
+        ),
+        "overload_protection_active": ZonneplanBinarySensorEntityDescription(
+            key="charge_point_data.state.overload_protection_active",
+            name="Charge point overload protection active",
+        ),
+    }
 }

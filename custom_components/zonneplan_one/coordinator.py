@@ -15,6 +15,16 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
+def getGasPriceFromSummary(summary) -> int | None:
+    if not "price_per_hour" in summary:
+        return None
+
+    for hour in summary["price_per_hour"]:
+        if "gas_price" in hour:
+           return hour["gas_price"]
+
+    return None
+
 class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     """Zonneplan status update coordinator"""
 
@@ -60,6 +70,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                         "electricity_data": {},
                         "gas_data": {},
                         "summary_data": {},
+                        "charge_point_data": {},
                     }
                 for contract in connection["contracts"]:
                     if not contract["type"] in result[connection["uuid"]]:
@@ -90,6 +101,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
+                    result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
                     summary_retrieved = True
 
             # Prevent duplicate sensors being setup if there is also an electricity contract
@@ -97,6 +109,13 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
+                    result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
+                    summary_retrieved = True
+
+            if "charge_point" in connection:
+                charge_point = await self.api.async_get(uuid, "/charge-points/" + connection["charge_point"][0]["uuid"])
+                if charge_point:
+                    result[uuid]["charge_point_data"] = charge_point["contracts"][0]
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
@@ -116,8 +135,8 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         for key in keys:
             if key.isdigit():
                 key = int(key)
-                if not type(rv) is list or len(rv) < key:
-                    _LOGGER.warning(
+                if not type(rv) is list or len(rv) <= key:
+                    _LOGGER.info(
                         "Could not find %d of %s",
                         key,
                         value_path,
@@ -126,7 +145,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     return None
 
             elif not key in rv:
-                _LOGGER.warning("Could not find %s of %s", key, value_path)
+                _LOGGER.info("Could not find %s of %s", key, value_path)
                 _LOGGER.debug("in %s", rv)
                 return None
             rv = rv[key]
