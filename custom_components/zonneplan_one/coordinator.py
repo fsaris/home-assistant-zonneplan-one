@@ -136,7 +136,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if key.isdigit():
                 key = int(key)
                 if not type(rv) is list or len(rv) <= key:
-                    _LOGGER.warning(
+                    _LOGGER.info(
                         "Could not find %d of %s",
                         key,
                         value_path,
@@ -145,7 +145,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     return None
 
             elif not key in rv:
-                _LOGGER.warning("Could not find %s of %s", key, value_path)
+                _LOGGER.info("Could not find %s of %s", key, value_path)
                 _LOGGER.debug("in %s", rv)
                 return None
             rv = rv[key]
