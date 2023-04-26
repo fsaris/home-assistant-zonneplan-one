@@ -137,7 +137,7 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
         else:
             return self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "charge_point.{install_index}.uuid".format(
+                "charge_point_installation.{install_index}.uuid".format(
                     install_index=self._install_index
                 ),
             )
@@ -150,7 +150,7 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
             "manufacturer": "Zonneplan",
             "name": self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "charge_point.0.label",
+                "charge_point_installation.0.label",
             ),
         }
 
@@ -158,13 +158,13 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
             device_info["identifiers"].add((DOMAIN, self.install_uuid))
             device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "charge_point.{install_index}.label".format(
+                "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             )
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "charge_point.{install_index}.meta.serial_number".format(
+                "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),
             )
