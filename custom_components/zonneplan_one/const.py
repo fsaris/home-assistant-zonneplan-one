@@ -24,7 +24,7 @@ DOMAIN = "zonneplan_one"
 SUMMARY = "summary_data"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
-CHARGE_POINT = "charge_point"
+CHARGE_POINT = "charge_point_installation"
 
 NONE_IS_ZERO = 'none-is-zero'
 NONE_USE_PREVIOUS = 'none-is-previous'

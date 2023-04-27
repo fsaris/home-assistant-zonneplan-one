@@ -112,8 +112,8 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
                     summary_retrieved = True
 
-            if "charge_point" in connection:
-                charge_point = await self.api.async_get(uuid, "/charge-points/" + connection["charge_point"][0]["uuid"])
+            if "charge_point_installation" in connection:
+                charge_point = await self.api.async_get(uuid, "/charge-points/" + connection["charge_point_installation"][0]["uuid"])
                 if charge_point:
                     result[uuid]["charge_point_data"] = charge_point["contracts"][0]
 
