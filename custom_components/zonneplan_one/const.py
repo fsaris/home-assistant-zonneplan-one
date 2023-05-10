@@ -82,7 +82,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Zonneplan current tariff group",
         ),
         "current_tariff": ZonneplanSensorEntityDescription(
-            key="summary_data.price_per_hour.24.price",
+            key="summary_data.price_per_hour.24.electricity_price",
             name="Zonneplan current electricity tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
