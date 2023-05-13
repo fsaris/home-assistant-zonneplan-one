@@ -97,15 +97,8 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     result[uuid]["gas_data"] = gas
 
             # Electricity summary also contains gas data - only need to retrieve summary once
-            if "electricity" in connection:
-                summary = await self.api.async_get(uuid, "/summary")
-                if summary:
-                    result[uuid]["summary_data"] = summary
-                    result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
-                    summary_retrieved = True
-
             # Prevent duplicate sensors being setup if there is also an electricity contract
-            if "gas" in connection and summary_retrieved == False:
+            if ("electricity" in connection or "gas" in connection) and summary_retrieved == False:
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
