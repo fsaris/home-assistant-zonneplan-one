@@ -15,7 +15,7 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
-def getGasPriceFromSummary(summary) -> int | None:
+def getGasPriceFromSummary(summary):
     if not "price_per_hour" in summary:
         return None
 
