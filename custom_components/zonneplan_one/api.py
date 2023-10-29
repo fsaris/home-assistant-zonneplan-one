@@ -62,7 +62,26 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         response_json = await response.json()
 
-        _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
+        _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+
+        return response_json["data"]
+
+    async def async_post(self, connection_uuid: str, path: str) -> dict:
+        _LOGGER.info("post: %s", path)
+        response = await self._oauth_session.async_request(
+            "GET",
+            "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
+            # headers=self._request_headers,
+        )
+
+        _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
+        _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+
+        response.raise_for_status()
+
+        response_json = await response.json()
+
+        _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
 
         return response_json["data"]
 
