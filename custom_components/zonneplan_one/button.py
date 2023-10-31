@@ -95,9 +95,9 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
     async def async_press(self) -> None:
         """Handle the button press."""
 
-        if (self._button_key == "charge_point.start"):
+        if (self._button_key == "start"):
             await self.coordinator.async_startCharge(self._connection_uuid)
-        elif (self._button_key == "charge_point.stop"):
+        elif (self._button_key == "stop"):
             await self.coordinator.async_startCharge(self._connection_uuid)
         else:
             _LOGGER.warning("Unknonw button action for %s", self._button_key)
