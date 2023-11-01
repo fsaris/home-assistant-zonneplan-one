@@ -98,7 +98,7 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
         if (self._button_key == "start"):
             await self.coordinator.async_startCharge(self._connection_uuid)
         elif (self._button_key == "stop"):
-            await self.coordinator.async_startCharge(self._connection_uuid)
+            await self.coordinator.async_stopCharge(self._connection_uuid)
         else:
             _LOGGER.warning("Unknonw button action for %s", self._button_key)
 
