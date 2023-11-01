@@ -146,7 +146,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         return rv
 
     async def async_startCharge(self, connection_uid: str) -> dict:
-        return self.api.async_post("charge-points/" + connection_uid + "/actions/start_boost")
+        return self.api.async_post(connection_uid, "charge-points/" + connection_uid + "/actions/start_boost")
 
     async def async_stopCharge(self, connection_uid: str) -> dict:
-        return self.api.async_post("charge-points/" + connection_uid + "/actions/stop_charging")
+        return self.api.async_post(connection_uid, "charge-points/" + connection_uid + "/actions/stop_charging")
