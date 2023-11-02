@@ -21,9 +21,10 @@ def getGasPriceFromSummary(summary):
 
     for hour in summary["price_per_hour"]:
         if "gas_price" in hour:
-           return hour["gas_price"]
+            return hour["gas_price"]
 
     return None
+
 
 class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     """Zonneplan status update coordinator"""
@@ -98,15 +99,23 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
             # Electricity summary also contains gas data - only need to retrieve summary once
             # Prevent duplicate sensors being setup if there is also an electricity contract
-            if ("electricity" in connection or "gas" in connection) and summary_retrieved == False:
+            if (
+                "electricity" in connection or "gas" in connection
+            ) and summary_retrieved == False:
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
-                    result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
+                    result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(
+                        summary
+                    )
                     summary_retrieved = True
 
             if "charge_point_installation" in connection:
-                charge_point = await self.api.async_get(uuid, "/charge-points/" + connection["charge_point_installation"][0]["uuid"])
+                charge_point = await self.api.async_get(
+                    uuid,
+                    "/charge-points/"
+                    + connection["charge_point_installation"][0]["uuid"],
+                )
                 if charge_point:
                     result[uuid]["charge_point_data"] = charge_point["contracts"][0]
 
@@ -145,8 +154,18 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
         return rv
 
-    async def async_startCharge(self, connection_uid: str) -> dict:
-        return await self.api.async_post(connection_uid, "/charge-points/" + connection_uid + "/actions/start_boost")
+    async def async_startCharge(
+        self, connection_uid: str, charge_point_uuid: str
+    ) -> dict:
+        return await self.api.async_post(
+            connection_uid,
+            "/charge-points/" + charge_point_uuid + "/actions/start_boost",
+        )
 
-    async def async_stopCharge(self, connection_uid: str) -> dict:
-        return await self.api.async_post(connection_uid, "/charge-points/" + connection_uid + "/actions/stop_charging")
+    async def async_stopCharge(
+        self, connection_uid: str, charge_point_uuid: str
+    ) -> dict:
+        return await self.api.async_post(
+            connection_uid,
+            "/charge-points/" + charge_point_uuid + "/actions/stop_charging",
+        )

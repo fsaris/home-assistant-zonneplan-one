@@ -24,7 +24,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_entities):
-
     coordinator: ZonneplanUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
         "coordinator"
     ]
@@ -49,7 +48,6 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
                     )
 
     async_add_entities(entities)
-
 
 
 class ZonneplanButton(CoordinatorEntity, ButtonEntity):
@@ -95,10 +93,17 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
     async def async_press(self) -> None:
         """Handle the button press."""
 
-        if (self._button_key == "start"):
-            await self.coordinator.async_startCharge(self._connection_uuid)
-        elif (self._button_key == "stop"):
-            await self.coordinator.async_stopCharge(self._connection_uuid)
+        charge_point_uuid = self.coordinator.getConnectionValue(
+            self._connection_uuid, "charge_point_data.uuid"
+        )
+
+        if self._button_key == "start":
+            await self.coordinator.async_startCharge(
+                self._connection_uuid, charge_point_uuid
+            )
+        elif self._button_key == "stop":
+            await self.coordinator.async_stopCharge(
+                self._connection_uuid, charge_point_uuid
+            )
         else:
             _LOGGER.warning("Unknonw button action for %s", self._button_key)
-
