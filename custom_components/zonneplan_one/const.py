@@ -16,9 +16,9 @@ from homeassistant.components.button import (
 )
 from homeassistant.const import (
     CURRENCY_EURO,
-    ENERGY_KILO_WATT_HOUR,
-    POWER_WATT,
-    VOLUME_CUBIC_METERS,
+    UnitOfEnergy,
+    UnitOfPower,
+    UnitOfVolume,
     PERCENTAGE,
 )
 
@@ -35,8 +35,8 @@ NONE_USE_PREVIOUS = "none-is-previous"
 
 @dataclass
 class Attribute:
-    key: String
-    label: String
+    key: str
+    label: str
 
 
 @dataclass
@@ -45,7 +45,7 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
 
     entity_registry_enabled_default: bool = False
     value_factor: Number = None
-    none_value_behaviour: String = ""
+    none_value_behaviour: str = ""
     daily_update_hour: None | Number = None
     attributes: None | list[Attribute] = None
 
@@ -71,7 +71,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         "usage": ZonneplanSensorEntityDescription(
             key="summary_data.usage.value",
             name="Zonneplan current usage",
-            native_unit_of_measurement=POWER_WATT,
+            native_unit_of_measurement=UnitOfPower.WATT,
             device_class=SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
@@ -100,7 +100,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Zonneplan current electricity tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             attributes=[
@@ -115,7 +115,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Zonneplan current gas tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{VOLUME_CUBIC_METERS}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             none_value_behaviour=NONE_USE_PREVIOUS,
@@ -137,56 +137,56 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Zonneplan forecast tariff hour 1",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_2": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.26.electricity_price",
             name="Zonneplan forecast tariff hour 2",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_3": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.27.electricity_price",
             name="Zonneplan forecast tariff hour 3",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_4": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.28.electricity_price",
             name="Zonneplan forecast tariff hour 4",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_5": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.29.electricity_price",
             name="Zonneplan forecast tariff hour 5",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_6": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.30.electricity_price",
             name="Zonneplan forecast tariff hour 6",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_7": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.31.electricity_price",
             name="Zonneplan forecast tariff hour 7",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_8": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.32.electricity_price",
             name="Zonneplan forecast tariff hour 8",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{ENERGY_KILO_WATT_HOUR}",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_group_1": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.25.tariff_group",
@@ -227,7 +227,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "total_power_measured": ZonneplanSensorEntityDescription(
                 key="pv_installation.{install_index}.meta.total_power_measured",
                 name="Zonneplan yield total",
-                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 icon="mdi:solar-power",
@@ -237,7 +237,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "last_measured_power_value": ZonneplanSensorEntityDescription(
                 key="pv_installation.{install_index}.meta.last_measured_power_value",
                 name="Zonneplan last measured value",
-                native_unit_of_measurement=POWER_WATT,
+                native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
                 icon="mdi:solar-power",
                 entity_registry_enabled_default=True,
@@ -261,7 +261,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "total_today": ZonneplanSensorEntityDescription(
                 key="live_data.total",
                 name="Zonneplan yield today",
-                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 icon="mdi:solar-power",
@@ -275,7 +275,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_total_today": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups.0.totals.d",
                 name="Zonneplan P1 electricity consumption today",
-                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 entity_registry_enabled_default=True,
@@ -284,7 +284,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_total_today_returned": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups.0.totals.p",
                 name="Zonneplan P1 electricity returned today",
-                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 entity_registry_enabled_default=True,
@@ -293,7 +293,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_total_today_low_tariff": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups.0.meta.low_tariff_group",
                 name="Zonneplan P1 electricity consumption today low tariff",
-                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 entity_registry_enabled_default=False,
@@ -302,7 +302,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_total_today_normal_tariff": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups.0.meta.normal_tariff_group",
                 name="Zonneplan P1 electricity consumption today normal tariff",
-                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 entity_registry_enabled_default=False,
@@ -311,7 +311,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_total_today_high_tariff": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups.0.meta.high_tariff_group",
                 name="Zonneplan P1 electricity consumption today high tariff",
-                native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 entity_registry_enabled_default=False,
@@ -320,7 +320,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "gas_total_today": ZonneplanSensorEntityDescription(
                 key="gas_data.measurement_groups.0.total",
                 name="Zonneplan P1 gas consumption today",
-                native_unit_of_measurement=VOLUME_CUBIC_METERS,
+                native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.GAS,
                 entity_registry_enabled_default=True,
@@ -331,7 +331,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_last_measured_delivery_value": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.electricity_last_measured_delivery_value",
                 name="Zonneplan P1 electricity consumption",
-                native_unit_of_measurement=POWER_WATT,
+                native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.MEASUREMENT,
@@ -340,7 +340,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_last_measured_production_value": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.electricity_last_measured_production_value",
                 name="Zonneplan P1 electricity production",
-                native_unit_of_measurement=POWER_WATT,
+                native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.MEASUREMENT,
@@ -349,7 +349,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             "electricity_last_measured_average_value": ZonneplanSensorEntityDescription(
                 key="p1_installation.{install_index}.meta.electricity_last_measured_average_value",
                 name="Zonneplan P1 electricity average",
-                native_unit_of_measurement=POWER_WATT,
+                native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.MEASUREMENT,
@@ -409,14 +409,14 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         "power_actual": ZonneplanSensorEntityDescription(
             key="charge_point_data.state.power_actual",
             name="Charge point power",
-            native_unit_of_measurement=POWER_WATT,
+            native_unit_of_measurement=UnitOfPower.WATT,
             device_class=SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
         ),
         "energy_delivered_session": ZonneplanSensorEntityDescription(
             key="charge_point_data.state.energy_delivered_session",
             name="Charge point energy delivered session",
-            native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+            native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
             value_factor=0.001,
             device_class=SensorDeviceClass.ENERGY,
             entity_registry_enabled_default=True,

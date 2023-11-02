@@ -68,6 +68,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
     async def async_post(self, connection_uuid: str, path: str) -> dict:
         _LOGGER.info("POST: %s", path)
+
         response = await self._oauth_session.async_request(
             "POST",
             "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
