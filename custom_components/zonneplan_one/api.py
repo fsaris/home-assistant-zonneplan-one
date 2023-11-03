@@ -84,7 +84,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
 
-        return response_json["data"]
+        return response_json
 
 
 class ZonneplanOAuth2Implementation(
