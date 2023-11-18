@@ -36,10 +36,19 @@ class ZonneplanApi:
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
 
-        response.raise_for_status()
-
-        response_json = await response.json()
-        _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
+        try:
+            with async_timeout.timeout(10):
+                response.raise_for_status()
+                _LOGGER.debug("ZonneplanAPI validated status: %s", response.status)
+                # Temporary for debugging show raw response
+                response_body = await response.read()
+                _LOGGER.debug("ZonneplanAPI response body: %s", response_body)
+                # Get Json
+                response_json = await response.json()
+                _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+        except asyncio.TimeoutError:
+            _LOGGER.error("Failed to extract body")
+            return None
 
         return response_json["data"]["uuid"]
 
@@ -61,7 +70,7 @@ class ZonneplanApi:
         response.raise_for_status()
 
         response_json = await response.json()
-        _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
+        _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
 
         if (
             "data" in response_json
@@ -103,6 +112,6 @@ class ZonneplanApi:
                     response.raise_for_status()
                     _LOGGER.info("_async_request_new_token: get json from response")
                     response_json = await response.json()
-                    _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
+                    _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
 
         return response_json

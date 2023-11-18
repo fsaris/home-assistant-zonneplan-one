@@ -121,6 +121,17 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             none_value_behaviour=NONE_USE_PREVIOUS,
             daily_update_hour=6,
         ),
+        "next_tariff_gas": ZonneplanSensorEntityDescription(
+            key="summary_data.gas_price_next",
+            name="Zonneplan next gas tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            none_value_behaviour=NONE_USE_PREVIOUS,
+            daily_update_hour=19,
+        ),
         "status_message": ZonneplanSensorEntityDescription(
             key="summary_data.usage.status_message",
             name="Zonneplan status message",
