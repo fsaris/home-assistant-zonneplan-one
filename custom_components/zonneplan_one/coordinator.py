@@ -25,6 +25,16 @@ def getGasPriceFromSummary(summary):
 
     return None
 
+def getNextGasPriceFromSummary(summary):
+    if not "price_per_hour" in summary:
+        return None
+
+    for hour in reversed(summary["price_per_hour"]):
+        if "gas_price" in hour:
+           return hour["gas_price"]
+
+    return None
+
 class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     """Zonneplan status update coordinator"""
 
@@ -103,6 +113,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 if summary:
                     result[uuid]["summary_data"] = summary
                     result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
+                    result[uuid]["summary_data"]["gas_price_next"] = getNextGasPriceFromSummary(summary)
                     summary_retrieved = True
 
             if "charge_point_installation" in connection:
