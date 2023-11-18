@@ -52,7 +52,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=300),
+            update_interval=timedelta(seconds=10),
         )
         self.data: dict = {}
         self.api: AsyncConfigEntryAuth = api
@@ -67,29 +67,40 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             raise e
 
     async def _fetch_data(self) -> dict:
-        result = {}
+        result = self.data
         _LOGGER.info("_async_update_data: start")
         # Get all info of all connections (part of your account info)
         accounts = await self.api.async_get_user_accounts()
-        if not accounts:
+        if not accounts and not result:
             return result
-        _LOGGER.info("_async_update_data: parse addresses")
-        # Flatten all found connections
-        for address_group in accounts["address_groups"]:
-            for connection in address_group["connections"]:
-                if not connection["uuid"] in result:
-                    result[connection["uuid"]] = {
-                        "uuid": connection["uuid"],
-                        "live_data": {},
-                        "electricity_data": {},
-                        "gas_data": {},
-                        "summary_data": {},
-                        "charge_point_data": {},
-                    }
-                for contract in connection["contracts"]:
-                    if not contract["type"] in result[connection["uuid"]]:
-                        result[connection["uuid"]][contract["type"]] = []
-                    result[connection["uuid"]][contract["type"]].append(contract)
+
+        if accounts:
+            _LOGGER.info("_async_update_data: parse addresses")
+            # Flatten all found connections
+            for address_group in accounts["address_groups"]:
+                for connection in address_group["connections"]:
+                    if not connection["uuid"] in result:
+                        result[connection["uuid"]] = {
+                            "uuid": connection["uuid"],
+                            "live_data": {},
+                            "electricity_data": {},
+                            "gas_data": {},
+                            "summary_data": {},
+                            "charge_point_data": {},
+                        }
+
+                    # Remove known contracts
+                    if "pv_installation" in result[connection["uuid"]]:
+                        del result[connection["uuid"]]["pv_installation"]
+                    if "p1_installation" in result[connection["uuid"]]:
+                        del result[connection["uuid"]]["p1_installation"]
+                    if "charge_point_installation" in result[connection["uuid"]]:
+                        del result[connection["uuid"]]["charge_point_installation"]
+
+                    for contract in connection["contracts"]:
+                        if not contract["type"] in result[connection["uuid"]]:
+                            result[connection["uuid"]][contract["type"]] = []
+                        result[connection["uuid"]][contract["type"]].append(contract)
 
         _LOGGER.info("_async_update_data: fetch live data")
 
@@ -102,6 +113,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 )
                 if live_data:
                     result[uuid]["live_data"] = live_data[0]
+
             if "p1_installation" in connection:
                 electricity = await self.api.async_get(uuid, "/electricity-delivered")
                 if electricity:
