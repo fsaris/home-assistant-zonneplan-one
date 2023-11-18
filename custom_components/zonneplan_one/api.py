@@ -22,6 +22,8 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         super().__init__(websession)
         self._oauth_session = oauth_session
 
+        self._etags = {}
+
     async def async_get_access_token(self) -> str:
         """Return a valid access token."""
         if not self._oauth_session.valid_token:
@@ -29,40 +31,41 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return self._oauth_session.token["access_token"]
 
-    async def async_get_user_accounts(self) -> dict:
-        response = await self._oauth_session.async_request(
-            "GET",
-            "https://app-api.zonneplan.nl/user-accounts/me",
-            # headers=self._request_headers,
-        )
+    async def async_get_user_accounts(self) -> dict | None:
+        return await self._async_get("user-accounts/me")
 
-        _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+    async def async_get(self, connection_uuid: str, path: str) -> dict | None:
+        return await self._async_get("connections/" + connection_uuid + path)
 
-        response.raise_for_status()
-
-        response_json = await response.json()
-
-        _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
-
-        return response_json["data"]
-
-    async def async_get(self, connection_uuid: str, path: str) -> dict:
+    async def _async_get(self, path: str) -> dict | None:
         _LOGGER.info("fetch: %s", path)
+
+        headers = {}
+        url = "https://app-api.zonneplan.nl/" + path
+
+        if url in self._etags and self._etags[url]:
+            headers["If-None-Match"] = self._etags[url]
+
+        _LOGGER.debug("ZonneplanAPI request header: %s", headers)
         response = await self._oauth_session.async_request(
             "GET",
-            "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
-            # headers=self._request_headers,
+            url,
+            headers=headers,
         )
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+
+        if response.status == 304:
+            return None
 
         response.raise_for_status()
 
         response_json = await response.json()
 
         _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+
+        self._etags[url] = response.headers.get("ETag")
 
         return response_json["data"]
 
