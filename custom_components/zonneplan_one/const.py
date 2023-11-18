@@ -62,7 +62,7 @@ class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
 class ZonneplanButtonEntityDescription(ButtonEntityDescription):
     """A class that describes Zonneplan button entities."""
 
-    entity_registry_enabled_default: bool = False
+    entity_registry_enabled_default: bool = True
 
 
 """Available sensors"""

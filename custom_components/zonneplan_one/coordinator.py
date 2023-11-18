@@ -119,11 +119,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     summary_retrieved = True
 
             if "charge_point_installation" in connection:
-                charge_point = await self.api.async_get(
-                    uuid,
-                    "/charge-points/"
-                    + connection["charge_point_installation"][0]["uuid"],
-                )
+                charge_point = await self._async_getChargePointData(uuid, connection["charge_point_installation"][0]["uuid"])
                 if charge_point:
                     result[uuid]["charge_point_data"] = charge_point["contracts"][0]
 
@@ -162,18 +158,37 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
         return rv
 
+    async def _async_getChargePointData(self, connection_uuid: str, charge_point_uuid: str) -> dict:
+        return await self.api.async_get(connection_uuid, "/charge-points/" + charge_point_uuid )
+
+    async def async_updateChargePointData(self, connection_uuid: str, charge_point_uuid: str) -> None:
+        charge_point = await self._async_getChargePointData(connection_uuid, charge_point_uuid)
+        if charge_point:
+            result[connection_uuid]["charge_point_data"] = charge_point["contracts"][0]
+            self.async_update_listeners()
+
     async def async_startCharge(
-        self, connection_uid: str, charge_point_uuid: str
-    ) -> dict:
-        return await self.api.async_post(
-            connection_uid,
+        self, connection_uuid: str, charge_point_uuid: str
+    ) -> None:
+        await self.api.async_post(
+            connection_uuid,
             "/charge-points/" + charge_point_uuid + "/actions/start_boost",
         )
 
+        self.data[connection_uuid]["charge_point_data"]["state"]["processing"] = True
+        self.async_update_listeners()
+
+        await self.async_updateChargePointData(connection_uuid, charge_point_uuid)
+
     async def async_stopCharge(
-        self, connection_uid: str, charge_point_uuid: str
-    ) -> dict:
-        return await self.api.async_post(
-            connection_uid,
+        self, connection_uuid: str, charge_point_uuid: str
+    ) -> None:
+        await self.api.async_post(
+            connection_uuid,
             "/charge-points/" + charge_point_uuid + "/actions/stop_charging",
         )
+
+        self.data[connection_uuid]["charge_point_data"]["state"]["processing"] = True
+        self.async_update_listeners()
+
+        await self.async_updateChargePointData(connection_uuid, charge_point_uuid)

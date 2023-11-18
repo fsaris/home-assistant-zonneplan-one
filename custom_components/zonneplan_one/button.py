@@ -90,6 +90,55 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
 
         return name
 
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        if not self.coordinator.last_update_success:
+            return False
+
+        state = self.coordinator.getConnectionValue(self._connection_uuid, "charge_point_data.state")
+
+        if not state["connectivity_state"]:
+            return False
+
+        if "processing" in state:
+            return False
+
+        if self._button_key == "stop" and (state["charging_manually"] or state["charging_automatically"]):
+            return True
+
+        if self._button_key == "start" and state["can_charge"] and not (state["charging_manually"] or state["charging_automatically"]):
+            return True
+
+    @property
+    def device_info(self):
+        """Return the device information."""
+        device_info = {
+            "identifiers": {(DOMAIN, self._connection_uuid, CHARGE_POINT)},
+            "manufacturer": "Zonneplan",
+            "name": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point_installation.0.label",
+            ),
+        }
+
+        if self._install_index >= 0:
+            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["name"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            )
+            device_info["model"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point_installation.{install_index}.meta.serial_number".format(
+                    install_index=self._install_index
+                ),
+            )
+
+        return device_info
+
     async def async_press(self) -> None:
         """Handle the button press."""
 
