@@ -36,10 +36,15 @@ class ZonneplanApi:
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
 
-        response.raise_for_status()
+        try:
+            with async_timeout.timeout(10):
+                response.raise_for_status()
 
-        response_json = await response.json()
-        _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
+                response_json = await response.json()
+                _LOGGER.debug("ZonneplanAPI response body  : %s", response_json)
+        except asyncio.TimeoutError:
+            _LOGGER.error("Failed to extract body")
+            return None
 
         return response_json["data"]["uuid"]
 
