@@ -29,7 +29,7 @@ def getNextGasPriceFromSummary(summary):
     if not "price_per_hour" in summary:
         return None
 
-    first_price_found = false
+    first_price_found = False
     for hour in summary["price_per_hour"]:
         if "gas_price" in hour:
             if first_price_found:
