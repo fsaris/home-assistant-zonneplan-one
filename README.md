@@ -1,19 +1,18 @@
-# Zonneplan ONE integration for Home Assistant
+# Zonneplan | Energie integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
 
-Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
+Unofficial integration for Zonneplan | Energie
 
 ## Current features
-- Support for Zonneplan ONE + Connect
-- Zonneplan ONE (Solar inverter) sensors:
+- Zonneplan ONE (Solar inverter) sensors: (available when solar contract)
    - Yield total: `kWh` _(can be used as entity on Energy Dashboard)_
    - Yield today: `kWh` _(can be used as entity on Energy Dashboard)_
    - First measured: `date` _(default disabled)_
    - Last measured value: `W`
    - Last measured: `date`
-- Zonneplan Connect (P1 reader) sensors: (when available)
+- Zonneplan Connect (P1 reader) sensors: (available when P1 available)
    - Electricity consumed today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity today low tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
@@ -28,7 +27,7 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Gas consumption today: `m³`
    - Gas first measured: `date` _(default disabled)_
    - Gas last measured: `date`
-- Charge laadpaal: (when available)
+- Charge point/Laadpaal: (available when charge point contract)
   - Charge point state
   - Charge point power `W`
   - Charge point energy delivered session `kWh`
@@ -46,6 +45,7 @@ Unofficial integration for Zonneplan ONE solar inverter + Zonneplan connect
    - Current Zonneplan Electricity tariff: `€/kWh`
      - The full Electricity forecast is available as a forecast attribute of this sensor
    - Current Zonneplan Gas tariff: `€/m³`
+   - Next Zonneplan Gas tariff: `€/m³` #73
    - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
    - Current electricity usage
    - Sustainability score
