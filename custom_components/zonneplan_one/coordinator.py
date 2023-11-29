@@ -133,12 +133,12 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if (
                 "electricity" in connection or "gas" in connection
             ) and summary_retrieved == False:
+                summary_retrieved = True
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
                     result[uuid]["summary_data"] = summary
                     result[uuid]["summary_data"]["gas_price"] = getGasPriceFromSummary(summary)
                     result[uuid]["summary_data"]["gas_price_next"] = getNextGasPriceFromSummary(summary)
-                    summary_retrieved = True
 
             if "charge_point_installation" in connection:
                 charge_point = await self._async_getChargePointData(uuid, connection["charge_point_installation"][0]["uuid"])
