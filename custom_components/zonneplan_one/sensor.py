@@ -33,7 +33,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_entities):
-
     coordinator: ZonneplanUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
         "coordinator"
     ]
@@ -177,20 +176,24 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         value = self._value_from_coordinator()
 
-        if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
+        if (
+            value is None
+            and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS
+        ):
             return
 
         if self.skip_update_based_on_daily_update_hour():
-            _LOGGER.info(f'Skip update {self.name} until {self.entity_description.daily_update_hour}h')
+            _LOGGER.info(
+                f"Skip update {self.name} until {self.entity_description.daily_update_hour}h"
+            )
             return
 
-        _LOGGER.debug(f'Update {self.name}: {value}')
+        _LOGGER.debug(f"Update {self.name}: {value}")
 
         self._attr_native_value = value
         self.async_write_ha_state()
 
     def skip_update_based_on_daily_update_hour(self) -> bool:
-
         if self.entity_description.daily_update_hour is None:
             return False
 
@@ -202,23 +205,31 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         if not state.last_updated:
             return False
 
-        update_today = dt_util.now().replace(hour=self.entity_description.daily_update_hour, minute=0, second=0, microsecond=0)
+        update_today = dt_util.now().replace(
+            hour=self.entity_description.daily_update_hour,
+            minute=0,
+            second=0,
+            microsecond=0,
+        )
 
         # Is it time already to update the value today? No then we skip
         if update_today > dt_util.now():
-            _LOGGER.debug(f'Skipped update {self.name}: {update_today} (update today) > {dt_util.now()} (now)')
+            _LOGGER.debug(
+                f"Skipped update {self.name}: {update_today} (update today) > {dt_util.now()} (now)"
+            )
             return True
 
         # Already updated today after daily_update_hour? Then skip
         if dt_util.as_local(state.last_updated) >= update_today:
-            _LOGGER.debug(f'Skipped update {self.name}: {dt_util.as_local(state.last_updated)} (last update) >= {update_today} (update today)')
+            _LOGGER.debug(
+                f"Skipped update {self.name}: {dt_util.as_local(state.last_updated)} (last update) >= {update_today} (update today)"
+            )
             return True
 
         return False
 
     @property
     def extra_state_attributes(self):
-
         if not self.entity_description.attributes:
             return
 
@@ -228,7 +239,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
                 self._connection_uuid,
                 attribute.key.format(install_index=self._install_index),
             )
-            _LOGGER.debug(f'Update {self.name}.attribute[{attribute.label}]: {value}')
+            _LOGGER.debug(f"Update {self.name}.attribute[{attribute.label}]: {value}")
             attrs[attribute.label] = value
 
         return attrs
@@ -239,7 +250,10 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
             self.entity_description.key.format(install_index=self._install_index),
         )
 
-        if value is None and self.entity_description.none_value_behaviour == NONE_IS_ZERO:
+        if (
+            value is None
+            and self.entity_description.none_value_behaviour == NONE_IS_ZERO
+        ):
             value = 0
 
         # Converting value is only needed when value isn't None or 0
@@ -250,9 +264,10 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
 
-        _LOGGER.debug(f'Value {self.name}: {value} [{raw_value}]')
+        _LOGGER.debug(f"Value {self.name}: {value} [{raw_value}]")
 
         return value
+
 
 class ZonneplanPvSensor(ZonneplanSensor):
     @property
@@ -367,6 +382,7 @@ class ZonneplanP1Sensor(ZonneplanSensor):
             )
 
         return device_info
+
 
 class ZonneplanChargePointSensor(ZonneplanSensor):
     @property

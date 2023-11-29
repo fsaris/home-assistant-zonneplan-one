@@ -11,6 +11,9 @@ from homeassistant.components.sensor import (
 from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
+from homeassistant.components.button import (
+    ButtonEntityDescription,
+)
 from homeassistant.const import (
     CURRENCY_EURO,
     UnitOfEnergy,
@@ -26,8 +29,9 @@ PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
 CHARGE_POINT = "charge_point_installation"
 
-NONE_IS_ZERO = 'none-is-zero'
-NONE_USE_PREVIOUS = 'none-is-previous'
+NONE_IS_ZERO = "none-is-zero"
+NONE_USE_PREVIOUS = "none-is-previous"
+
 
 @dataclass
 class Attribute:
@@ -52,6 +56,13 @@ class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
 
     entity_registry_enabled_default: bool = False
     attributes: None | list[Attribute] = None
+
+
+@dataclass
+class ZonneplanButtonEntityDescription(ButtonEntityDescription):
+    """A class that describes Zonneplan button entities."""
+
+    entity_registry_enabled_default: bool = True
 
 
 """Available sensors"""
@@ -476,6 +487,19 @@ BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = 
         "overload_protection_active": ZonneplanBinarySensorEntityDescription(
             key="charge_point_data.state.overload_protection_active",
             name="Charge point overload protection active",
+        ),
+    }
+}
+
+BUTTON_TYPES: dict[str, list[ZonneplanButtonEntityDescription]] = {
+    CHARGE_POINT: {
+        "start": ZonneplanButtonEntityDescription(
+            key="charge_point.start",
+            name="Start charge",
+        ),
+        "stop": ZonneplanButtonEntityDescription(
+            key="charge_point.stop",
+            name="Stop charge",
         ),
     }
 }
