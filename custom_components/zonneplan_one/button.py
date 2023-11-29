@@ -104,10 +104,10 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
         if "processing" in state:
             return False
 
-        if self._button_key == "stop" and (state["charging_manually"] or state["charging_automatically"]):
+        if self._button_key == "stop" and state["state"] == "Charging":
             return True
 
-        if self._button_key == "start" and state["can_charge"] and not (state["charging_manually"] or state["charging_automatically"]):
+        if self._button_key == "start" and state["state"] == "VehicleDetected":
             return True
 
     @property
