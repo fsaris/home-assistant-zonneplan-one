@@ -41,6 +41,7 @@ Unofficial integration for Zonneplan | Energie
   - Charge point charging automatically `on/off`
   - Charge point plug and charge `on/off`
   - Charge point overload protection active `on/off` _(default disabled)_
+  - Buttons to start/stop charge
 - Additional sensors: _(available when you have a energy contract)_
    - Current Zonneplan Electricity tariff: `€/kWh`
      - The full Electricity forecast is available as a forecast attribute of this sensor
