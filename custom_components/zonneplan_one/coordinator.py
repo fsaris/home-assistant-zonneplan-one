@@ -1,10 +1,11 @@
 """Zonneplan DataUpdateCoordinator"""
 from collections.abc import Callable
-from datetime import timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Any
 
 import logging
+import homeassistant.util.dt as dt_util
 
 from aiohttp.client_exceptions import ClientResponseError
 
@@ -59,6 +60,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=timedelta(seconds=300),
         )
+        self.last_accounts_update: datetime | None = None
         self.data: dict = {}
         self.api: AsyncConfigEntryAuth = api
         self._delayed_fetch_charge_point: Callable[[], None] | None = None
@@ -76,11 +78,13 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         result = self.data
         _LOGGER.info("_async_update_data: start")
         # Get all info of all connections (part of your account info)
-        accounts = await self.api.async_get_user_accounts()
-        if not accounts and not result:
-            return result
+        if not result or not self.last_accounts_update or self.last_accounts_update < dt_util.now() - timedelta(minutes=59):
+            accounts = await self.api.async_get_user_accounts()
+            if not accounts and not result:
+                return result
 
         if accounts:
+            self.last_accounts_update = dt_util.now()
             _LOGGER.info("_async_update_data: parse addresses")
             # Flatten all found connections
             for address_group in accounts["address_groups"]:
