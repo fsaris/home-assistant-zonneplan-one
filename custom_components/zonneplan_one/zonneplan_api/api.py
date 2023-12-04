@@ -78,13 +78,22 @@ class ZonneplanApi:
             _LOGGER.error("Timeout calling ZonneplanAPI to request temporary password")
             return None
 
-        _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+        _LOGGER.debug("Temporary password response header: %s", response.headers)
+        _LOGGER.debug("Temporary password response status: %s", response.status)
 
-        response.raise_for_status()
+        try:
+            with async_timeout.timeout(10):
+                response.raise_for_status()
+                _LOGGER.debug("Temporary password validated status: %s (%s)", response.status, response)
+                # Temporary for debugging show raw response
+                response_body = await response.read()
+                _LOGGER.debug("Temporary password response body raw: %s", response_body)
 
-        response_json = await response.json()
-        _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+                response_json = await response.json()
+                _LOGGER.debug("Temporary password response body json: %s", response_json)
+        except asyncio.TimeoutError:
+            _LOGGER.error("Timed out extracting response body of temporary password request")
+            return None
 
         if (
             "data" in response_json
@@ -120,12 +129,12 @@ class ZonneplanApi:
                     allow_redirects=True,
                 ) as response:
 
-                    _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-                    _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+                    _LOGGER.debug("ZonneplanAPI oAuth Token response header: %s", response.headers)
+                    _LOGGER.debug("ZonneplanAPI oAuth Token response status: %s", response.status)
 
                     response.raise_for_status()
-                    _LOGGER.info("_async_request_new_token: get json from response")
+                    _LOGGER.info("ZonneplanAPI oAuth Token get json from response")
                     response_json = await response.json()
-                    _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+                    _LOGGER.debug("ZonneplanAPI oAuth Token response body: %s", response_json)
 
         return response_json
