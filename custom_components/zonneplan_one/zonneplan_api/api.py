@@ -3,6 +3,9 @@ import asyncio
 import aiohttp
 import async_timeout
 import logging
+import json
+import inspect
+import os
 
 API_VERSION = "2.1.1"
 LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"
@@ -17,7 +20,18 @@ class ZonneplanApi:
         self._request_headers = {
             "content-type": "application/json;charset=utf-8",
             "x-app-version": API_VERSION,
+            "x-ha-integration": self._get_integration_version(),
         }
+
+    def _get_integration_version(self) -> str:
+        script_directory = os.path.dirname(os.path.abspath(
+            inspect.getfile(inspect.currentframe())))
+        f = open(script_directory + '/../manifest.json')
+        manifest = json.load(f)
+
+        _LOGGER.debug("Version from manifest.json -> %s", manifest["version"])
+
+        return manifest["version"]
 
     async def async_request_temp_pass(self, email: str) -> str:
         try:
