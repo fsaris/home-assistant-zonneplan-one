@@ -76,12 +76,16 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
     async def _fetch_data(self) -> dict:
         result = self.data
+        accounts = None
+
         _LOGGER.info("_async_update_data: start")
         # Get all info of all connections (part of your account info)
         if not result or not self.last_accounts_update or self.last_accounts_update < dt_util.now() - timedelta(minutes=59):
             accounts = await self.api.async_get_user_accounts()
             if not accounts and not result:
                 return result
+        else:
+            _LOGGER.debug("Last time accounts are fetched: %s, mext time to fetch: %s", self.last_accounts_update, self.last_accounts_update + timedelta(minutes=59))
 
         if accounts:
             self.last_accounts_update = dt_util.now()
