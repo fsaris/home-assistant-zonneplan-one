@@ -39,7 +39,7 @@ class ZonneplanApi:
         try:
             with async_timeout.timeout(10):
                 response.raise_for_status()
-                _LOGGER.debug("ZonneplanAPI validated status: %s", response.status)
+                _LOGGER.debug("ZonneplanAPI validated status: %s (%s)", response.status, response)
                 # Temporary for debugging show raw response
                 response_body = await response.read()
                 _LOGGER.debug("ZonneplanAPI response body: %s", response_body)
@@ -47,7 +47,7 @@ class ZonneplanApi:
                 response_json = await response.json()
                 _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
         except asyncio.TimeoutError:
-            _LOGGER.error("Failed to extract body")
+            _LOGGER.error("Timed out extracting response body")
             return None
 
         return response_json["data"]["uuid"]
