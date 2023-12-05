@@ -50,6 +50,9 @@ Unofficial integration for Zonneplan | Energie
    - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
    - Current electricity usage
    - Sustainability score
+   - Electricity delivery costs today
+   - Electricity production costs today
+   - Gas delivery costs today
 
 ## Installation
 
