@@ -40,7 +40,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
     async def _async_get(self, path: str) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 
-        headers = {}
+        headers = self._request_headers
         url = "https://app-api.zonneplan.nl/" + path
 
         if url in self._etags and self._etags[url]:
@@ -76,6 +76,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             "POST",
             "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
             json={},
+            headers=self._request_headers,
         )
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
@@ -130,5 +131,5 @@ class ZonneplanOAuth2Implementation(
         return new_token
 
     async def async_generate_authorize_url(self, flow_id: str) -> str:
-        """Generate a url for the user to authorize."""
+        """Generate an url for the user to authorize."""
         return ""
