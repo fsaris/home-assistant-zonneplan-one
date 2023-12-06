@@ -10,6 +10,7 @@ import homeassistant.util.dt as dt_util
 from aiohttp.client_exceptions import ClientResponseError
 
 from homeassistant.core import HassJob
+from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -59,6 +60,12 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER,
             name=DOMAIN,
             update_interval=timedelta(seconds=300),
+            request_refresh_debouncer=Debouncer(
+                hass,
+                _LOGGER,
+                cooldown=60,
+                immediate=False
+            )
         )
         self.last_accounts_update: datetime | None = None
         self.data: dict = {}
