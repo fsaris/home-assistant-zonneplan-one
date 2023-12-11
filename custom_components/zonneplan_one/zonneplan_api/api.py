@@ -36,13 +36,20 @@ class ZonneplanApi:
 
     async def async_request_temp_pass(self, email: str) -> str:
         try:
-            async with aiohttp.ClientSession() as session:
-                with async_timeout.timeout(10):
-                    response = await session.post(
-                        LOGIN_REQUEST_URI,
-                        json={"email": email},
-                        headers=self._request_headers,
-                    )
+            timeout = aiohttp.ClientTimeout(total=10)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with await session.post(
+                    LOGIN_REQUEST_URI,
+                    json={"email": email},
+                    headers=self._request_headers,
+                ) as response:
+
+                    response.raise_for_status()
+                    _LOGGER.debug("ZonneplanAPI validated status: %s (%s)", response.status, response)
+
+                    # Get Json
+                    response_json = await response.json()
+                    _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
 
         except (asyncio.TimeoutError, aiohttp.ClientError):
             _LOGGER.error("Timeout calling ZonneplanAPI to request login email")
@@ -51,29 +58,21 @@ class ZonneplanApi:
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
 
-        try:
-            with async_timeout.timeout(10):
-                response.raise_for_status()
-                _LOGGER.debug("ZonneplanAPI validated status: %s (%s)", response.status, response)
-                # Temporary for debugging show raw response
-                response_body = await response.read()
-                _LOGGER.debug("ZonneplanAPI response body: %s", response_body)
-                # Get Json
-                response_json = await response.json()
-                _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
-        except asyncio.TimeoutError:
-            _LOGGER.error("Timed out extracting response body")
-            return None
-
         return response_json["data"]["uuid"]
 
     async def async_get_temp_pass(self, email: str, uuid: str):
         try:
-            async with aiohttp.ClientSession() as session:
-                with async_timeout.timeout(10):
-                    response = await session.get(
-                        LOGIN_REQUEST_URI + "/" + uuid, headers=self._request_headers
-                    )
+            timeout = aiohttp.ClientTimeout(total=10)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(
+                    LOGIN_REQUEST_URI + "/" + uuid, headers=self._request_headers
+                ) as response:
+
+                    response.raise_for_status()
+                    _LOGGER.debug("Temporary password validated status: %s (%s)", response.status, response)
+
+                    response_json = await response.json()
+                    _LOGGER.debug("Temporary password response body json: %s", response_json)
 
         except (asyncio.TimeoutError, aiohttp.ClientError):
             _LOGGER.error("Timeout calling ZonneplanAPI to request temporary password")
@@ -81,20 +80,6 @@ class ZonneplanApi:
 
         _LOGGER.debug("Temporary password response header: %s", response.headers)
         _LOGGER.debug("Temporary password response status: %s", response.status)
-
-        try:
-            with async_timeout.timeout(10):
-                response.raise_for_status()
-                _LOGGER.debug("Temporary password validated status: %s (%s)", response.status, response)
-                # Temporary for debugging show raw response
-                response_body = await response.read()
-                _LOGGER.debug("Temporary password response body raw: %s", response_body)
-
-                response_json = await response.json()
-                _LOGGER.debug("Temporary password response body json: %s", response_json)
-        except asyncio.TimeoutError:
-            _LOGGER.error("Timed out extracting response body of temporary password request")
-            return None
 
         if (
             "data" in response_json
@@ -121,21 +106,21 @@ class ZonneplanApi:
     async def _async_request_new_token(self, grant_params):
         _LOGGER.info("_async_request_new_token: %s", grant_params)
 
-        async with aiohttp.ClientSession() as session:
-            with async_timeout.timeout(30):
-                async with session.post(
-                    OAUTH2_TOKEN_URI,
-                    headers=self._request_headers,
-                    json=grant_params,
-                    allow_redirects=True,
-                ) as response:
+        timeout = aiohttp.ClientTimeout(total=30)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.post(
+                OAUTH2_TOKEN_URI,
+                headers=self._request_headers,
+                json=grant_params,
+                allow_redirects=True,
+            ) as response:
 
-                    _LOGGER.debug("ZonneplanAPI oAuth Token response header: %s", response.headers)
-                    _LOGGER.debug("ZonneplanAPI oAuth Token response status: %s", response.status)
+                _LOGGER.debug("ZonneplanAPI oAuth Token response header: %s", response.headers)
+                _LOGGER.debug("ZonneplanAPI oAuth Token response status: %s", response.status)
 
-                    response.raise_for_status()
-                    _LOGGER.info("ZonneplanAPI oAuth Token get json from response")
-                    response_json = await response.json()
-                    _LOGGER.debug("ZonneplanAPI oAuth Token response body: %s", response_json)
+                response.raise_for_status()
+                _LOGGER.info("ZonneplanAPI oAuth Token get json from response")
+                response_json = await response.json()
+                _LOGGER.debug("ZonneplanAPI oAuth Token response body: %s", response_json)
 
         return response_json
