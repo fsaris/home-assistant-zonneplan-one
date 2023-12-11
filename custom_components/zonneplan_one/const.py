@@ -48,6 +48,7 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     none_value_behaviour: str = ""
     daily_update_hour: None | Number = None
     attributes: None | list[Attribute] = None
+    last_reset_key: None | str = None
 
 
 @dataclass
@@ -331,18 +332,20 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 name="Electricity delivery costs today",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement=CURRENCY_EURO,
+                native_unit_of_measurement='EUR',
                 entity_registry_enabled_default=False,
-                state_class=SensorStateClass.TOTAL_INCREASING,
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="electricity_data.measurement_groups.0.date",
             ),
             "electricity_production_costs_incl_tax": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups.0.meta.production_costs_incl_tax",
                 name="Electricity production costs today",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement=CURRENCY_EURO,
+                native_unit_of_measurement='EUR',
                 entity_registry_enabled_default=False,
-                state_class=SensorStateClass.TOTAL_INCREASING,
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="electricity_data.measurement_groups.0.date",
             ),
             "gas_total_today": ZonneplanSensorEntityDescription(
                 key="gas_data.measurement_groups.0.total",
@@ -358,9 +361,10 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 name="Gas delivery costs today",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement=CURRENCY_EURO,
+                native_unit_of_measurement='EUR',
                 entity_registry_enabled_default=False,
-                state_class=SensorStateClass.TOTAL_INCREASING,
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="gas_data.measurement_groups.0.date",
             ),
         },
         "install": {

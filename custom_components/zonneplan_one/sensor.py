@@ -1,6 +1,7 @@
 """Zonneplan Sensor"""
 from typing import Optional, Any
 from voluptuous.validators import Number
+from datetime import datetime
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -171,6 +172,24 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
             "manufacturer": "Zonneplan",
             "name": "Usage",
         }
+
+    @property
+    def last_reset(self) -> datetime | None:
+
+        if not self.entity_description.last_reset_key:
+            return None
+
+        value = self.coordinator.getConnectionValue(
+            self._connection_uuid,
+            self.entity_description.last_reset_key.format(install_index=self._install_index),
+        )
+
+        if value:
+            value = dt_util.parse_datetime(value)
+
+        _LOGGER.debug(f"Last update {self.name}: {value}")
+
+        return value
 
     @callback
     def _handle_coordinator_update(self) -> None:
