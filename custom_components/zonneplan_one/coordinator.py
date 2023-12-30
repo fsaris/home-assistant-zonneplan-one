@@ -28,7 +28,7 @@ def getGasPriceFromSummary(summary):
 
     for hour in summary["price_per_hour"]:
         if "gas_price" in hour:
-           return hour["gas_price"]
+            return hour["gas_price"]
 
     return None
 
@@ -133,7 +133,23 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     uuid, "/pv_installation/charts/live"
                 )
                 if live_data:
+                    if not accounts:
+                        old = result[uuid]["live_data"]["total"]
                     result[uuid]["live_data"] = live_data[0]
+
+                    # These entity referenced params are not updated when only updating live data
+                    if not accounts:
+                        new = result[uuid]["live_data"]["total"]
+                        last = result[uuid]["live_data"]["measurements"][-1]
+                        result[uuid]["pv_installation"][0]["meta"]["last_measured_at"] = last["measured_at"]
+                        result[uuid]["pv_installation"][0]["meta"]["last_measured_power_value"] = last["value"]
+                        _LOGGER.debug(
+                            "Update total power with: %d + (%d - %d)",
+                            result[uuid]["pv_installation"][0]["meta"]["total_power_measured"],\
+                            new,
+                            old
+                        )
+                        result[uuid]["pv_installation"][0]["meta"]["total_power_measured"] += new - old
 
             if "p1_installation" in connection:
                 electricity = await self.api.async_get(uuid, "/electricity-delivered")
