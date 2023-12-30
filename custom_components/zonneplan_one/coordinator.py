@@ -145,7 +145,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                         result[uuid]["pv_installation"][0]["meta"]["last_measured_power_value"] = last["value"]
                         _LOGGER.debug(
                             "Update total power with: %d + (%d - %d)",
-                            result[uuid]["pv_installation"][0]["meta"]["total_power_measured"],\
+                            result[uuid]["pv_installation"][0]["meta"]["total_power_measured"],
                             new,
                             old
                         )
