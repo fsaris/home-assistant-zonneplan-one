@@ -92,7 +92,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if not accounts and not result:
                 return result
         else:
-            _LOGGER.debug("Last time accounts are fetched: %s, mext time to fetch: %s", self.last_accounts_update, self.last_accounts_update + timedelta(minutes=59))
+            _LOGGER.debug("Last time accounts are fetched: %s, next time to fetch: %s", self.last_accounts_update, self.last_accounts_update + timedelta(minutes=59))
 
         if accounts:
             self.last_accounts_update = dt_util.now()
