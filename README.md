@@ -7,9 +7,9 @@ Unofficial integration for Zonneplan | Energie
 
 ## Current features
 - Zonneplan ONE (Solar inverter) sensors: (available when solar contract)
-   - Yield total: `kWh` _(can be used as entity on Energy Dashboard)_
+   - Yield total: `kWh` _(only updated once a hour)_
    - Yield today: `kWh` _(can be used as entity on Energy Dashboard)_
-   - First measured: `date` _(default disabled)_
+   - First measured: `date` _(default disabled, only updated once a hour)_
    - Last measured value: `W`
    - Last measured: `date`
 - Zonneplan Connect (P1 reader) sensors: (available when P1 available)
