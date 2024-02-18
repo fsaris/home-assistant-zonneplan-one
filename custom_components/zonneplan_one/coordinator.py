@@ -103,7 +103,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     if not connection["uuid"] in result:
                         result[connection["uuid"]] = {
                             "uuid": connection["uuid"],
-                            "live_data": {},
+                            "pv_data": {},
                             "electricity_data": {},
                             "gas_data": {},
                             "summary_data": {},
@@ -129,11 +129,11 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         summary_retrieved = False
         for uuid, connection in result.items():
             if "pv_installation" in connection:
-                live_data = await self.api.async_get(
-                    uuid, "/pv_installation/charts/live"
+                pv_data = await self.api.async_get(
+                    uuid, "/pv-installation"
                 )
-                if live_data:
-                    result[uuid]["live_data"] = live_data[0]
+                if pv_data:
+                    result[uuid]["pv_data"] = pv_data
 
             if "p1_installation" in connection:
                 electricity = await self.api.async_get(uuid, "/electricity-delivered")

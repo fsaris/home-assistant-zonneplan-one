@@ -7,26 +7,26 @@ Unofficial integration for Zonneplan | Energie
 
 ## Current features
 - Zonneplan ONE (Solar inverter) sensors: (available when solar contract)
-   - Yield total: `kWh` _(only updated once a hour)_
+   - Yield total: `kWh`
    - Yield today: `kWh` _(can be used as entity on Energy Dashboard)_
    - First measured: `date` _(default disabled)_
-   - Last measured value: `W` _(only updated once a hour)_
-   - Last measured: `date` _(only updated once a hour)_
+   - Last measured value: `W`
+   - Last measured: `date`
 - Zonneplan Connect (P1 reader) sensors: (available when P1 available)
    - Electricity consumed today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity today low tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
    - Electricity today normal tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
    - Electricity today high tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
-   - Electricity consumption: `W` _(only updated once a hour)_
-   - Electricity production: `W` _(only updated once a hour)_
-   - Electricity average: `W` (average use over the last 5min) _(only updated once a hour)_
+   - Electricity consumption: `W`
+   - Electricity production: `W`
+   - Electricity average: `W` (average use over the last 5min)
    - Electricity first measured: `date` _(default disabled)_
-   - Electricity last measured: `date` _(only updated once a hour)_
-   - Electricity last measured production: `date` _(only updated once a hour)_
+   - Electricity last measured: `date`
+   - Electricity last measured production: `date`
    - Gas consumption today: `m³`
    - Gas first measured: `date` _(default disabled)_
-   - Gas last measured: `date` _(only updated once a hour)_
+   - Gas last measured: `date`
 - Charge point/Laadpaal: (available when charge point contract)
   - Charge point state
   - Charge point power `W`

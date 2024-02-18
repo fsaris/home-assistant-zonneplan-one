@@ -235,7 +235,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     PV_INSTALL: {
         "install": {
             "total_power_measured": ZonneplanSensorEntityDescription(
-                key="pv_installation.{install_index}.meta.total_power_measured",
+                key="pv_data.contracts.0.meta.total_power_measured",
                 name="Zonneplan yield total",
                 native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
@@ -245,7 +245,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.TOTAL_INCREASING,
             ),
             "last_measured_power_value": ZonneplanSensorEntityDescription(
-                key="pv_installation.{install_index}.meta.last_measured_power_value",
+                key="pv_data.contracts.0.meta.last_measured_power_value",
                 name="Zonneplan last measured value",
                 native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
@@ -254,13 +254,13 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.MEASUREMENT,
             ),
             "first_measured_at": ZonneplanSensorEntityDescription(
-                key="pv_installation.{install_index}.meta.first_measured_at",
+                key="pv_data.contracts.0.meta.first_measured_at",
                 name="Zonneplan first measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
             ),
             "last_measured_at": ZonneplanSensorEntityDescription(
-                key="pv_installation.{install_index}.meta.last_measured_at",
+                key="pv_data.contracts.0.meta.last_measured_at",
                 name="Zonneplan last measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
@@ -269,7 +269,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         },
         "totals": {
             "total_today": ZonneplanSensorEntityDescription(
-                key="live_data.total",
+                key="pv_data.measurement_groups.0.total",
                 name="Zonneplan yield today",
                 native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
@@ -369,7 +369,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         },
         "install": {
             "electricity_last_measured_delivery_value": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.electricity_last_measured_delivery_value",
+                key="electricity_data.contracts.0.meta.electricity_last_measured_delivery_value",
                 name="Zonneplan P1 electricity consumption",
                 native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
@@ -378,7 +378,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_last_measured_production_value": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.electricity_last_measured_production_value",
+                key="electricity_data.contracts.0.meta.electricity_last_measured_production_value",
                 name="Zonneplan P1 electricity production",
                 native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
@@ -387,7 +387,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_last_measured_average_value": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.electricity_last_measured_average_value",
+                key="electricity_data.contracts.0.meta.electricity_last_measured_average_value",
                 name="Zonneplan P1 electricity average",
                 native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
@@ -396,33 +396,33 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_first_measured_at": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.electricity_first_measured_at",
+                key="electricity_data.contracts.0.meta.electricity_first_measured_at",
                 name="Zonneplan P1 electricity first measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
             ),
             "electricity_last_measured_at": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.electricity_last_measured_at",
+                key="electricity_data.contracts.0.meta.electricity_last_measured_at",
                 name="Zonneplan P1 electricity last measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
                 entity_registry_enabled_default=True,
             ),
             "electricity_last_measured_production_at": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.electricity_last_measured_production_at",
+                key="electricity_data.contracts.0.meta.electricity_last_measured_production_at",
                 name="Zonneplan P1 electricity last measured production",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
                 entity_registry_enabled_default=True,
             ),
             "gas_first_measured_at": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.gas_first_measured_at",
+                key="gas_data.contracts.0.meta.gas_first_measured_at",
                 name="Zonneplan P1 gas first measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
             ),
             "gas_last_measured_at": ZonneplanSensorEntityDescription(
-                key="p1_installation.{install_index}.meta.gas_last_measured_at",
+                key="gas_data.contracts.0.meta.gas_last_measured_at",
                 name="Zonneplan P1 gas last measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
