@@ -6,7 +6,9 @@ from typing import Any
 
 import logging
 import homeassistant.util.dt as dt_util
-
+import json
+import inspect
+import os
 from aiohttp.client_exceptions import ClientResponseError
 
 from homeassistant.core import HassJob
@@ -72,6 +74,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         self.api: AsyncConfigEntryAuth = api
         self._delayed_fetch_charge_point: Callable[[], None] | None = None
 
+        self._test_file = None
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
@@ -82,6 +85,18 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             raise e
 
     async def _fetch_data(self) -> dict:
+
+        if self._test_file:
+            script_directory = os.path.dirname(os.path.abspath(
+                inspect.getfile(inspect.currentframe())))
+            f = open(script_directory + '/tests/' + self._test_file)
+            result = json.load(f)
+
+            _LOGGER.debug("TEST Result %s", result)
+
+            return result
+
+
         result = self.data
         accounts = None
 
