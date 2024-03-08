@@ -113,31 +113,23 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
     @property
     def device_info(self):
         """Return the device information."""
-        device_info = {
-            "identifiers": {(DOMAIN, self._connection_uuid, CHARGE_POINT)},
+        return {
+            "identifiers": {(DOMAIN, self.install_uuid)},
+            "via_device": (DOMAIN, self._connection_uuid),
             "manufacturer": "Zonneplan",
             "name": self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "charge_point_installation.0.label",
-            ),
-        }
-
-        if self._install_index >= 0:
-            device_info["identifiers"].add((DOMAIN, self.install_uuid))
-            device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            )
-            device_info["model"] = self.coordinator.getConnectionValue(
+            ),
+            "model": self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),
-            )
-
-        return device_info
+            ),
+        }
 
     async def async_press(self) -> None:
         """Handle the button press."""

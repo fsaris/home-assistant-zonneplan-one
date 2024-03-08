@@ -236,7 +236,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     PV_INSTALL: {
         "install": {
             "total_power_measured": ZonneplanSensorEntityDescription(
-                key="pv_data.contracts.0.meta.total_power_measured",
+                key="pv_data.contracts.{install_index}.meta.total_power_measured",
                 name="Zonneplan yield total",
                 native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
@@ -246,7 +246,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.TOTAL_INCREASING,
             ),
             "last_measured_power_value": ZonneplanSensorEntityDescription(
-                key="pv_data.contracts.0.meta.last_measured_power_value",
+                key="pv_data.contracts.{install_index}.meta.last_measured_power_value",
                 name="Zonneplan last measured value",
                 native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
@@ -255,13 +255,13 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.MEASUREMENT,
             ),
             "first_measured_at": ZonneplanSensorEntityDescription(
-                key="pv_data.contracts.0.meta.first_measured_at",
+                key="pv_data.contracts.{install_index}.meta.first_measured_at",
                 name="Zonneplan first measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
             ),
             "last_measured_at": ZonneplanSensorEntityDescription(
-                key="pv_data.contracts.0.meta.last_measured_at",
+                key="pv_data.contracts.{install_index}.meta.last_measured_at",
                 name="Zonneplan last measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",

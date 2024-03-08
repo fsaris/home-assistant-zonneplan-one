@@ -183,9 +183,9 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
     def device_info(self):
         """Return the device information."""
         return {
-            "identifiers": {(DOMAIN, self._connection_uuid, SUMMARY)},
+            "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
-            "name": "Usage",
+            "name": "Zonneplan",
         }
 
     @property
@@ -321,25 +321,36 @@ class ZonneplanPvSensor(ZonneplanSensor):
     def device_info(self):
         """Return the device information."""
         device_info = {
-            "identifiers": {(DOMAIN, self._connection_uuid, PV_INSTALL)},
+            "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
-            "name": self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "pv_installation.0.label",
-            ),
+            "name": "Zonneplan",
         }
 
         if self._install_index >= 0:
-            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
+            device_info["via_device"] = (DOMAIN, self._connection_uuid)
             device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "pv_installation.{install_index}.meta.name".format(
                     install_index=self._install_index
                 ),
             )
+
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "pv_installation.{install_index}.meta.name".format(
+                    install_index=self._install_index
+                ),
+            ) + " " + str(self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.meta.panel_count".format(
+                    install_index=self._install_index
+                ),
+            )) + " panels"
+
+            device_info["serial_number"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.meta.sgn_serial_number".format(
                     install_index=self._install_index
                 ),
             )
@@ -386,16 +397,14 @@ class ZonneplanP1Sensor(ZonneplanSensor):
     def device_info(self):
         """Return the device information."""
         device_info = {
-            "identifiers": {(DOMAIN, self._connection_uuid, P1_INSTALL)},
+            "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
-            "name": self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "p1_installation.0.label",
-            ),
+            "name": "Zonneplan",
         }
 
         if self._install_index >= 0:
-            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
+            device_info["via_device"] = (DOMAIN, self._connection_uuid)
             device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "p1_installation.{install_index}.label".format(
@@ -436,16 +445,14 @@ class ZonneplanChargePointSensor(ZonneplanSensor):
     def device_info(self):
         """Return the device information."""
         device_info = {
-            "identifiers": {(DOMAIN, self._connection_uuid, CHARGE_POINT)},
+            "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
-            "name": self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "charge_point_installation.0.label",
-            ),
+            "name": "Zonneplan",
         }
 
         if self._install_index >= 0:
-            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
+            device_info["via_device"] = (DOMAIN, self._connection_uuid)
             device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
@@ -480,16 +487,14 @@ class ZonneplanBatterySensor(ZonneplanSensor):
     def device_info(self):
         """Return the device information."""
         device_info = {
-            "identifiers": {(DOMAIN, self._connection_uuid, BATTERY)},
+            "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
-            "name": self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "home_battery_installation.0.label",
-            ),
+            "name": "Zonneplan",
         }
 
         if self._install_index >= 0:
-            device_info["identifiers"].add((DOMAIN, self.install_uuid))
+            device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
+            device_info["via_device"] = (DOMAIN, self._connection_uuid)
             device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "home_battery_installation.{install_index}.label".format(
