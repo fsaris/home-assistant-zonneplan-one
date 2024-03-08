@@ -28,6 +28,7 @@ SUMMARY = "summary_data"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
 CHARGE_POINT = "charge_point_installation"
+BATTERY = "home_battery_installation"
 
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
@@ -430,6 +431,86 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             ),
         },
     },
+    BATTERY: {
+        "battery_state": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.battery_state",
+            name="Battery state",
+            entity_registry_enabled_default=True,
+        ),
+        "state_of_charge": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.state_of_charge",
+            name="Percentage",
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            value_factor=0.1,
+            native_unit_of_measurement=PERCENTAGE,
+        ),
+        "power_ac": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.power_ac",
+            name="Power",
+            native_unit_of_measurement=UnitOfPower.WATT,
+            device_class=SensorDeviceClass.POWER,
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
+        "inverter_state": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.inverter_state",
+            name="Inverter state",
+        ),
+        "manual_control_state": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.manual_control_state",
+            name="Manual control state",
+        ),
+        "total_earned": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.total_earned",
+            name="Total",
+            value_factor=0.0000001,
+            device_class=SensorDeviceClass.MONETARY,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.TOTAL,
+            entity_registry_enabled_default=True,
+        ),
+        "total_day": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.total_day",
+            name="Today",
+            value_factor=0.0000001,
+            device_class=SensorDeviceClass.MONETARY,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.TOTAL,
+            last_reset_key="battery_data.measurement_groups.0.date",
+            entity_registry_enabled_default=True,
+        ),
+        "delivery_day": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.delivery_day",
+            name="Delivery today",
+            native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+            value_factor=0.001,
+            device_class=SensorDeviceClass.ENERGY,
+            entity_registry_enabled_default=True,
+            state_class=SensorStateClass.TOTAL_INCREASING,
+        ),
+        "production_day": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.production_day",
+            name="Production today",
+            native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+            value_factor=0.001,
+            device_class=SensorDeviceClass.ENERGY,
+            entity_registry_enabled_default=True,
+            state_class=SensorStateClass.TOTAL_INCREASING,
+        ),
+        "first_measured_at": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.first_measured_at",
+            name="First measured",
+            device_class=SensorDeviceClass.TIMESTAMP,
+            icon="mdi:calendar-clock",
+        ),
+        "last_measured_at": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.0.meta.last_measured_at",
+            name="Last measured",
+            device_class=SensorDeviceClass.TIMESTAMP,
+            icon="mdi:calendar-clock",
+            entity_registry_enabled_default=True,
+        ),
+    },
     CHARGE_POINT: {
         "state": ZonneplanSensorEntityDescription(
             key="charge_point_data.state.state",
@@ -484,6 +565,28 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
 }
 
 BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
+    BATTERY: {
+        "dynamic_charging_enabled": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.0.meta.dynamic_charging_enabled",
+            name="Dynamic charging enabled",
+            entity_registry_enabled_default=True,
+        ),
+        "dynamic_load_balancing_enabled": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.0.meta.dynamic_load_balancing_enabled",
+            name="Dynamic load balancing overload enabled",
+            entity_registry_enabled_default=True,
+        ),
+        "dynamic_load_balancing_overload_active": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.0.meta.dynamic_load_balancing_overload_active",
+            name="Dynamic load balancing overload active",
+            entity_registry_enabled_default=True,
+        ),
+        "manual_control_enabled": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.0.meta.manual_control_enabled",
+            name="Manual control enabled",
+            entity_registry_enabled_default=True,
+        ),
+    },
     CHARGE_POINT: {
         "connectivity_state": ZonneplanBinarySensorEntityDescription(
             key="charge_point_data.state.connectivity_state",
