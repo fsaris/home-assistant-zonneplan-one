@@ -99,16 +99,6 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
         """Return a unique ID."""
         return self.install_uuid + "_" + self._sensor_key
 
-    @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-
-        name = self.entity_description.name
-        if self._install_index and self._install_index > 0:
-            name += " (" + str(self._install_index + 1) + ")"
-
-        return name
-
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
@@ -169,7 +159,7 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            ),
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
             "model": self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
@@ -210,7 +200,7 @@ class ZonneplanBatteryBinarySensor(ZonneplanBinarySensor):
                 "home_battery_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            ),
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
             "model": self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "home_battery_installation.{install_index}.label".format(

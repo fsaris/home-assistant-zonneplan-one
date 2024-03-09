@@ -50,6 +50,7 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     daily_update_hour: None | Number = None
     attributes: None | list[Attribute] = None
     last_reset_key: None | str = None
+    has_entity_name: bool = True
 
 
 @dataclass
@@ -58,6 +59,7 @@ class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
 
     entity_registry_enabled_default: bool = False
     attributes: None | list[Attribute] = None
+    has_entity_name: bool = True
 
 
 @dataclass
@@ -65,6 +67,7 @@ class ZonneplanButtonEntityDescription(ButtonEntityDescription):
     """A class that describes Zonneplan button entities."""
 
     entity_registry_enabled_default: bool = True
+    has_entity_name: bool = True
 
 
 """Available sensors"""
@@ -72,7 +75,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     SUMMARY: {
         "usage": ZonneplanSensorEntityDescription(
             key="summary_data.usage.value",
-            name="Zonneplan current usage",
+            name="Current usage",
             native_unit_of_measurement=UnitOfPower.WATT,
             device_class=SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
@@ -80,13 +83,13 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         ),
         "usage_measured_at": ZonneplanSensorEntityDescription(
             key="summary_data.usage.measured_at",
-            name="Zonneplan current usage measured at",
+            name="Current usage measured at",
             device_class=SensorDeviceClass.TIMESTAMP,
             icon="mdi:calendar-clock",
         ),
         "sustainability_score": ZonneplanSensorEntityDescription(
             key="summary_data.usage.sustainability_score",
-            name="Zonneplan sustainability score",
+            name="Sustainability score",
             icon="mdi:leaf-circle-outline",
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
@@ -95,11 +98,11 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         ),
         "current_tariff_group": ZonneplanSensorEntityDescription(
             key="summary_data.usage.type",
-            name="Zonneplan current tariff group",
+            name="Current tariff group",
         ),
         "current_tariff": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.24.electricity_price",
-            name="Zonneplan current electricity tariff",
+            name="Current electricity tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
@@ -114,7 +117,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         ),
         "current_tariff_gas": ZonneplanSensorEntityDescription(
             key="summary_data.gas_price",
-            name="Zonneplan current gas tariff",
+            name="Current gas tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
@@ -125,7 +128,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         ),
         "next_tariff_gas": ZonneplanSensorEntityDescription(
             key="summary_data.gas_price_next",
-            name="Zonneplan next gas tariff",
+            name="Next gas tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
@@ -134,110 +137,110 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         ),
         "status_message": ZonneplanSensorEntityDescription(
             key="summary_data.usage.status_message",
-            name="Zonneplan status message",
+            name="Status message",
             icon="mdi:message-text-outline",
         ),
         "status_tip": ZonneplanSensorEntityDescription(
             key="summary_data.usage.status_tip",
-            name="Zonneplan status tip",
+            name="Status tip",
             icon="mdi:message-text-outline",
             entity_registry_enabled_default=True,
         ),
         "forcast_tariff_1": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.25.electricity_price",
-            name="Zonneplan forecast tariff hour 1",
+            name="Forecast tariff hour 1",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_2": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.26.electricity_price",
-            name="Zonneplan forecast tariff hour 2",
+            name="Forecast tariff hour 2",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_3": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.27.electricity_price",
-            name="Zonneplan forecast tariff hour 3",
+            name="Forecast tariff hour 3",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_4": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.28.electricity_price",
-            name="Zonneplan forecast tariff hour 4",
+            name="Forecast tariff hour 4",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_5": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.29.electricity_price",
-            name="Zonneplan forecast tariff hour 5",
+            name="Forecast tariff hour 5",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_6": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.30.electricity_price",
-            name="Zonneplan forecast tariff hour 6",
+            name="Forecast tariff hour 6",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_7": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.31.electricity_price",
-            name="Zonneplan forecast tariff hour 7",
+            name="Forecast tariff hour 7",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_8": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.32.electricity_price",
-            name="Zonneplan forecast tariff hour 8",
+            name="Forecast tariff hour 8",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
         "forcast_tariff_group_1": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.25.tariff_group",
-            name="Zonneplan forecast tariff group hour 1",
+            name="Forecast tariff group hour 1",
             icon="mdi:cash",
         ),
         "forcast_tariff_group_2": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.26.tariff_group",
-            name="Zonneplan forecast tariff group hour 2",
+            name="Forecast tariff group hour 2",
         ),
         "forcast_tariff_group_3": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.27.tariff_group",
-            name="Zonneplan forecast tariff group hour 3",
+            name="Forecast tariff group hour 3",
         ),
         "forcast_tariff_group_4": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.28.tariff_group",
-            name="Zonneplan forecast tariff group hour 4",
+            name="Forecast tariff group hour 4",
         ),
         "forcast_tariff_group_5": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.29.tariff_group",
-            name="Zonneplan forecast tariff group hour 5",
+            name="Forecast tariff group hour 5",
         ),
         "forcast_tariff_group_6": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.30.tariff_group",
-            name="Zonneplan forecast tariff group hour 6",
+            name="Forecast tariff group hour 6",
         ),
         "forcast_tariff_group_7": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.31.tariff_group",
-            name="Zonneplan forecast tariff group hour 7",
+            name="Forecast tariff group hour 7",
         ),
         "forcast_tariff_group_8": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.32.tariff_group",
-            name="Zonneplan forecast tariff group hour 8",
+            name="Forecast tariff group hour 8",
         ),
     },
     PV_INSTALL: {
         "install": {
             "total_power_measured": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.total_power_measured",
-                name="Zonneplan yield total",
+                name="Yield total",
                 native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
@@ -247,7 +250,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             ),
             "last_measured_power_value": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.last_measured_power_value",
-                name="Zonneplan last measured value",
+                name="Last measured value",
                 native_unit_of_measurement=UnitOfPower.WATT,
                 device_class=SensorDeviceClass.POWER,
                 icon="mdi:solar-power",
@@ -256,13 +259,13 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             ),
             "first_measured_at": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.first_measured_at",
-                name="Zonneplan first measured",
+                name="First measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
             ),
             "last_measured_at": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.last_measured_at",
-                name="Zonneplan last measured",
+                name="Last measured",
                 device_class=SensorDeviceClass.TIMESTAMP,
                 icon="mdi:calendar-clock",
                 entity_registry_enabled_default=True,
@@ -271,7 +274,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         "totals": {
             "total_today": ZonneplanSensorEntityDescription(
                 key="pv_data.measurement_groups.0.total",
-                name="Zonneplan yield today",
+                name="Yield today",
                 native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,

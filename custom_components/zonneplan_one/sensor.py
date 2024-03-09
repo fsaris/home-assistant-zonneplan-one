@@ -169,16 +169,6 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         return self.install_uuid + "_" + self._sensor_key
 
     @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-
-        name = self.entity_description.name
-        if self._install_index and self._install_index > 0:
-            name += " (" + str(self._install_index + 1) + ")"
-
-        return name
-
-    @property
     def device_info(self):
         """Return the device information."""
         return {
@@ -333,7 +323,7 @@ class ZonneplanPvSensor(ZonneplanSensor):
                 "pv_installation.{install_index}.meta.name".format(
                     install_index=self._install_index
                 ),
-            )
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
 
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
@@ -406,7 +396,7 @@ class ZonneplanP1Sensor(ZonneplanSensor):
                 "p1_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            )
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "p1_installation.{install_index}.label".format(
@@ -460,7 +450,7 @@ class ZonneplanChargePointSensor(ZonneplanSensor):
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            )
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
@@ -508,7 +498,7 @@ class ZonneplanBatterySensor(ZonneplanSensor):
                 "home_battery_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            )
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
             device_info["model"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "home_battery_installation.{install_index}.label".format(

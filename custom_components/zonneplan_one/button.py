@@ -86,16 +86,6 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
         return self.install_uuid + "_" + self._button_key
 
     @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-
-        name = self.entity_description.name
-        if self._install_index and self._install_index > 0:
-            name += " (" + str(self._install_index + 1) + ")"
-
-        return name
-
-    @property
     def available(self) -> bool:
         """Return if entity is available."""
         if not self.coordinator.last_update_success:
@@ -127,7 +117,7 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            ),
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
             "model": self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
