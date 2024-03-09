@@ -172,6 +172,12 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
             ),
             "model": self.coordinator.getConnectionValue(
                 self._connection_uuid,
+                "charge_point_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            ),
+            "serial_number": self.coordinator.getConnectionValue(
+                self._connection_uuid,
                 "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),

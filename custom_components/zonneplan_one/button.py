@@ -73,7 +73,12 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
     @property
     def install_uuid(self) -> str:
         """Return install ID."""
-        return self._connection_uuid
+        return self.coordinator.getConnectionValue(
+            self._connection_uuid,
+            "charge_point_installation.{install_index}.uuid".format(
+                install_index=self._install_index
+            ),
+        )
 
     @property
     def unique_id(self) -> Optional[str]:
@@ -124,6 +129,12 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
                 ),
             ),
             "model": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            ),
+            "serial_number": self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index

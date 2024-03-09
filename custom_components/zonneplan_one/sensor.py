@@ -62,6 +62,16 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
                 )
 
         if pv_installations:
+            for sensor_key in SENSOR_TYPES[PV_INSTALL]["totals"]:
+                entities.append(
+                    ZonneplanPvSensor(
+                        uuid,
+                        sensor_key,
+                        coordinator,
+                        -1,
+                        SENSOR_TYPES[PV_INSTALL]["totals"][sensor_key],
+                    )
+                )
             for install_index in range(len(pv_installations)):
                 for sensor_key in SENSOR_TYPES[PV_INSTALL]["install"]:
                     entities.append(
@@ -74,18 +84,17 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
                         )
                     )
 
-            for sensor_key in SENSOR_TYPES[PV_INSTALL]["totals"]:
+        if p1_installations:
+            for sensor_key in SENSOR_TYPES[P1_INSTALL]["totals"]:
                 entities.append(
-                    ZonneplanPvSensor(
+                    ZonneplanP1Sensor(
                         uuid,
                         sensor_key,
                         coordinator,
                         -1,
-                        SENSOR_TYPES[PV_INSTALL]["totals"][sensor_key],
+                        SENSOR_TYPES[P1_INSTALL]["totals"][sensor_key],
                     )
                 )
-
-        if p1_installations:
             for install_index in range(len(p1_installations)):
                 for sensor_key in SENSOR_TYPES[P1_INSTALL]["install"]:
                     entities.append(
@@ -97,16 +106,6 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
                             SENSOR_TYPES[P1_INSTALL]["install"][sensor_key],
                         )
                     )
-            for sensor_key in SENSOR_TYPES[P1_INSTALL]["totals"]:
-                entities.append(
-                    ZonneplanP1Sensor(
-                        uuid,
-                        sensor_key,
-                        coordinator,
-                        -1,
-                        SENSOR_TYPES[P1_INSTALL]["totals"][sensor_key],
-                    )
-                )
 
         if charge_point:
             for install_index in range(len(charge_point)):
@@ -354,8 +353,7 @@ class ZonneplanPvSensor(ZonneplanSensor):
                     install_index=self._install_index
                 ),
             )
-            device_info["sw_version"] = (
-                str(
+            device_info["sw_version"] = str(
                     self.coordinator.getConnectionValue(
                         self._connection_uuid,
                         "pv_installation.{install_index}.meta.module_firmware_version".format(
@@ -364,8 +362,7 @@ class ZonneplanPvSensor(ZonneplanSensor):
                     )
                     or "unknown"
                 )
-                + " - "
-                + str(
+            device_info["hw_version"] = str(
                     self.coordinator.getConnectionValue(
                         self._connection_uuid,
                         "pv_installation.{install_index}.meta.inverter_firmware_version".format(
@@ -374,7 +371,6 @@ class ZonneplanPvSensor(ZonneplanSensor):
                     )
                     or "unknown"
                 )
-            )
 
         return device_info
 
@@ -412,6 +408,12 @@ class ZonneplanP1Sensor(ZonneplanSensor):
                 ),
             )
             device_info["model"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "p1_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            )
+            device_info["serial_number"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "p1_installation.{install_index}.meta.sgn_serial_number".format(
                     install_index=self._install_index
@@ -459,9 +461,15 @@ class ZonneplanChargePointSensor(ZonneplanSensor):
                     install_index=self._install_index
                 ),
             )
+            device_info["model"] = self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            )
             device_info["serial_number"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "charge_point_installation.{install_index}.meta.identifier".format(
+                "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),
             )
