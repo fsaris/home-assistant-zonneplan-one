@@ -73,22 +73,17 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
     @property
     def install_uuid(self) -> str:
         """Return install ID."""
-        return self._connection_uuid
+        return self.coordinator.getConnectionValue(
+            self._connection_uuid,
+            "charge_point_installation.{install_index}.uuid".format(
+                install_index=self._install_index
+            ),
+        )
 
     @property
     def unique_id(self) -> Optional[str]:
         """Return a unique ID."""
         return self.install_uuid + "_" + self._button_key
-
-    @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-
-        name = self.entity_description.name
-        if self._install_index and self._install_index > 0:
-            name += " (" + str(self._install_index + 1) + ")"
-
-        return name
 
     @property
     def available(self) -> bool:
@@ -113,31 +108,29 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
     @property
     def device_info(self):
         """Return the device information."""
-        device_info = {
-            "identifiers": {(DOMAIN, self._connection_uuid, CHARGE_POINT)},
+        return {
+            "identifiers": {(DOMAIN, self.install_uuid)},
+            "via_device": (DOMAIN, self._connection_uuid),
             "manufacturer": "Zonneplan",
             "name": self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "charge_point_installation.0.label",
-            ),
-        }
-
-        if self._install_index >= 0:
-            device_info["identifiers"].add((DOMAIN, self.install_uuid))
-            device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            )
-            device_info["model"] = self.coordinator.getConnectionValue(
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
+            "model": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            ),
+            "serial_number": self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),
-            )
-
-        return device_info
+            ),
+        }
 
     async def async_press(self) -> None:
         """Handle the button press."""

@@ -18,6 +18,7 @@ from .const import (
     DOMAIN,
     BINARY_SENSORS_TYPES,
     CHARGE_POINT,
+    BATTERY,
     ZonneplanBinarySensorEntityDescription,
 )
 
@@ -33,6 +34,7 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
     entities = []
     for uuid, connection in coordinator.connections.items():
         charge_point = coordinator.getConnectionValue(uuid, CHARGE_POINT)
+        battery = coordinator.getConnectionValue(uuid, BATTERY)
 
         _LOGGER.debug("Setup binary sensors for connnection %s", uuid)
 
@@ -46,6 +48,19 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_ent
                             coordinator,
                             install_index,
                             BINARY_SENSORS_TYPES[CHARGE_POINT][sensor_key],
+                        )
+                    )
+
+        if battery:
+            for install_index in range(len(battery)):
+                for sensor_key in BINARY_SENSORS_TYPES[BATTERY]:
+                    entities.append(
+                        ZonneplanBatteryBinarySensor(
+                            uuid,
+                            sensor_key,
+                            coordinator,
+                            install_index,
+                            BINARY_SENSORS_TYPES[BATTERY][sensor_key],
                         )
                     )
 
@@ -83,16 +98,6 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
     def unique_id(self) -> Optional[str]:
         """Return a unique ID."""
         return self.install_uuid + "_" + self._sensor_key
-
-    @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-
-        name = self.entity_description.name
-        if self._install_index and self._install_index > 0:
-            name += " (" + str(self._install_index + 1) + ")"
-
-        return name
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -145,28 +150,67 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
     @property
     def device_info(self):
         """Return the device information."""
-        device_info = {
-            "identifiers": {(DOMAIN, self._connection_uuid, CHARGE_POINT)},
+        return {
+            "identifiers": {(DOMAIN, self.install_uuid)},
+            "via_device": (DOMAIN, self._connection_uuid),
             "manufacturer": "Zonneplan",
             "name": self.coordinator.getConnectionValue(
-                self._connection_uuid,
-                "charge_point_installation.0.label",
-            ),
-        }
-
-        if self._install_index >= 0:
-            device_info["identifiers"].add((DOMAIN, self.install_uuid))
-            device_info["name"] = self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
-            )
-            device_info["model"] = self.coordinator.getConnectionValue(
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
+            "model": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "charge_point_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            ),
+            "serial_number": self.coordinator.getConnectionValue(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
                 ),
             )
+        }
 
-        return device_info
+class ZonneplanBatteryBinarySensor(ZonneplanBinarySensor):
+    @property
+    def install_uuid(self) -> str:
+        """Return install ID."""
+        if self._install_index < 0:
+            return self._connection_uuid
+        else:
+            return self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "home_battery_installation.{install_index}.uuid".format(
+                    install_index=self._install_index
+                ),
+            )
+
+    @property
+    def device_info(self):
+        """Return the device information."""
+        return {
+            "identifiers": {(DOMAIN, self.install_uuid)},
+            "via_device": (DOMAIN, self._connection_uuid),
+            "manufacturer": "Zonneplan",
+            "name": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "home_battery_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
+            "model": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "home_battery_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            ),
+            "serial_number": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "home_battery_installation.{install_index}.meta.identifier".format(
+                    install_index=self._install_index
+                ),
+            ),
+        }

@@ -6,7 +6,9 @@ from typing import Any
 
 import logging
 import homeassistant.util.dt as dt_util
-
+import json
+import inspect
+import os
 from aiohttp.client_exceptions import ClientResponseError
 
 from homeassistant.core import HassJob
@@ -72,6 +74,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         self.api: AsyncConfigEntryAuth = api
         self._delayed_fetch_charge_point: Callable[[], None] | None = None
 
+        self._test_file = None
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
@@ -82,6 +85,18 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             raise e
 
     async def _fetch_data(self) -> dict:
+
+        if self._test_file:
+            script_directory = os.path.dirname(os.path.abspath(
+                inspect.getfile(inspect.currentframe())))
+            f = open(script_directory + '/tests/' + self._test_file)
+            result = json.load(f)
+
+            _LOGGER.debug("TEST Result %s", result)
+
+            return result
+
+
         result = self.data
         accounts = None
 
@@ -108,6 +123,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                             "gas_data": {},
                             "summary_data": {},
                             "charge_point_data": {},
+                            "battery_data": {},
                         }
 
                     # Remove known contracts
@@ -117,6 +133,8 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                         del result[connection["uuid"]]["p1_installation"]
                     if "charge_point_installation" in result[connection["uuid"]]:
                         del result[connection["uuid"]]["charge_point_installation"]
+                    if "home_battery_installation" in result[connection["uuid"]]:
+                        del result[connection["uuid"]]["home_battery_installation"]
 
                     for contract in connection["contracts"]:
                         if not contract["type"] in result[connection["uuid"]]:
@@ -159,6 +177,11 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 charge_point = await self._async_getChargePointData(uuid, connection["charge_point_installation"][0]["uuid"])
                 if charge_point:
                     result[uuid]["charge_point_data"] = charge_point["contracts"][0]
+
+            if "home_battery_installation" in connection:
+                battery_data = await self.api.async_get(uuid, "/home-battery-installation/" + connection["home_battery_installation"][0]["uuid"])
+                if battery_data:
+                    result[uuid]["battery_data"] = battery_data
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
