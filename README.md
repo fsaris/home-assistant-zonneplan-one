@@ -6,28 +6,21 @@
 Unofficial integration for Zonneplan | Energie
 
 ## Current features
-- Zonneplan ONE (Solar inverter) sensors: (available when solar contract)
+- Zonneplan ONE (Solar inverter) sensors: _(available when solar contract)_
    - Yield total: `kWh`
-   - Yield today: `kWh` _(can be used as entity on Energy Dashboard)_
    - First measured: `date` _(default disabled)_
    - Last measured value: `W`
    - Last measured: `date`
-- Zonneplan Connect (P1 reader) sensors: (available when P1 available)
-   - Electricity consumed today: `kWh` _(can be used as entity on Energy Dashboard)_
-   - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
-   - Electricity today low tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
-   - Electricity today normal tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
-   - Electricity today high tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
+- Zonneplan Connect (P1 reader) sensors: _(available when P1 reader from Zonneplan)_
    - Electricity consumption: `W`
    - Electricity production: `W`
    - Electricity average: `W` (average use over the last 5min)
    - Electricity first measured: `date` _(default disabled)_
    - Electricity last measured: `date`
    - Electricity last measured production: `date`
-   - Gas consumption today: `m³`
    - Gas first measured: `date` _(default disabled)_
    - Gas last measured: `date`
-- Charge point/Laadpaal: (available when charge point contract)
+- Charge point/Laadpaal: _(available when charge point contract)_
   - Charge point state
   - Charge point power `W`
   - Charge point energy delivered session `kWh`
@@ -42,17 +35,43 @@ Unofficial integration for Zonneplan | Energie
   - Charge point plug and charge `on/off`
   - Charge point overload protection active `on/off` _(default disabled)_
   - Buttons to start/stop charge
-- Additional sensors: _(available when you have a energy contract)_
-   - Current Zonneplan Electricity tariff: `€/kWh`
-     - The full Electricity forecast is available as a forecast attribute of this sensor
-   - Current Zonneplan Gas tariff: `€/m³`
-   - Next Zonneplan Gas tariff: `€/m³` #73
-   - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled)_
-   - Current electricity usage
-   - Sustainability score
-   - Electricity delivery costs today
-   - Electricity production costs today
-   - Gas delivery costs today
+- Battery: _(available when there is a Zonneplan Thuisbatterij)_
+  - Battery state
+  - Percentage `%`
+  - Power `W` _(default disabled)_
+  - Delivery today `kWh`
+  - Production today `kWh`
+  - Today `€`
+  - Total `€`
+  - Dynamic charging enabled `on/off`
+  - Dynamic load balancing overload active `on/off`
+  - Dynamic load balancing overload enabled `on/off`
+  - Manual control enabled `on/off`
+  - Inverter state _(default disabled)_
+  - Manual control state _(default disabled)_
+  - First measured `datetime` _(default disabled)_
+  - Last measured `datetime`
+- Zonneplan (additional sensors):
+   - Energy contract related sensors: _(available when you have a energy contract)_
+     - Current Zonneplan Electricity tariff: `€/kWh`
+       - The full Electricity forecast is available as a forecast attribute of this sensor
+     - Current Zonneplan Gas tariff: `€/m³`
+     - Next Zonneplan Gas tariff: `€/m³` 
+     - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled, available when you have a energy contract)_
+     - Current electricity usage
+     - Sustainability score
+     - Electricity delivery costs today
+     - Electricity production costs today
+     - Gas delivery costs today
+   - Solar panel: _(available when solar contract)_
+     - Yield today: `kWh` _(can be used as entity on Energy Dashboard)_
+   - General energy values: _(available when P1 reader from Zonneplan)_
+     - Electricity consumed today: `kWh` _(can be used as entity on Energy Dashboard)_
+     - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
+     - Gas consumption today: `m³`
+     - Electricity today low tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
+     - Electricity today normal tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
+     - Electricity today high tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
 
 ## Installation
 
