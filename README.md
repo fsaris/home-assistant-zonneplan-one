@@ -27,11 +27,16 @@ Unofficial integration for Zonneplan | Energie
      - Electricity delivery costs today
      - Electricity production costs today
      - Gas delivery costs today
-- Zonneplan ONE (Solar inverter) sensors: _(available when you have a Zonneplan solar inverter)_
+- Zonneplan Solar inverter sensors: _(available when you have a Zonneplan solar inverter)_
    - Yield total: `kWh`
    - First measured: `date` _(default disabled)_
    - Last measured value: `W`
    - Last measured: `date`
+   - Powerplay enabled: `on/off` _(default disabled)_
+   - Powerplay/power limit active: `on/off` _(default disabled)_
+   - Powerplay total: `€` _(default disabled)_
+   - Powerplay today: `€` _(default disabled)_
+   - Current scenario _(default disabled)_
 - Zonneplan Connect (P1 reader) sensors: _(available when there is a P1 reader from Zonneplan)_
    - Electricity consumption: `W`
    - Electricity production: `W`
