@@ -7,7 +7,8 @@ import json
 import inspect
 import os
 
-API_VERSION = "4.7.1"
+APP_VERSION = "4.12.1"
+API_VERSION = "v2"
 LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"
 OAUTH2_TOKEN_URI = "https://app-api.zonneplan.nl/oauth/token"
 
@@ -19,8 +20,9 @@ class ZonneplanApi:
         self._session = session
         self._request_headers = {
             "content-type": "application/json;charset=utf-8",
-            "x-app-version": API_VERSION,
-            # "x-app-environment": "production",
+            "x-app-version": APP_VERSION,
+            "x-api-version": API_VERSION,
+            "x-app-environment": "production",
             "x-ha-integration": self._get_integration_version(),
         }
 
