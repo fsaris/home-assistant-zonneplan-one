@@ -279,6 +279,25 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.MEASUREMENT,
             ),
+            "total_earned": ZonneplanSensorEntityDescription(
+                key="pv_data.contracts.{install_index}.meta.total_earned",
+                name="Powerplay total",
+                value_factor=0.0000001,
+                device_class=SensorDeviceClass.MONETARY,
+                native_unit_of_measurement='EUR',
+                state_class=SensorStateClass.TOTAL,
+                entity_registry_enabled_default=True,
+            ),
+            "total_day": ZonneplanSensorEntityDescription(
+                key="pv_data.contracts.{install_index}.meta.total_day",
+                name="Powerplay today",
+                value_factor=0.0000001,
+                device_class=SensorDeviceClass.MONETARY,
+                native_unit_of_measurement='EUR',
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="pv_data.measurement_groups.0.date",
+                entity_registry_enabled_default=True,
+            ),
             "current_scenario": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.current_scenario",
                 name="Current scenario",
@@ -296,11 +315,6 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 icon="mdi:solar-power",
                 entity_registry_enabled_default=True,
                 state_class=SensorStateClass.TOTAL_INCREASING,
-            ),
-            "powerplay": ZonneplanSensorEntityDescription(
-                key="pv_data.powerplay",
-                name="Powerplay",
-                entity_registry_enabled_default=True,
             ),
         },
     },
@@ -613,7 +627,7 @@ BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = 
     PV_INSTALL: {
         "dynamic_control_enabled": ZonneplanBinarySensorEntityDescription(
             key="pv_data.contracts.{install_index}.meta.dynamic_control_enabled",
-            name="Dynamic control enabled",
+            name="Powerplay enabled",
             entity_registry_enabled_default=True,
         ),
         "power_limit_active": ZonneplanBinarySensorEntityDescription(
