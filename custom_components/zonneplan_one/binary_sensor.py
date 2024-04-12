@@ -19,6 +19,7 @@ from .const import (
     BINARY_SENSORS_TYPES,
     CHARGE_POINT,
     BATTERY,
+    PV_INSTALL,
     ZonneplanBinarySensorEntityDescription,
 )
 
@@ -26,17 +27,30 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_entities):
-
     coordinator: ZonneplanUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
         "coordinator"
     ]
 
     entities = []
     for uuid, connection in coordinator.connections.items():
+        pv_installations = coordinator.getConnectionValue(uuid, PV_INSTALL)
         charge_point = coordinator.getConnectionValue(uuid, CHARGE_POINT)
         battery = coordinator.getConnectionValue(uuid, BATTERY)
 
         _LOGGER.debug("Setup binary sensors for connnection %s", uuid)
+
+        if pv_installations:
+            for install_index in range(len(pv_installations)):
+                for sensor_key in BINARY_SENSORS_TYPES[PV_INSTALL]:
+                    entities.append(
+                        ZonneplanPvBinarySensor(
+                            uuid,
+                            sensor_key,
+                            coordinator,
+                            install_index,
+                            BINARY_SENSORS_TYPES[PV_INSTALL][sensor_key],
+                        )
+                    )
 
         if charge_point:
             for install_index in range(len(charge_point)):
@@ -73,12 +87,12 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
     coordinator: ZonneplanUpdateCoordinator
 
     def __init__(
-        self,
-        connection_uuid,
-        sensor_key: str,
-        coordinator: ZonneplanUpdateCoordinator,
-        install_index: Number,
-        description: ZonneplanBinarySensorEntityDescription,
+            self,
+            connection_uuid,
+            sensor_key: str,
+            coordinator: ZonneplanUpdateCoordinator,
+            install_index: Number,
+            description: ZonneplanBinarySensorEntityDescription,
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
@@ -133,6 +147,54 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
 
         return attrs
 
+
+class ZonneplanPvBinarySensor(ZonneplanBinarySensor):
+    @property
+    def install_uuid(self) -> str:
+        """Return install ID."""
+        if self._install_index < 0:
+            return self._connection_uuid
+        else:
+            return self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.uuid".format(
+                    install_index=self._install_index
+                ),
+            )
+
+    @property
+    def device_info(self):
+        """Return the device information."""
+        return {
+            "identifiers": {(DOMAIN, self.install_uuid)},
+            "via_device": (DOMAIN, self._connection_uuid),
+            "manufacturer": "Zonneplan",
+            "name": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.meta.name".format(
+                    install_index=self._install_index
+                ),
+            ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
+            "model": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.label".format(
+                    install_index=self._install_index
+                ),
+            ) + " " + str(self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.meta.panel_count".format(
+                    install_index=self._install_index
+                ),
+            )) + " panels",
+            "serial_number": self.coordinator.getConnectionValue(
+                self._connection_uuid,
+                "pv_installation.{install_index}.meta.sgn_serial_number".format(
+                    install_index=self._install_index
+                ),
+            ),
+        }
+
+
 class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
     @property
     def install_uuid(self) -> str:
@@ -173,6 +235,7 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
                 ),
             )
         }
+
 
 class ZonneplanBatteryBinarySensor(ZonneplanBinarySensor):
     @property
