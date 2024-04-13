@@ -2,6 +2,8 @@
 from typing import Optional, Any
 from voluptuous.validators import Number
 from datetime import datetime
+from pytz import timezone
+
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -282,7 +284,13 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         # Converting value is only needed when value isn't None or 0
         if value:
             if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
-                value = dt_util.parse_datetime(str(value))
+                if isinstance(value, str):
+                    value = dt_util.parse_datetime(value)
+                else:
+                    tz = timezone('Europe/Amsterdam')
+                    value = datetime.fromtimestamp(value/1000000)
+                    value.replace(tzinfo=tz)
+                    value = value.astimezone(tz)
 
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
