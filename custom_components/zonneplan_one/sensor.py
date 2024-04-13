@@ -287,10 +287,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
                 if isinstance(value, str):
                     value = dt_util.parse_datetime(value)
                 else:
-                    tz = timezone('Europe/Amsterdam')
-                    value = datetime.fromtimestamp(value/1000000)
-                    value.replace(tzinfo=tz)
-                    value = value.astimezone(tz)
+                    value = datetime.fromtimestamp(value/1000000, timezone('Europe/Amsterdam'))
 
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
