@@ -282,7 +282,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         # Converting value is only needed when value isn't None or 0
         if value:
             if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
-                value = dt_util.parse_datetime(value)
+                value = dt_util.parse_datetime(str(value))
 
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
