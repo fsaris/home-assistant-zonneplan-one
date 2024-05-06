@@ -6,9 +6,11 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
 import logging
-from homeassistant.core import callback
+from homeassistant.core import ( 
+    callback, 
+    HomeAssistant
+)
 from homeassistant.helpers.restore_state import RestoreEntity
-from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
 )
@@ -26,7 +28,7 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistantType, config_entry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     coordinator: ZonneplanUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
         "coordinator"
     ]
