@@ -11,10 +11,12 @@ import inspect
 import os
 from aiohttp.client_exceptions import ClientResponseError
 
-from homeassistant.core import HassJob
+from homeassistant.core import ( 
+    HassJob, 
+    HomeAssistant
+)
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_call_later
-from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
@@ -53,7 +55,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
     def __init__(
         self,
-        hass: HomeAssistantType,
+        hass: HomeAssistant,
         api: AsyncConfigEntryAuth,
     ) -> None:
         """Initialize."""
