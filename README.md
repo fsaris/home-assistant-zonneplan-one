@@ -94,10 +94,7 @@ Do you have [HACS](https://hacs.xyz/) installed?
 2. Create another folder `zonneplan_one` in the `custom_components` folder. Copy all files from `custom_components/zonneplan_one` into the `zonneplan_one` folder.
 
 ## Setup
-1. In Home Assistant click on `Configuration`
-1. Click on `Integrations`
-1. Click on `+ Add integration`
-1. Search for and select `Zonneplan ONE`
+1. In Home Assistant click on `Configuration` -> `Integrations` -> `+ Add integration` and search for and select `Zonneplan ONE` [![Open your Home Assistant instance and start setting up Zonneplan.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=zonneplan_one)
 1. Enter you `emailaddress` you also use in the **Zonneplan ONE** app
 1. You will get an email to verify the login.
 1. Click "Save"
