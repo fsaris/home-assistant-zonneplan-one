@@ -1,11 +1,11 @@
-# Zonneplan | Energie integration for Home Assistant
+# Zonneplan integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![GitHub Release](https://img.shields.io/github/v/release/fsaris/home-assistant-zonneplan-one?style=for-the-badge)
 ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
 ![GitHub License](https://img.shields.io/github/license/fsaris/home-assistant-zonneplan-one?style=for-the-badge)
 
-Unofficial integration for Zonneplan | Energie. This integration uses the official Zonneplan API to pull the same data available in the Zonneplan app into your Home Assistant instance.
+Unofficial integration for Zonneplan. This integration uses the official Zonneplan API to pull the same data available in the Zonneplan app into your Home Assistant instance.
 
 ## Available sensors
 ### Zonneplan:
@@ -111,9 +111,9 @@ Unofficial integration for Zonneplan | Energie. This integration uses the offici
 
 Ensure you have [HACS](https://hacs.xyz/) installed. 
 
-[![Direct link to Zonneplan_one in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=fsaris&repository=home-assistant-zonneplan-one)
+[![Direct link to Zonneplan in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=fsaris&repository=home-assistant-zonneplan-one)
 
-1. Click the above My button or search HACS integrations for **Zonneplan ONE**
+1. Click the above My button or search HACS integrations for **Zonneplan**
 1. Click `Install`
 1. Restart Home Assistant
 1. Continue with [setup](#setup)
@@ -130,7 +130,7 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 <details>
    
 1. Go to `HACS` => `Integrations`
-1. Click on the three dots icon in right bottom of the **Zonneplan ONE** card
+1. Click on the three dots icon in right bottom of the **Zonneplan** card
 1. Click `Reinstall`
 1. Make sure `Show beta versions` is checked
 1. Select version `main`
@@ -140,7 +140,7 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 ## Setup
 [![Open your Home Assistant instance and start setting up Zonneplan.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=zonneplan_one)
 1. Click the above My button _(or navigate to `Configuration` -> `Integrations` -> `+ Add integration` and search for and select `Zonneplan ONE`)_
-1. Enter you `emailaddress` you also use in the **Zonneplan ONE** app
+1. Enter you `emailaddress` you also use in the **Zonneplan** app
 1. You will get an email to verify the login.
 1. Click "Save"
 1. Enjoy

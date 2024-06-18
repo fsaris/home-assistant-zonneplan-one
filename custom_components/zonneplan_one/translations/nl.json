@@ -13,7 +13,7 @@
         "description": "Controleer je mailbox op een mail van Zonneplan en klik op de link in die mail *(kan enkele minuten duren voordat de mail binnenkomt)*. Ga hier vervolgens verder door op **VOLGENDE** te klikken."
       },
       "reauth_confirm": {
-        "title": "Verifieer opnieuw je Zonnneplan ONE login",
+        "title": "Verifieer opnieuw je Zonnneplan login",
         "description": "Herauthenticatie van je account is nodig. Ga verder om Zonneplan om een nieuwe login mail op te vragen."
       }
     },
