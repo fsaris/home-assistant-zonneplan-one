@@ -14,7 +14,7 @@
       },
       "reauth_confirm": {
         "title": "Reauthenticate Integration",
-        "description": "The Zonneplan ONE integration needs to re-authenticate your account"
+        "description": "The Zonneplan integration needs to re-authenticate your account"
       }
     },
     "abort": {

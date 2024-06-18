@@ -1,6 +1,6 @@
 {
   "domain": "zonneplan_one",
-  "name": "Zonneplan ONE",
+  "name": "Zonneplan",
   "after_dependencies": [
     "http"
   ],
