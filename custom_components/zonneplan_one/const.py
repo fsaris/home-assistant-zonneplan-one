@@ -385,6 +385,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="electricity_data.measurement_groups.0.date",
+                none_value_behaviour=NONE_IS_ZERO,
             ),
             "gas_total_today": ZonneplanSensorEntityDescription(
                 key="gas_data.measurement_groups.0.total",
