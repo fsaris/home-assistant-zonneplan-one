@@ -20,6 +20,7 @@ from homeassistant.const import (
     UnitOfPower,
     UnitOfVolume,
     PERCENTAGE,
+    NUMBER,
 )
 
 DOMAIN = "zonneplan_one"
@@ -547,6 +548,13 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Last measured",
             device_class=SensorDeviceClass.TIMESTAMP,
             icon="mdi:calendar-clock",
+            entity_registry_enabled_default=True,
+        ),
+        "cycle_count": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.{install_index}.meta.cycle_count",
+            name="Battery cycles",
+            device_class=SensorDeviceClass.NUMBER,
+            icon="mdi:battery-sync",
             entity_registry_enabled_default=True,
         ),
     },
