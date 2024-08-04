@@ -1,4 +1,4 @@
-"""Constants for the Zonneplan ONE integration."""
+"""Constants for the Zonneplan integration."""
 from __future__ import annotations
 from dataclasses import dataclass
 
@@ -33,6 +33,7 @@ BATTERY = "home_battery_installation"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 
+VERSION = "2024.6.0"
 
 @dataclass
 class Attribute:
@@ -384,6 +385,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="electricity_data.measurement_groups.0.date",
+                none_value_behaviour=NONE_IS_ZERO,
             ),
             "gas_total_today": ZonneplanSensorEntityDescription(
                 key="gas_data.measurement_groups.0.total",

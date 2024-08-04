@@ -1,4 +1,4 @@
-"""Config flow for Zonneplan ONE."""
+"""Config flow for Zonneplan"""
 import logging
 
 from typing import Any, Dict, Mapping, Optional

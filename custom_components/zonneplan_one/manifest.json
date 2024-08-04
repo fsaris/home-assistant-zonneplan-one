@@ -1,6 +1,6 @@
 {
   "domain": "zonneplan_one",
-  "name": "Zonneplan ONE",
+  "name": "Zonneplan",
   "after_dependencies": [
     "http"
   ],
@@ -14,6 +14,6 @@
   "issue_tracker": "https://github.com/fsaris/home-assistant-zonneplan-one/issues",
   "requirements": [],
   "ssdp": [],
-  "version": "2024.4.2",
+  "version": "2024.6.0",
   "zeroconf": []
 }
