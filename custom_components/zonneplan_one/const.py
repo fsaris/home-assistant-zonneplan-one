@@ -477,6 +477,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         "state_of_charge": ZonneplanSensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.state_of_charge",
             name="Percentage",
+            device_class=SensorDeviceClass.BATTERY,
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             value_factor=0.1,
@@ -546,6 +547,13 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             device_class=SensorDeviceClass.TIMESTAMP,
             icon="mdi:calendar-clock",
             entity_registry_enabled_default=True,
+        ),
+        "cycle_count": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.{install_index}.meta.cycle_count",
+            name="Battery cycles",
+            icon="mdi:battery-sync",
+            entity_registry_enabled_default=True,
+            state_class=SensorStateClass.TOTAL,
         ),
     },
     CHARGE_POINT: {
@@ -621,6 +629,11 @@ BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = 
         "manual_control_enabled": ZonneplanBinarySensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.manual_control_enabled",
             name="Manual control enabled",
+            entity_registry_enabled_default=True,
+        ),
+        "self_consumption_enabled": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.{install_index}.meta.self_consumption_enabled",
+            name="Self consumption enabled",
             entity_registry_enabled_default=True,
         ),
     },
