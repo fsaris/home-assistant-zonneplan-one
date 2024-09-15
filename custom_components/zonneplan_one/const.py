@@ -279,7 +279,6 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 entity_registry_enabled_default=False,
-                state_class=SensorStateClass.MEASUREMENT,
             ),
             "total_earned": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.total_earned",
