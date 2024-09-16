@@ -201,6 +201,10 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         keys = value_path.split(".")
         rv = self.data[connection_uuid]
         for key in keys:
+            if rv is None:
+                _LOGGER.info("No value for %s part (%s)", value_path, key)
+                return None
+
             if key.isdigit():
                 key = int(key)
                 if not type(rv) is list or len(rv) <= key:
