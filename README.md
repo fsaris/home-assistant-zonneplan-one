@@ -81,6 +81,17 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Charge point charging automatically `on/off`
   - Charge point plug and charge `on/off`
   - Charge point overload protection active `on/off` _(default disabled)_
+  - Charge point session cost `€`
+  - Charge point cost total `€`
+  - Charge point session average costs `€/kWh`
+  - Charge point start mode _(default disabled)_
+  - Charge point dynamic load desired distance `km`
+  - Charge point dynamic load desired end time `datetime`
+  - Charge point session start time `datetime`
+  - Charge point session charged distance `km`
+  - Charge point dynamic charging enabled `on/off`
+  - Charge point dynamic charging flex enabled `on/off`
+  - Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
   - Buttons to start/stop charge
 </details>
 
