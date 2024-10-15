@@ -15,9 +15,6 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
      - Electricity consumed today: `kWh` _(can be used as entity on Energy Dashboard)_
      - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
      - Gas consumption today: `m³`
-     - Electricity today low tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
-     - Electricity today normal tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
-     - Electricity today high tariff: `kWh` _(can be used as entity on Energy Dashboard, default disabled)_
 
 ### Zonneplan Connect (P1 reader):
 <details>
