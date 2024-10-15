@@ -34,7 +34,7 @@ BATTERY = "home_battery_installation"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 
-VERSION = "2024.10.0"
+VERSION = "2024.10.1"
 
 @dataclass
 class Attribute:
