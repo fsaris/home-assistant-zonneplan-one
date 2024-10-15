@@ -58,7 +58,6 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - Powerplay/power limit active: `on/off` _(default disabled)_
    - Powerplay total: `€` _(default disabled)_
    - Powerplay today: `€` _(default disabled)_
-   - Current scenario _(default disabled)_
 </details>
 
 ### Zonneplan Charge point/Laadpaal:

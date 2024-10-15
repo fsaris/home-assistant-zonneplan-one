@@ -291,12 +291,6 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 last_reset_key="pv_data.measurement_groups.0.date",
                 entity_registry_enabled_default=False,
             ),
-            "current_scenario": ZonneplanSensorEntityDescription(
-                key="pv_data.contracts.{install_index}.meta.current_scenario",
-                name="Current scenario",
-                entity_registry_enabled_default=False,
-                icon="mdi:message-text-outline",
-            ),
         },
         "totals": {
             "total_today": ZonneplanSensorEntityDescription(
