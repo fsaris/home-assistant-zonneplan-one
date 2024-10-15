@@ -6,6 +6,7 @@ import logging
 
 from ..const import VERSION
 
+APP_VERSION = "4.22.3"
 LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"
 OAUTH2_TOKEN_URI = "https://app-api.zonneplan.nl/oauth/token"
 
@@ -17,6 +18,7 @@ class ZonneplanApi:
         self._session = session
         self._request_headers = {
             "content-type": "application/json;charset=utf-8",
+            "x-app-version": APP_VERSION,
             "x-app-environment": "production",
             "x-ha-integration": VERSION,
         }
