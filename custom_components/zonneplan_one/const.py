@@ -136,6 +136,8 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
+            none_value_behaviour=NONE_USE_PREVIOUS,
+            daily_update_hour=6,
         ),
         "status_message": ZonneplanSensorEntityDescription(
             key="summary_data.usage.status_message",
