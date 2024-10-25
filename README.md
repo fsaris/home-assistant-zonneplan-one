@@ -1,7 +1,8 @@
 # Zonneplan integration for Home Assistant
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![GitHub Release](https://img.shields.io/github/v/release/fsaris/home-assistant-zonneplan-one?style=for-the-badge)
+![Active installations](https://badge.t-haber.de/badge/zonneplan_one?kill_cache=1)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz/)
 ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg?style=for-the-badge&color=green)
 ![GitHub License](https://img.shields.io/github/license/fsaris/home-assistant-zonneplan-one?style=for-the-badge)
 
