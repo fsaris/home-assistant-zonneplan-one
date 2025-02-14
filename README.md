@@ -168,11 +168,13 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 
 ## Troubleshooting
 
-If you run into issues during setup or when entries do not update anymore please increase logging and provide them when creating an issue.
-Add `custom_components.zonneplan_one: debug` to the logger config in you `configuration.yaml`:
+If you run into issues during setup or when entries do not update anymore please enable debug logging and provide them when creating an issue.
 
-```yaml
-logger:
-  logs:
-    custom_components.zonneplan_one: debug
-```
+1. Go to the integration
+
+   [![Open your Home Assistant instance and show an integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one)
+2. Enable debug log by clicking `Enable debug logging`
+3. Wait a few minutes for the integration to fetch new data
+4. Disable debug logging again (same button as step 2)
+5. Log will be presented for download
+6. Be sure to remove sensitive data from the log before attaching it to a ticket
