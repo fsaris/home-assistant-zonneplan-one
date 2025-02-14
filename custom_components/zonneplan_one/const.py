@@ -569,6 +569,15 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             entity_registry_enabled_default=True,
             state_class=SensorStateClass.TOTAL_INCREASING,
         ),
+        "session_flex_result": ZonneplanSensorEntityDescription(
+            key="charge_point_data.meta.session_flex_result",
+            name="Charge point session flex result",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.TOTAL_INCREASING,
+            entity_registry_enabled_default=True,
+        ),
         "session_average_cost_in_cents": ZonneplanSensorEntityDescription(
             key="charge_point_data.meta.session_average_cost_in_cents",
             name="Charge point session average costs",
