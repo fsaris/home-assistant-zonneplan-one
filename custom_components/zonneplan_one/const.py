@@ -577,6 +577,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             native_unit_of_measurement='EUR',
             state_class=SensorStateClass.TOTAL_INCREASING,
             entity_registry_enabled_default=True,
+            none_value_behaviour=NONE_IS_ZERO,
         ),
         "session_average_cost_in_cents": ZonneplanSensorEntityDescription(
             key="charge_point_data.meta.session_average_cost_in_cents",
