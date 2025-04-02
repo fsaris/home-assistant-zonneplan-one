@@ -567,7 +567,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             icon="mdi:cash",
             native_unit_of_measurement='EUR',
             entity_registry_enabled_default=True,
-            state_class=SensorStateClass.TOTAL_INCREASING,
+            state_class=SensorStateClass.MEASUREMENT,
         ),
         "session_flex_result": ZonneplanSensorEntityDescription(
             key="charge_point_data.meta.session_flex_result",
