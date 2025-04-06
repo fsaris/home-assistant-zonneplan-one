@@ -206,6 +206,27 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
         ),
+        "forcast_tariff_9": ZonneplanSensorEntityDescription(
+            key="summary_data.price_per_hour.33.electricity_price",
+            name="Forecast tariff hour 9",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+        ),
+        "forcast_tariff_10": ZonneplanSensorEntityDescription(
+            key="summary_data.price_per_hour.34.electricity_price",
+            name="Forecast tariff hour 10",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+        ),
+        "forcast_tariff_11": ZonneplanSensorEntityDescription(
+            key="summary_data.price_per_hour.35.electricity_price",
+            name="Forecast tariff hour 11",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+        ),
         "forcast_tariff_group_1": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.25.tariff_group",
             name="Forecast tariff group hour 1",
@@ -238,6 +259,18 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         "forcast_tariff_group_8": ZonneplanSensorEntityDescription(
             key="summary_data.price_per_hour.32.tariff_group",
             name="Forecast tariff group hour 8",
+        ),
+        "forcast_tariff_group_9": ZonneplanSensorEntityDescription(
+            key="summary_data.price_per_hour.33.tariff_group",
+            name="Forecast tariff group hour 9",
+        ),
+        "forcast_tariff_group_10": ZonneplanSensorEntityDescription(
+            key="summary_data.price_per_hour.34.tariff_group",
+            name="Forecast tariff group hour 10",
+        ),
+        "forcast_tariff_group_11": ZonneplanSensorEntityDescription(
+            key="summary_data.price_per_hour.35.tariff_group",
+            name="Forecast tariff group hour 11",
         ),
     },
     PV_INSTALL: {
