@@ -666,6 +666,16 @@ BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = 
             name="Self consumption enabled",
             entity_registry_enabled_default=True,
         ),
+        "home_optimization_enabled": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.{install_index}.meta.home_optimization_enabled",
+            name="Home optimization enabled",
+            entity_registry_enabled_default=True,
+        ),
+        "home_optimization_active": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.{install_index}.meta.home_optimization_active",
+            name="Home optimization active",
+            entity_registry_enabled_default=True,
+        ),
     },
     PV_INSTALL: {
         "dynamic_control_enabled": ZonneplanBinarySensorEntityDescription(
