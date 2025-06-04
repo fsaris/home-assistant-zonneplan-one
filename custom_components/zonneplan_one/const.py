@@ -429,6 +429,12 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 icon="mdi:calendar-clock",
                 entity_registry_enabled_default=True,
             ),
+            "dsmr_version": ZonneplanSensorEntityDescription(
+                key="electricity_data.contracts.{install_index}.meta.dsmr_version",
+                name="Dsmr version",
+                icon="mdi:meter-electric",
+                entity_registry_enabled_default=True,
+            ),
         },
     },
     BATTERY: {
