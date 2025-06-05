@@ -119,7 +119,7 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Grid congestion active `on/off`
   - Home optimization active `on/off`
   - Home optimization enabled `on/off`
-  - Zelfconsumptie `on/off`
+  - Self consumption enabled `on/off`
 
 </details>
 
