@@ -98,7 +98,7 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
 <details>
 <summary>Sensors available if you have a Zonneplan Nexus battery</summary>
 
-  - Avarage day: `€`
+  - Average day: `€`
   - Battery cycles
   - Dynamic charging enabled `on/off`
   - Battery state
