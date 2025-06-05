@@ -433,7 +433,6 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 key="electricity_data.contracts.{install_index}.meta.dsmr_version",
                 name="Dsmr version",
                 icon="mdi:meter-electric",
-                entity_registry_enabled_default=True,
             ),
         },
     },
