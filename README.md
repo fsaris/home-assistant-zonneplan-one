@@ -175,6 +175,232 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 #### Return to grid
 `Zonneplan Electricity returned today` is what you returned to the grid
 
+
+## Using full forecast in graphs, tables and/or automations
+
+The full forecast is available as attributes of the `Current Zonneplan Electricity tariff` sensor. The incl. tax and excl. tax values are present.
+Zonneplan doesn't deliver a constant set of forecast values.
+
+Using a helper you can turn this data into a single "cheapest price at" sensor. Or with some template magic you can turn it in a nice table so shown on your dashboard. Or fill a graph like shown in the official app.
+
+### Cheapest price sensor
+<details>
+<summary>Setup template sensor helper</summary>
+
+Go to [Helpers](https://my.home-assistant.io/redirect/helpers/) and create and new `Template -> Template sensor` helper to create a sensor that shows the cheapest time based on the forecast data
+
+From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41#discussioncomment-4642002)
+
+```
+{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') 
+  | selectattr('datetime', '>', utcnow().isoformat())
+  | selectattr('datetime', '<', (utcnow() + timedelta(hours = 11)).isoformat())  
+  | sort(attribute='price')  
+  | first %}
+
+{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.datetime)) }}
+```
+
+![Setup template sensor helper](./images/sensor_cheapest_hour.png)
+
+</details>
+
+
+### Forecast table
+<details>
+
+From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41)
+
+```
+{% set timezone_offset = 2 %} {# Verander 2 naar je gewenste offset in uren #}
+{% set cheapest_hour_next_fifteen_hours =
+state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
+selectattr('datetime', '>', utcnow().isoformat()) |
+selectattr('datetime', '<', (utcnow() + timedelta(hours = 15)).isoformat())
+| sort(attribute='price') %}
+{% if cheapest_hour_next_fifteen_hours | length > 0 %}
+{% set cheapest_hour = cheapest_hour_next_fifteen_hours | first %}
+{% set cheapest_hour_local_time = as_timestamp(strptime(cheapest_hour.datetime, '%Y-%m-%dT%H:%M:%S.%fZ')) + timezone_offset * 3600 %}
+De goedkoopste tijd is {{ 'vandaag' if as_timestamp(utcnow())|timestamp_custom('%Y-%m-%d') == cheapest_hour_local_time|timestamp_custom('%Y-%m-%d') else 'morgen' }} om {{ (cheapest_hour_local_time)|timestamp_custom('%H') }} uur en kost €{{"{:.2f}".format(cheapest_hour.electricity_price_excl_tax|float/10000000) }}/kWh.
+  {% endif %}
+  
+  {%- set cheapest_forecast =
+  state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
+  selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
+  '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+  sort(attribute='electricity_price_excl_tax') | first %}
+  
+  {%- set expensive_forecast =
+  state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
+  selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
+  '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+  sort(attribute='electricity_price_excl_tax') | last %}
+  
+  {%- for forecast in
+  state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
+  selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
+  '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+  sort(attribute='datetime') %}
+  
+  {%- set forecast_local_time = as_timestamp(strptime(forecast.datetime, '%Y-%m-%dT%H:%M:%S.%fZ')) + timezone_offset * 3600 %}
+  • {{ (forecast_local_time)|timestamp_custom('%H:%M') }}    €{{ (forecast.electricity_price / 10000000) | round(2) }} (€{{ (forecast.electricity_price_excl_tax / 10000000) | round(2) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
+  {%- endfor %}
+```
+
+_Example:_
+
+![Forecast](./images/forecast.png)
+</details>
+
+### Forecast graph
+
+![Graph example](./images/plotly-graph-example.png)
+
+<details>
+<summary>Setup graph card</summary>
+
+From [HomeAssistant community](https://community.home-assistant.io/t/zonneplan-one-custom-component/283435/109)
+
+Install the [PlotlyGraph custom component](https://github.com/dbuezas/lovelace-plotly-graph-card) and setup a card with next config:
+
+```
+type: custom:plotly-graph
+hours_to_show: 20
+refresh_interval: 600
+time_offset: 18h
+disable_pinch_to_zoom: true
+fn: |
+  $fn ({ hass, vars, getFromConfig }) => {
+    const hours_to_show = getFromConfig('hours_to_show');
+    const time_offset = parseInt(getFromConfig('time_offset'));
+    vars.x = []; vars.y = []; vars.color = []; vars.hover = []
+    vars.min = {p: 999,t: null}; 
+    vars.max = {p:-999,t:null};
+    vars.ymin = 999; 
+    vars.ymax = -999;
+    vars.unit_of_measurement = hass.states['sensor.zonneplan_current_electricity_tariff'].attributes.unit_of_measurement
+    vars.now = {t: Date.now(), p: parseFloat(hass.states['sensor.zonneplan_current_electricity_tariff'].state)} 
+    vars.now.h = "<b>" + vars.now.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @now " 
+    vars.avg = { p: 0, c: 0 }
+    let start = new Date();
+    start.setHours(start.getHours() - (hours_to_show - time_offset));
+    let end = new Date();
+    end.setHours(start.getHours() + hours_to_show - 1);
+    hass.states['sensor.zonneplan_current_electricity_tariff']?.attributes?.forecast?.map(e => {
+      if (start >= new Date(e.datetime) || end <  new Date(e.datetime)) return;
+      var t = new Date(e.datetime).getTime()+1800000 
+      var p = e.electricity_price/10000000
+      vars.avg.p += p
+      vars.avg.c++
+      var c = e.tariff_group.replace("low", "#00a964").replace("normal", "#365651").replace("high","#ed5e18")
+      if (t>=Date.now()-1800000) {
+        if (p<vars.min.p) vars.min = {p,t,c}
+        if (p>vars.max.p) vars.max = {p,t,c}
+      }
+      
+      if (p<vars.ymin) vars.ymin = p
+      if (p>vars.ymax) vars.ymax = p
+      vars.x.push(t)
+      vars.y.push(p)
+      vars.color.push(c)
+      vars.hover.push(String(new Date(t).getHours()).padStart(2,"0") + "-" + 
+        String(new Date((new Date(t).getTime()+3600000)).getHours()).padStart(2,"0") + ": <b>" + 
+        p.toFixed(3) + "</b> " + vars.unit_of_measurement)
+    })
+    vars.min.h = "<b>" + vars.min.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @ " + new Date(vars.min.t).getHours() + ":00"
+    vars.max.h = "<b>" + vars.max.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @ " +  new Date(vars.max.t).getHours() + ":00"
+    vars.avg.p = vars.avg.p / vars.avg.c
+    vars.avg.h = "<b>" + vars.avg.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " average"
+    //console.log(vars, hass.states['sensor.zonneplan_current_electricity_tariff']?.attributes?.forecast);
+  }
+layout:
+  margin:
+    l: 20
+    r: 20
+    b: 40
+  dragmode: false
+  clickmode: none
+  legend:
+    itemclick: false
+    itemdoubleclick: false
+  yaxis:
+    fixedrange: false
+    tickformat: .2f
+    range: $fn ({vars}) => [ vars.ymin-0.02, vars.ymax+0.02 ]
+    showgrid: false
+    visible: false
+    showticklabels: true
+    showline: false
+    title: null
+  xaxis:
+    tickformat: "%H"
+    showgrid: false
+    visible: true
+    showticklabels: true
+    showline: false
+    dtick: 3600000
+config:
+  displayModeBar: false
+  scrollZoom: false
+  doubleClick: false
+entities:
+  - entity: ""
+    unit_of_measurement: $ex vars.unit_of_measurement
+    showlegend: false
+    x: $ex vars.x
+    "y": $ex vars.y
+    marker:
+      color: $ex vars.color
+    type: bar
+    hovertemplate: $ex vars.hover
+  - entity: ""
+    mode: markers
+    textposition: top
+    showlegend: true
+    name: $ex vars.min.h
+    hovertemplate: $ex vars.min.h
+    yaxis: y0
+    marker:
+      symbol: diamond
+      color: $ex vars.min.c
+      opacity: 0.7
+    x:
+      - $ex vars.min.t
+    "y":
+      - $ex vars.min.p
+  - entity: ""
+    mode: markers
+    textposition: top
+    showlegend: true
+    name: $ex vars.max.h
+    hovertemplate: $ex vars.max.h
+    yaxis: y0
+    marker:
+      symbol: diamond
+      color: $ex vars.max.c
+      opacity: 0.7
+    x:
+      - $ex vars.max.t
+    "y":
+      - $ex vars.max.p
+  - entity: ""
+    name: Now
+    hovertemplate: Now
+    yaxis: y9
+    showlegend: false
+    line:
+      width: 0.5
+      color: gray
+      opacity: 1
+    x: $ex [vars.now.t, vars.now.t]
+    "y":
+      - 0
+      - 1
+
+```
+
+</details>
+
 ## Troubleshooting
 
 If you run into issues during setup or when entries do not update anymore please enable debug logging and provide them when creating an issue.
