@@ -429,6 +429,11 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 icon="mdi:calendar-clock",
                 entity_registry_enabled_default=True,
             ),
+            "dsmr_version": ZonneplanSensorEntityDescription(
+                key="electricity_data.contracts.{install_index}.meta.dsmr_version",
+                name="Dsmr version",
+                icon="mdi:meter-electric",
+            ),
         },
     },
     BATTERY: {
@@ -473,6 +478,16 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
         "total_day": ZonneplanSensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.total_day",
             name="Today",
+            value_factor=0.0000001,
+            device_class=SensorDeviceClass.MONETARY,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.TOTAL,
+            last_reset_key="battery_data.measurement_groups.0.date",
+            entity_registry_enabled_default=True,
+        ),
+        "average_day": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.{install_index}.meta.average_day",
+            name="Average day",
             value_factor=0.0000001,
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
@@ -674,6 +689,11 @@ BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = 
         "home_optimization_active": ZonneplanBinarySensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.home_optimization_active",
             name="Home optimization active",
+            entity_registry_enabled_default=True,
+        ),
+        "grid_congestion_active": ZonneplanBinarySensorEntityDescription(
+            key="battery_data.contracts.{install_index}.meta.grid_congestion_active",
+            name="Grid congestion active",
             entity_registry_enabled_default=True,
         ),
     },

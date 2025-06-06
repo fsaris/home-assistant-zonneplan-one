@@ -21,6 +21,7 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
 <details>
 <summary>Sensors available if you have a Zonneplan Connect P1 reader</summary>
    
+   - Dsmr version _(default disabled)_
    - Electricity consumption: `W`
    - Electricity production: `W`
    - Electricity average: `W` (average use over the last 5min)
@@ -96,7 +97,10 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
 ### Zonneplan Battery:
 <details>
 <summary>Sensors available if you have a Zonneplan Nexus battery</summary>
-   
+
+  - Average day: `€`
+  - Battery cycles
+  - Dynamic charging enabled `on/off`
   - Battery state
   - Percentage `%`
   - Power `W` _(default disabled)_
@@ -112,6 +116,11 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Manual control state _(default disabled)_
   - First measured `datetime` _(default disabled)_
   - Last measured `datetime`
+  - Grid congestion active `on/off`
+  - Home optimization active `on/off`
+  - Home optimization enabled `on/off`
+  - Self consumption enabled `on/off`
+
 </details>
 
 ## Installation
