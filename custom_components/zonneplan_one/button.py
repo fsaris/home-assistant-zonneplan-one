@@ -150,4 +150,4 @@ class ZonneplanButton(CoordinatorEntity, ButtonEntity):
                 self._connection_uuid, charge_point_uuid
             )
         else:
-            _LOGGER.warning("Unknonw button action for %s", self._button_key)
+            _LOGGER.warning("Unknown button action for %s", self._button_key)
