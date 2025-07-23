@@ -195,7 +195,7 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 {% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') 
   | selectattr('datetime', '>', utcnow().isoformat())
   | selectattr('datetime', '<', (utcnow() + timedelta(hours = 11)).isoformat())  
-  | sort(attribute='price')  
+  | sort(attribute='electricity_price')  
   | first %}
 
 {{ as_local(as_datetime(cheapest_hour_next_twelve_hours.datetime)) }}
