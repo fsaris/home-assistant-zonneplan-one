@@ -475,6 +475,58 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
         ),
+        "result_this_year": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.{install_index}.charts.this_year.total_result",
+            name="Result this year",
+            device_class=SensorDeviceClass.MONETARY,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_year.year",
+                    label="year",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_year.total_delivery_kwh",
+                    label="total_delivery_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_year.total_production_kwh",
+                    label="total_production_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_year.months",
+                    label="months",
+                ),
+            ],
+        ),
+        "result_last_year": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.{install_index}.charts.last_year.total_result",
+            name="Result last year",
+            device_class=SensorDeviceClass.MONETARY,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_year.year",
+                    label="year",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_year.total_delivery_kwh",
+                    label="total_delivery_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_year.total_production_kwh",
+                    label="total_production_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_year.months",
+                    label="months",
+                ),
+            ],
+        ),
         "total_day": ZonneplanSensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.total_day",
             name="Today",
@@ -494,6 +546,58 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             state_class=SensorStateClass.TOTAL,
             last_reset_key="battery_data.measurement_groups.0.date",
             entity_registry_enabled_default=True,
+        ),
+        "result_this_month": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.{install_index}.charts.this_month.total_result",
+            name="Result this month",
+            device_class=SensorDeviceClass.MONETARY,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_month.month",
+                    label="month",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_month.total_delivery_kwh",
+                    label="total_delivery_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_month.total_production_kwh",
+                    label="total_production_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.this_month.days",
+                    label="days",
+                ),
+            ],
+        ),
+        "result_last_month": ZonneplanSensorEntityDescription(
+            key="battery_data.contracts.{install_index}.charts.last_month.total_result",
+            name="Result last month",
+            device_class=SensorDeviceClass.MONETARY,
+            native_unit_of_measurement='EUR',
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_month.month",
+                    label="month",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_month.total_delivery_kwh",
+                    label="total_delivery_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_month.total_production_kwh",
+                    label="total_production_kwh",
+                ),
+                Attribute(
+                    key="battery_data.contracts.{install_index}.charts.last_month.days",
+                    label="days",
+                ),
+            ],
         ),
         "delivery_day": ZonneplanSensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.delivery_day",
