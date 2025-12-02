@@ -25,6 +25,8 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
+BATTERY_CHART_UPDATE_INTERVAL = timedelta(hours=6)
+
 
 def getGasPriceFromSummary(summary):
     if not "price_per_hour" in summary:
@@ -77,6 +79,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         self._delayed_fetch_charge_point: Callable[[], None] | None = None
 
         self._test_file = None
+        self._last_battery_chart_fetch: dict[str, datetime] = {}
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
@@ -148,6 +151,8 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         # Update last live data for each connection
         summary_retrieved = False
         for uuid, connection in result.items():
+            existing_battery_data = connection.get("battery_data")
+
             if "pv_installation" in connection:
                 pv_data = await self.api.async_get(
                     uuid, "/pv-installation"
@@ -183,9 +188,11 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if "home_battery_installation" in connection:
                 battery_data = await self.api.async_get(uuid, "/home-battery-installation/" + connection["home_battery_installation"][0]["uuid"])
                 if battery_data:
+                    self._merge_battery_charts(existing_battery_data, battery_data)
                     result[uuid]["battery_data"] = battery_data
                 await self._async_enrich_battery_charts(
                     result[uuid].get("battery_data"),
+                    existing_battery_data,
                 )
 
         _LOGGER.info("_async_update_data: done")
@@ -194,7 +201,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         return result
 
     async def _async_enrich_battery_charts(
-        self, battery_data: dict | None
+        self, battery_data: dict | None, existing_battery_data: dict | None = None
     ) -> None:
         """Fetch and attach chart data for battery contracts."""
         if not battery_data or not battery_data.get("contracts"):
@@ -211,7 +218,19 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if not contract_uuid:
                 continue
 
-            charts = contract.get("charts", {})
+            existing_charts = (
+                contract.get("charts")
+                or self._get_existing_battery_charts(existing_battery_data, contract_uuid)
+                or {}
+            )
+            charts = dict(existing_charts)
+
+            if not self._should_refresh_battery_charts(contract_uuid):
+                if existing_charts:
+                    contract["charts"] = existing_charts
+                continue
+
+            fetched = False
 
             months_this_year = await self.api.async_get_battery_chart(
                 contract_uuid, "months", current_year_date
@@ -220,6 +239,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 parsed := self._parse_month_chart(months_this_year, current_year_date.year)
             ):
                 charts["this_year"] = parsed
+                fetched = True
 
             months_last_year = await self.api.async_get_battery_chart(
                 contract_uuid, "months", last_year_date
@@ -228,6 +248,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 parsed := self._parse_month_chart(months_last_year, last_year_date.year)
             ):
                 charts["last_year"] = parsed
+                fetched = True
 
             days_this_month = await self.api.async_get_battery_chart(
                 contract_uuid, "days", current_month_date
@@ -236,6 +257,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 parsed := self._parse_day_chart(days_this_month, current_month_date)
             ):
                 charts["this_month"] = parsed
+                fetched = True
 
             days_last_month = await self.api.async_get_battery_chart(
                 contract_uuid, "days", last_month_date
@@ -244,8 +266,63 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 parsed := self._parse_day_chart(days_last_month, last_month_date)
             ):
                 charts["last_month"] = parsed
+                fetched = True
 
-            contract["charts"] = charts
+            if charts:
+                contract["charts"] = charts
+            self._last_battery_chart_fetch[contract_uuid] = dt_util.now()
+
+            if not fetched and existing_charts:
+                contract["charts"] = existing_charts
+
+    def _merge_battery_charts(
+        self, existing_battery_data: dict | None, new_battery_data: dict | None
+    ) -> None:
+        """Carry over previously fetched charts when the API returns 304."""
+        if not existing_battery_data or not new_battery_data:
+            return
+
+        existing_contracts = {
+            contract.get("uuid"): contract
+            for contract in existing_battery_data.get("contracts", [])
+            if contract.get("uuid")
+        }
+
+        for contract in new_battery_data.get("contracts", []):
+            contract_uuid = contract.get("uuid")
+            if not contract_uuid or contract.get("charts"):
+                continue
+
+            previous_contract = existing_contracts.get(contract_uuid)
+            if previous_contract and previous_contract.get("charts"):
+                contract["charts"] = previous_contract["charts"]
+
+    def _get_existing_battery_charts(
+        self, battery_data: dict | None, contract_uuid: str
+    ) -> dict | None:
+        contract = self._get_battery_contract(battery_data, contract_uuid)
+        if contract:
+            return contract.get("charts")
+        return None
+
+    def _get_battery_contract(
+        self, battery_data: dict | None, contract_uuid: str
+    ) -> dict | None:
+        if not battery_data:
+            return None
+
+        for contract in battery_data.get("contracts", []):
+            if contract.get("uuid") == contract_uuid:
+                return contract
+        return None
+
+    def _should_refresh_battery_charts(self, contract_uuid: str) -> bool:
+        """Throttle chart refreshes to a few times per day."""
+        last_fetch = self._last_battery_chart_fetch.get(contract_uuid)
+        if not last_fetch:
+            return True
+
+        return last_fetch < dt_util.now() - BATTERY_CHART_UPDATE_INTERVAL
 
     def _parse_month_chart(self, chart_data: Any, year: int) -> dict | None:
         group = self._get_chart_group(chart_data)
