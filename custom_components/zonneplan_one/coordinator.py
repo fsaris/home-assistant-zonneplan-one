@@ -25,7 +25,7 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-BATTERY_CHART_UPDATE_INTERVAL = timedelta(hours=6)
+BATTERY_CHART_UPDATE_INTERVAL = timedelta(hours=12)
 
 
 def getGasPriceFromSummary(summary):
