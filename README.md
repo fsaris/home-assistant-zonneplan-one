@@ -108,6 +108,10 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Production today `kWh`
   - Today `€`
   - Total `€`
+  - This month `€`
+  - Last month `€`
+  - This year `€`
+  - Last year `€`
   - Dynamic charging enabled `on/off`
   - Dynamic load balancing overload active `on/off`
   - Dynamic load balancing overload enabled `on/off`

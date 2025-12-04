@@ -1,5 +1,6 @@
 """API for Zonneplan bound to Home Assistant OAuth."""
 from typing import Any
+from datetime import date
 from aiohttp import ClientSession
 
 import logging
@@ -36,6 +37,15 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
     async def async_get(self, connection_uuid: str, path: str) -> dict | None:
         return await self._async_get("connections/" + connection_uuid + path)
+
+    async def async_get_battery_chart(
+        self, contract_uuid: str, chart: str, chart_date: date
+    ) -> dict | None:
+        """Get battery chart data for the given contract and date."""
+        chart_date_str = chart_date.isoformat()
+        return await self._async_get(
+            f"contracts/{contract_uuid}/home_battery_installation/charts/{chart}?date={chart_date_str}"
+        )
 
     async def _async_get(self, path: str) -> dict | None:
         _LOGGER.info("fetch: %s", path)

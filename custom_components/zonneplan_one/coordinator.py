@@ -1,6 +1,6 @@
 """Zonneplan DataUpdateCoordinator"""
 from collections.abc import Callable
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from http import HTTPStatus
 from typing import Any
 
@@ -24,6 +24,8 @@ from .api import AsyncConfigEntryAuth
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
+
+BATTERY_CHART_UPDATE_INTERVAL = timedelta(hours=12)
 
 
 def getGasPriceFromSummary(summary):
@@ -77,6 +79,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         self._delayed_fetch_charge_point: Callable[[], None] | None = None
 
         self._test_file = None
+        self._last_battery_chart_fetch: dict[str, datetime] = {}
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
@@ -148,6 +151,8 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         # Update last live data for each connection
         summary_retrieved = False
         for uuid, connection in result.items():
+            existing_battery_data = connection.get("battery_data")
+
             if "pv_installation" in connection:
                 pv_data = await self.api.async_get(
                     uuid, "/pv-installation"
@@ -183,12 +188,222 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if "home_battery_installation" in connection:
                 battery_data = await self.api.async_get(uuid, "/home-battery-installation/" + connection["home_battery_installation"][0]["uuid"])
                 if battery_data:
+                    self._merge_battery_charts(existing_battery_data, battery_data)
                     result[uuid]["battery_data"] = battery_data
+                await self._async_enrich_battery_charts(
+                    result[uuid].get("battery_data"),
+                    existing_battery_data,
+                )
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
 
         return result
+
+    async def _async_enrich_battery_charts(
+        self, battery_data: dict | None, existing_battery_data: dict | None = None
+    ) -> None:
+        """Fetch and attach chart data for battery contracts."""
+        if not battery_data or not battery_data.get("contracts"):
+            return
+
+        today = dt_util.now().date()
+        current_year_date = date(today.year, 1, 1)
+        last_year_date = date(today.year - 1, 1, 1)
+        current_month_date = today.replace(day=1)
+        last_month_date = (current_month_date - timedelta(days=1)).replace(day=1)
+
+        for contract in battery_data.get("contracts", []):
+            contract_uuid = contract.get("uuid")
+            if not contract_uuid:
+                continue
+
+            existing_charts = (
+                contract.get("charts")
+                or self._get_existing_battery_charts(existing_battery_data, contract_uuid)
+                or {}
+            )
+            charts = dict(existing_charts)
+
+            if not self._should_refresh_battery_charts(contract_uuid):
+                if existing_charts:
+                    contract["charts"] = existing_charts
+                continue
+
+            fetched = False
+
+            months_this_year = await self.api.async_get_battery_chart(
+                contract_uuid, "months", current_year_date
+            )
+            if months_this_year and (
+                parsed := self._parse_month_chart(months_this_year, current_year_date.year)
+            ):
+                charts["this_year"] = parsed
+                fetched = True
+
+            months_last_year = await self.api.async_get_battery_chart(
+                contract_uuid, "months", last_year_date
+            )
+            if months_last_year and (
+                parsed := self._parse_month_chart(months_last_year, last_year_date.year)
+            ):
+                charts["last_year"] = parsed
+                fetched = True
+
+            days_this_month = await self.api.async_get_battery_chart(
+                contract_uuid, "days", current_month_date
+            )
+            if days_this_month and (
+                parsed := self._parse_day_chart(days_this_month, current_month_date)
+            ):
+                charts["this_month"] = parsed
+                fetched = True
+
+            days_last_month = await self.api.async_get_battery_chart(
+                contract_uuid, "days", last_month_date
+            )
+            if days_last_month and (
+                parsed := self._parse_day_chart(days_last_month, last_month_date)
+            ):
+                charts["last_month"] = parsed
+                fetched = True
+
+            if charts:
+                contract["charts"] = charts
+            self._last_battery_chart_fetch[contract_uuid] = dt_util.now()
+
+            if not fetched and existing_charts:
+                contract["charts"] = existing_charts
+
+    def _merge_battery_charts(
+        self, existing_battery_data: dict | None, new_battery_data: dict | None
+    ) -> None:
+        """Carry over previously fetched charts when the API returns 304."""
+        if not existing_battery_data or not new_battery_data:
+            return
+
+        existing_contracts = {
+            contract.get("uuid"): contract
+            for contract in existing_battery_data.get("contracts", [])
+            if contract.get("uuid")
+        }
+
+        for contract in new_battery_data.get("contracts", []):
+            contract_uuid = contract.get("uuid")
+            if not contract_uuid or contract.get("charts"):
+                continue
+
+            previous_contract = existing_contracts.get(contract_uuid)
+            if previous_contract and previous_contract.get("charts"):
+                contract["charts"] = previous_contract["charts"]
+
+    def _get_existing_battery_charts(
+        self, battery_data: dict | None, contract_uuid: str
+    ) -> dict | None:
+        contract = self._get_battery_contract(battery_data, contract_uuid)
+        if contract:
+            return contract.get("charts")
+        return None
+
+    def _get_battery_contract(
+        self, battery_data: dict | None, contract_uuid: str
+    ) -> dict | None:
+        if not battery_data:
+            return None
+
+        for contract in battery_data.get("contracts", []):
+            if contract.get("uuid") == contract_uuid:
+                return contract
+        return None
+
+    def _should_refresh_battery_charts(self, contract_uuid: str) -> bool:
+        """Throttle chart refreshes to a few times per day."""
+        last_fetch = self._last_battery_chart_fetch.get(contract_uuid)
+        if not last_fetch:
+            return True
+
+        return last_fetch < dt_util.now() - BATTERY_CHART_UPDATE_INTERVAL
+
+    def _parse_month_chart(self, chart_data: Any, year: int) -> dict | None:
+        group = self._get_chart_group(chart_data)
+        if not group:
+            return None
+
+        measurements = group.get("measurements") or []
+        meta = group.get("meta") or {}
+
+        months: dict[str, Any] = {}
+        tz_ams = dt_util.get_time_zone("Europe/Amsterdam")
+        for measurement in measurements:
+            measured_at = measurement.get("measured_at")
+            dt_value = dt_util.parse_datetime(measured_at) if measured_at else None
+            if not dt_value:
+                continue
+
+            dt_value = dt_util.as_utc(dt_value).astimezone(tz_ams)
+
+            month_key = dt_value.date().strftime("%Y-%m")
+            months[month_key] = {
+                "result": (measurement.get("value") or 0) * 0.0000001,
+                "delivery_kwh": (measurement.get("meta", {}).get("delivery") or 0) * 0.001,
+                "production_kwh": (measurement.get("meta", {}).get("production") or 0) * 0.001,
+            }
+
+        return {
+            "year": year,
+            "total_result": (group.get("total") or 0) * 0.0000001,
+            "total_delivery_kwh": (meta.get("delivery") or 0) * 0.001,
+            "total_production_kwh": (meta.get("production") or 0) * 0.001,
+            "months": months,
+        }
+
+    def _parse_day_chart(self, chart_data: Any, month_date: date) -> dict | None:
+        group = self._get_chart_group(chart_data)
+        if not group:
+            return None
+
+        measurements = group.get("measurements") or []
+        meta = group.get("meta") or {}
+
+        days: dict[str, Any] = {}
+        tz_ams = dt_util.get_time_zone("Europe/Amsterdam")
+        for measurement in measurements:
+            measured_at = measurement.get("measured_at")
+            dt_value = dt_util.parse_datetime(measured_at) if measured_at else None
+            if not dt_value:
+                continue
+
+            dt_value = dt_util.as_utc(dt_value).astimezone(tz_ams)
+
+            day_key = dt_value.date().isoformat()
+            days[day_key] = {
+                "result": (measurement.get("value") or 0) * 0.0000001,
+                "delivery_kwh": (measurement.get("meta", {}).get("delivery") or 0) * 0.001,
+                "production_kwh": (measurement.get("meta", {}).get("production") or 0) * 0.001,
+            }
+
+        return {
+            "month": month_date.strftime("%Y-%m"),
+            "total_result": (group.get("total") or 0) * 0.0000001,
+            "total_delivery_kwh": (meta.get("delivery") or 0) * 0.001,
+            "total_production_kwh": (meta.get("production") or 0) * 0.001,
+            "days": days,
+        }
+
+    def _get_chart_group(self, chart_data: Any) -> dict | None:
+        if not chart_data:
+            return None
+
+        if isinstance(chart_data, dict):
+            data = chart_data.get("data")
+            if isinstance(data, list) and data:
+                return data[0]
+            return None
+
+        if isinstance(chart_data, list) and chart_data:
+            return chart_data[0]
+
+        return None
 
     @property
     def connections(self) -> dict:
@@ -287,4 +502,3 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 10,
                 HassJob(self.async_fetchChargePointData, cancel_on_shutdown=True),
             )
-
