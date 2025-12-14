@@ -475,6 +475,34 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
         await self.async_fetchChargePointData()
 
+    async def async_enable_self_consumption(
+        self, connection_uuid: str, install_index: int, battery_uuid: str
+    ) -> None:
+        await self.api.async_post(
+            connection_uuid,
+            "/home-battery-installation/" + battery_uuid + "/actions/enable_self_consumption",
+        )
+
+        self.data[connection_uuid]["battery_data"]["contracts"][install_index]["meta"]["processing"] = True
+
+        self.async_update_listeners()
+
+        await self.async_fetch_battery_data()
+
+    async def async_disable_self_consumption(
+        self, connection_uuid: str, install_index: int, battery_uuid: str
+    ) -> None:
+        await self.api.async_post(
+            connection_uuid,
+            "/home-battery-installation/" + battery_uuid + "/actions/disable_self_consumption",
+        )
+
+        self.data[connection_uuid]["battery_data"]["contracts"][install_index]["meta"]["processing"] = True
+
+        self.async_update_listeners()
+
+        await self.async_fetch_battery_data()
+
     def _processing_charge_point_update(self) -> bool:
         for connection_uuid, connection in self.connections.items():
             processing = self.getConnectionValue(connection_uuid, "charge_point_data.state.processing")
@@ -502,3 +530,6 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 10,
                 HassJob(self.async_fetchChargePointData, cancel_on_shutdown=True),
             )
+
+    async def async_fetch_battery_data(self):
+        pass

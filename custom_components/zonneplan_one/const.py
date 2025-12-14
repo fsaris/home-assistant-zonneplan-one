@@ -875,5 +875,15 @@ BUTTON_TYPES: dict[str, list[ZonneplanButtonEntityDescription]] = {
             key="charge_point.stop",
             name="Stop charge",
         ),
+    },
+    BATTERY: {
+        "enable_self_consumption": ZonneplanButtonEntityDescription(
+            key="battery.enable_self_consumption",
+            name="Enabel self consumption",
+        ),
+        "disable_self_consumption": ZonneplanButtonEntityDescription(
+            key="battery.disable_self_consumption",
+            name="Disable self consumption",
+        ),
     }
 }
