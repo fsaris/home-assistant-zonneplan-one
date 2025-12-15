@@ -150,41 +150,8 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             icon="mdi:message-text-outline",
             entity_registry_enabled_default=True,
         ),
-    }
-}
-
-# Loop for forecast hours 1 to 48
-for i in range(1, 49):
-    # HYBRID LEGACY STRATEGY:
-    # Hours 1-8: Use 'forcast' (typo) to match upstream/legacy unique_ids.
-    # Hours 9-48: Use 'forecast' (correct) for new entities.
-    key_prefix = "forcast" if i <= 8 else "forecast"
-    
-    key_name_electricity = f"{key_prefix}_tariff_{i}"
-    
-    # Friendly Name is ALWAYS 'Forecast' (Visual Fix)
-    friendly_name_electricity = f"Forecast tariff hour {i}"
-    
-    SENSOR_TYPES[SUMMARY][key_name_electricity] = ZonneplanSensorEntityDescription(
-        key=f"summary_data.price_per_hour.{24+i}.electricity_price",
-        name=friendly_name_electricity,
-        icon="mdi:cash",
-        value_factor=0.0000001,
-        native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
-    )
-    
-    # Same for tariff groups
-    key_name_group = f"{key_prefix}_tariff_group_{i}"
-    friendly_name_group = f"Forecast tariff group hour {i}"
-    
-    SENSOR_TYPES[SUMMARY][key_name_group] = ZonneplanSensorEntityDescription(
-        key=f"summary_data.price_per_hour.{24+i}.tariff_group",
-        name=friendly_name_group,
-        icon="mdi:cash",
-        entity_registry_enabled_default=False,
-    )
-
-SENSOR_TYPES[PV_INSTALL] = {
+    },
+    PV_INSTALL: {
         "install": {
             "total_power_measured": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.total_power_measured",
@@ -424,7 +391,7 @@ SENSOR_TYPES[PV_INSTALL] = {
             name="Result this year",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
@@ -450,7 +417,7 @@ SENSOR_TYPES[PV_INSTALL] = {
             name="Result last year",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
@@ -496,7 +463,7 @@ SENSOR_TYPES[PV_INSTALL] = {
             name="Result this month",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
@@ -522,7 +489,7 @@ SENSOR_TYPES[PV_INSTALL] = {
             name="Result last month",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
@@ -701,6 +668,37 @@ SENSOR_TYPES[PV_INSTALL] = {
         ),
     },
 }
+
+# Loop for forecast hours 1 to 48
+for i in range(1, 49):
+    # HYBRID LEGACY STRATEGY:
+    # Hours 1-8: Use 'forcast' (typo) to match upstream/legacy unique_ids.
+    # Hours 9-48: Use 'forecast' (correct) for new entities.
+    key_prefix = "forcast" if i <= 8 else "forecast"
+    
+    key_name_electricity = f"{key_prefix}_tariff_{i}"
+    
+    # Friendly Name is ALWAYS 'Forecast' (Visual Fix)
+    friendly_name_electricity = f"Forecast tariff hour {i}"
+    
+    SENSOR_TYPES[SUMMARY][key_name_electricity] = ZonneplanSensorEntityDescription(
+        key=f"summary_data.price_per_hour.{24+i}.electricity_price",
+        name=friendly_name_electricity,
+        icon="mdi:cash",
+        value_factor=0.0000001,
+        native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+    )
+    
+    # Same for tariff groups
+    key_name_group = f"{key_prefix}_tariff_group_{i}"
+    friendly_name_group = f"Forecast tariff group hour {i}"
+    
+    SENSOR_TYPES[SUMMARY][key_name_group] = ZonneplanSensorEntityDescription(
+        key=f"summary_data.price_per_hour.{24+i}.tariff_group",
+        name=friendly_name_group,
+        icon="mdi:cash",
+        entity_registry_enabled_default=False,
+    )
 
 BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
     BATTERY: {
