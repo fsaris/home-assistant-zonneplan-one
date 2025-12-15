@@ -185,6 +185,15 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 icon="mdi:calendar-clock",
                 entity_registry_enabled_default=True,
             ),
+            "expected_surplus_kwh": ZonneplanSensorEntityDescription(
+                key="pv_data.contracts.{install_index}.meta.expected_surplus_kwh",
+                name="Expected surplus",
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+                value_factor=0.001,
+                device_class=SensorDeviceClass.ENERGY,
+                entity_registry_enabled_default=False,
+                state_class=SensorStateClass.MEASUREMENT,
+            ),
             "total_earned": ZonneplanSensorEntityDescription(
                 key="pv_data.contracts.{install_index}.meta.total_earned",
                 name="Powerplay total",
@@ -203,6 +212,12 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="pv_data.measurement_groups.0.date",
                 entity_registry_enabled_default=False,
+            ),
+            "current_scenario": ZonneplanSensorEntityDescription(
+                key="pv_data.contracts.{install_index}.meta.current_scenario",
+                name="Current scenario",
+                entity_registry_enabled_default=False,
+                icon="mdi:message-text-outline",
             ),
         },
         "totals": {
@@ -236,6 +251,33 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 value_factor=0.001,
                 device_class=SensorDeviceClass.ENERGY,
                 entity_registry_enabled_default=True,
+                state_class=SensorStateClass.TOTAL_INCREASING,
+            ),
+            "electricity_total_today_low_tariff": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups.0.meta.low_tariff_group",
+                name="Electricity consumption today low tariff",
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+                value_factor=0.001,
+                device_class=SensorDeviceClass.ENERGY,
+                entity_registry_enabled_default=False,
+                state_class=SensorStateClass.TOTAL_INCREASING,
+            ),
+            "electricity_total_today_normal_tariff": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups.0.meta.normal_tariff_group",
+                name="Electricity consumption today normal tariff",
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+                value_factor=0.001,
+                device_class=SensorDeviceClass.ENERGY,
+                entity_registry_enabled_default=False,
+                state_class=SensorStateClass.TOTAL_INCREASING,
+            ),
+            "electricity_total_today_high_tariff": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups.0.meta.high_tariff_group",
+                name="Electricity consumption today high tariff",
+                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+                value_factor=0.001,
+                device_class=SensorDeviceClass.ENERGY,
+                entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL_INCREASING,
             ),
             "electricity_delivery_costs_incl_tax": ZonneplanSensorEntityDescription(
@@ -597,7 +639,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             icon="mdi:cash",
             native_unit_of_measurement='EUR',
             entity_registry_enabled_default=True,
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL_INCREASING,
         ),
         "session_flex_result": ZonneplanSensorEntityDescription(
             key="charge_point_data.meta.session_flex_result",
@@ -669,14 +711,14 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     },
 }
 
-# Loop for forecast hours 1 to 48
-for i in range(1, 49):
+# Loop for forecast hours 1 to 34
+for i in range(1, 35):
     # HYBRID LEGACY STRATEGY:
     # Hours 1-8: Use 'forcast' (typo) to match upstream/legacy unique_ids.
-    # Hours 9-48: Use 'forecast' (correct) for new entities.
+    # Hours 9-34: Use 'forecast' (correct) for new entities.
     key_prefix = "forcast" if i <= 8 else "forecast"
     
-    # Enable first 8 hours by default, disable the rest to keep system clean
+    # Enable first 8 hours by default, disable the rest (9-34) to keep system clean
     enabled_default = True if i <= 8 else False
     
     key_name_electricity = f"{key_prefix}_tariff_{i}"
@@ -701,35 +743,7 @@ for i in range(1, 49):
         key=f"summary_data.price_per_hour.{24+i}.tariff_group",
         name=friendly_name_group,
         icon="mdi:cash",
-        entity_registry_enabled_default=False, # Always False for groups, or match enabled_default? Original was False? Let's use enabled_default logic for consistency or False if user prefers. 
-        # Original code for groups 1-8 was NOT specified, meaning it defaulted to False (from dataclass default).
-        # Wait, dataclass default is False.
-        # In my previous manual expansion, I didn't set it, so it was False.
-        # Let's keep groups disabled by default to avoid clutter, as requested "kan 9-48 inactief gemaakt worden".
-        # But wait, original code for electricity price 1-8 didn't set enabled_default explicitly in the dict either, but dataclass default is False.
-        # Let me check the original code from my read_file output.
-        # Original: "forcast_tariff_1" ... no entity_registry_enabled_default set. Dataclass default is False.
-        # BUT: "usage" has entity_registry_enabled_default=True.
-        # So originally, forecast sensors were DISABLED by default?
-        # Let me check my previous read_file of const.py.
-        # Dataclass: entity_registry_enabled_default: bool = False
-        # SENSOR_TYPES[SUMMARY]["forcast_tariff_1"] ... no override.
-        # So originally, they were False (Disabled)?
-        # That's weird. Usually key sensors are enabled.
-        # Let's verify standard behavior.
-        # If I want 1-8 ENABLED (as they were likely enabled by user manually or via UI), I should set True.
-        # But if the user says "kan 9-48 inactief gemaakt worden", it implies 1-8 ARE active.
-        # I will set 1-8 True, 9-48 False for Price.
-        # For Groups, I will keep them False (as they seem less critical).
-    )
-    # Correction: I will set groups to False always, as they are less used.
-    # And Price to True for 1-8, False for 9-48.
-    
-    SENSOR_TYPES[SUMMARY][key_name_group] = ZonneplanSensorEntityDescription(
-        key=f"summary_data.price_per_hour.{24+i}.tariff_group",
-        name=friendly_name_group,
-        icon="mdi:cash",
-        entity_registry_enabled_default=False,
+        entity_registry_enabled_default=False, # Always disabled for groups
     )
 
 BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
