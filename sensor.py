@@ -182,7 +182,38 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         }
 
     @property
-    def last_reset(self) -> datetime | None:
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        # Check if it's a forecast tariff or tariff group sensor
+        # This covers both 'forcast_tariff_X' and 'forecast_tariff_X' (and groups)
+        if ("tariff_" in self._sensor_key or "forcast_" in self._sensor_key) and \
+           (self._sensor_key.startswith("forcast_tariff_") or self._sensor_key.startswith("forecast_tariff_")):
+            
+            # Extract hour index from sensor_key (e.g., "forcast_tariff_1" -> 1)
+            try:
+                parts = self._sensor_key.split("_")
+                # Find the last numeric part which should be the hour index
+                hour_str = next(part for part in reversed(parts) if part.isdigit())
+                hour_index = int(hour_str)
+            except (ValueError, StopIteration):
+                # Fallback to the default name if index cannot be parsed
+                _LOGGER.warning(f"Could not parse hour index from sensor_key: {self._sensor_key}. Using default name.")
+                return self.entity_description.name
+
+            # Calculate start and end times based on current hour and forecast index
+            # hour_index 1 corresponds to the next full hour
+            now_rounded_down = dt_util.now().replace(minute=0, second=0, microsecond=0)
+            start_time = now_rounded_down + timedelta(hours=hour_index)
+            end_time = start_time + timedelta(hours=1)
+            
+            # Format the name as "HH:MM - HH:MM"
+            return f"{start_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}"
+        
+        # For all other sensors, return the name from entity_description
+        return self.entity_description.name
+
+
+    @property
 
         if not self.entity_description.last_reset_key:
             return None
