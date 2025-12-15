@@ -155,11 +155,14 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
 
 # Loop for forecast hours 1 to 48
 for i in range(1, 49):
-    # BACKWARD COMPATIBILITY: We retain 'forcast' in the key!
-    # This ensures that the unique_id (uuid + key) does not change for existing users.
-    key_name_electricity = f"forcast_tariff_{i}"
+    # HYBRID LEGACY STRATEGY:
+    # Hours 1-8: Use 'forcast' (typo) to match upstream/legacy unique_ids.
+    # Hours 9-48: Use 'forecast' (correct) for new entities.
+    key_prefix = "forcast" if i <= 8 else "forecast"
     
-    # VISUAL FIX: The name is spelled correctly 'Forecast'
+    key_name_electricity = f"{key_prefix}_tariff_{i}"
+    
+    # Friendly Name is ALWAYS 'Forecast' (Visual Fix)
     friendly_name_electricity = f"Forecast tariff hour {i}"
     
     SENSOR_TYPES[SUMMARY][key_name_electricity] = ZonneplanSensorEntityDescription(
@@ -168,11 +171,10 @@ for i in range(1, 49):
         icon="mdi:cash",
         value_factor=0.0000001,
         native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
-        # Optionally set entity_registry_enabled_default to False for higher hours if desired
     )
     
     # Same for tariff groups
-    key_name_group = f"forcast_tariff_group_{i}"
+    key_name_group = f"{key_prefix}_tariff_group_{i}"
     friendly_name_group = f"Forecast tariff group hour {i}"
     
     SENSOR_TYPES[SUMMARY][key_name_group] = ZonneplanSensorEntityDescription(
