@@ -214,6 +214,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
 
 
     @property
+    def last_reset(self) -> datetime | None:
 
         if not self.entity_description.last_reset_key:
             return None
@@ -227,8 +228,6 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
             value = dt_util.parse_datetime(value)
 
         _LOGGER.debug(f"Last update {self.name}: {value}")
-
-        return value
 
     @callback
     def _handle_coordinator_update(self) -> None:
