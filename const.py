@@ -2,7 +2,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from voluptuous.validators import Number
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
