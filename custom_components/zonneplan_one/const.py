@@ -480,7 +480,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Result this year",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
@@ -506,7 +506,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Result last year",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
@@ -552,7 +552,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Result this month",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
@@ -578,7 +578,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Result last month",
             device_class=SensorDeviceClass.MONETARY,
             native_unit_of_measurement='EUR',
-            state_class=SensorStateClass.MEASUREMENT,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
