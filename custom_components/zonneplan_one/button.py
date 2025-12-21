@@ -255,7 +255,7 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
         """Handle the button press."""
 
         battery_uuid = self.coordinator.getConnectionValue(
-            self._connection_uuid, "battery_data.uuid"
+            self._connection_uuid, "home_battery_installation.uuid"
         )
 
         if self._button_key == "enable_self_consumption":

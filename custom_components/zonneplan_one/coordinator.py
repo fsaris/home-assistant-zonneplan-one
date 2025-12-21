@@ -496,7 +496,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
         await self.async_fetch_battery_control_mode(connection_uuid, battery_uuid)
 
-    async def async_enable_powerplay(
+    async def async_enable_dynamic_charging(
         self, connection_uuid: str, install_index: int, battery_uuid: str
     ) -> None:
         await self.api.async_post(
