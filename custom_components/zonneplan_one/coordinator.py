@@ -485,10 +485,12 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             connection_uuid,
             "/home-battery-installation/" + battery_uuid + "/actions/enable_self_consumption",
         )
-        await self.api.async_post(
-            connection_uuid,
-            "/home-battery-installation/" + battery_uuid + "/actions/disable_home_optimization",
-        )
+
+        if self.getConnectionValue(connection_uuid, "battery_control_mode.modes.home_optimization.enabled"):
+            await self.api.async_post(
+                connection_uuid,
+                "/home-battery-installation/" + battery_uuid + "/actions/disable_home_optimization",
+            )
 
         self.data[connection_uuid]["battery_control_mode"]["processing"] = True
 
@@ -499,14 +501,17 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     async def async_enable_dynamic_charging(
         self, connection_uuid: str, install_index: int, battery_uuid: str
     ) -> None:
-        await self.api.async_post(
-            connection_uuid,
-            "/home-battery-installation/" + battery_uuid + "/actions/disable_home_optimization",
-        )
-        await self.api.async_post(
-            connection_uuid,
-            "/home-battery-installation/" + battery_uuid + "/actions/disable_self_consumption",
-        )
+
+        if self.getConnectionValue(connection_uuid, "battery_control_mode.modes.home_optimization.enabled"):
+            await self.api.async_post(
+                connection_uuid,
+                "/home-battery-installation/" + battery_uuid + "/actions/disable_home_optimization",
+            )
+        if self.getConnectionValue(connection_uuid, "battery_control_mode.modes.self_consumption.enabled"):
+            await self.api.async_post(
+                connection_uuid,
+                "/home-battery-installation/" + battery_uuid + "/actions/disable_self_consumption",
+            )
 
         self.data[connection_uuid]["battery_control_mode"]["processing"] = True
 
@@ -521,10 +526,12 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             connection_uuid,
             "/home-battery-installation/" + battery_uuid + "/actions/enable_home_optimization",
         )
-        await self.api.async_post(
-            connection_uuid,
-            "/home-battery-installation/" + battery_uuid + "/actions/disable_self_consumption",
-        )
+
+        if self.getConnectionValue(connection_uuid, "battery_control_mode.modes.self_consumption.enabled"):
+            await self.api.async_post(
+                connection_uuid,
+                "/home-battery-installation/" + battery_uuid + "/actions/disable_self_consumption",
+            )
 
         self.data[connection_uuid]["battery_control_mode"]["processing"] = True
 
@@ -565,3 +572,5 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         battery_control_mode = await self.api.async_get_battery_control_mode(battery_uuid)
         if battery_control_mode:
             self.data[connection_uuid]["battery_control_mode"] = battery_control_mode
+            _LOGGER.info("battery_control_mode %s", battery_control_mode)
+            self.async_update_listeners()

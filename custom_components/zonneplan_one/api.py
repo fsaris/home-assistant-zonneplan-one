@@ -102,6 +102,10 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         response.raise_for_status()
 
+        # 204 No Content successful response
+        if response.status == 204:
+            return {'ok': True}
+
         response_json = await response.json()
 
         _LOGGER.debug("ZonneplanAPI response body: %s", response_json)

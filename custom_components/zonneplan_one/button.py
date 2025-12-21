@@ -216,7 +216,7 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
         if self._button_key == "enable_self_consumption" and control_mode["modes"]["self_consumption"]["available"] and not control_mode["modes"]["self_consumption"]["enabled"]:
             return True
 
-        if self._button_key == "enable_dynamic_charging" and control_mode["modes"]["dynamic_charging"]["available"] and not control_mode["modes"]["dynamic_charging"]["enabled"]:
+        if self._button_key == "enable_dynamic_charging" and control_mode["modes"]["dynamic_charging"]["available"] and (control_mode["modes"]["self_consumption"]["enabled"] or control_mode["modes"]["home_optimization"]["enabled"]):
             return True
 
         if self._button_key == "enable_home_optimization" and control_mode["modes"]["home_optimization"]["available"] and not control_mode["modes"]["home_optimization"]["enabled"]:
@@ -239,13 +239,13 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
             ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
             "model": self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "home_battery_installation.{install_index}.label".format(
+                "home_battery_installation.{install_index}.host_device_model_name".format(
                     install_index=self._install_index
                 ),
             ),
             "serial_number": self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "home_battery_installation.{install_index}.meta.serial_number".format(
+                "home_battery_installation.{install_index}.meta.identifier".format(
                     install_index=self._install_index
                 ),
             ),
@@ -255,8 +255,12 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
         """Handle the button press."""
 
         battery_uuid = self.coordinator.getConnectionValue(
-            self._connection_uuid, "home_battery_installation.uuid"
+            self._connection_uuid, "home_battery_installation.0.uuid"
         )
+
+        if not battery_uuid:
+            _LOGGER.warning("No battery UUID found for %s", self._button_key)
+            return
 
         if self._button_key == "enable_self_consumption":
             await self.coordinator.async_enable_self_consumption(
