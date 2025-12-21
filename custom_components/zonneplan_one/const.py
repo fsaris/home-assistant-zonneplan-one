@@ -442,6 +442,11 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
             name="Battery state",
             entity_registry_enabled_default=True,
         ),
+        "battery_control_mode": ZonneplanSensorEntityDescription(
+            key="battery_control_mode.control_mode",
+            name="Battery control mode",
+            entity_registry_enabled_default=True,
+        ),
         "state_of_charge": ZonneplanSensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.state_of_charge",
             name="Percentage",
@@ -879,11 +884,15 @@ BUTTON_TYPES: dict[str, list[ZonneplanButtonEntityDescription]] = {
     BATTERY: {
         "enable_self_consumption": ZonneplanButtonEntityDescription(
             key="battery.enable_self_consumption",
-            name="Enabel self consumption",
+            name="Enable self consumption",
         ),
-        "disable_self_consumption": ZonneplanButtonEntityDescription(
-            key="battery.disable_self_consumption",
-            name="Disable self consumption",
+        "enable_dynamic_charging": ZonneplanButtonEntityDescription(
+            key="battery.enable_dynamic_charging",
+            name="Enable powerplay",
+        ),
+        "enable_home_optimization": ZonneplanButtonEntityDescription(
+            key="battery.enable_home_optimization",
+            name="Enable Home optimization",
         ),
     }
 }

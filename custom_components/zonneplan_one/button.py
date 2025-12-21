@@ -208,17 +208,20 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
         if not self.coordinator.last_update_success:
             return False
 
-        meta = self.coordinator.getConnectionValue(self._connection_uuid, "battery_data.contracts.{install_index}.meta").format(
+        control_mode = self.coordinator.getConnectionValue(self._connection_uuid, "battery_control_mode").format(
                 install_index=self._install_index
             )
 
-        if "processing" in meta:
+        if "processing" in control_mode:
             return False
 
-        if self._button_key == "enable_self_consumption" and not meta["self_consumption_enabled"]:
+        if self._button_key == "enable_self_consumption" and control_mode["modes"]["self_consumption"]["available"] and not control_mode["modes"]["self_consumption"]["enabled"]:
             return True
 
-        if self._button_key == "disable_self_consumption" and meta["self_consumption_enabled"]:
+        if self._button_key == "enable_dynamic_charging" and control_mode["modes"]["dynamic_charging"]["available"] and not control_mode["modes"]["dynamic_charging"]["enabled"]:
+            return True
+
+        if self._button_key == "enable_home_optimization" and control_mode["modes"]["home_optimization"]["available"] and not control_mode["modes"]["home_optimization"]["enabled"]:
             return True
 
         return False
@@ -261,8 +264,12 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
             await self.coordinator.async_enable_self_consumption(
                 self._connection_uuid, self._install_index, battery_uuid
             )
-        elif self._button_key == "disable_self_consumption":
-            await self.coordinator.async_disable_self_consumption(
+        elif self._button_key == "enable_dynamic_charging":
+            await self.coordinator.async_enable_dynamic_charging(
+                self._connection_uuid, self._install_index, battery_uuid
+            )
+        elif self._button_key == "enable_home_optimization":
+            await self.coordinator.async_enable_home_optimization(
                 self._connection_uuid, self._install_index, battery_uuid
             )
         else:
