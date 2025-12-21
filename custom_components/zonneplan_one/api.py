@@ -52,7 +52,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
     ) -> dict | None:
         """Get battery control mode"""
         return await self._async_get(
-            f"contracts/{contract_uuid}/home-battery/control-mode"
+            f"api/contracts/{contract_uuid}/home-battery/control-mode"
         )
 
     async def _async_get(self, path: str) -> dict | None:
