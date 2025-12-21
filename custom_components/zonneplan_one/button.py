@@ -215,16 +215,18 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
         if "processing" in control_mode:
             return False
 
-        if self._button_key == "enable_self_consumption" and control_mode["modes"]["self_consumption"]["available"] and not control_mode["modes"]["self_consumption"]["enabled"]:
-            return True
+        return True
 
-        if self._button_key == "enable_dynamic_charging" and control_mode["modes"]["dynamic_charging"]["available"] and not control_mode["modes"]["dynamic_charging"]["enabled"]:
-            return True
-
-        if self._button_key == "enable_home_optimization" and control_mode["modes"]["home_optimization"]["available"] and not control_mode["modes"]["home_optimization"]["enabled"]:
-            return True
-
-        return False
+        # if self._button_key == "enable_self_consumption" and control_mode["modes"]["self_consumption"]["available"] and not control_mode["modes"]["self_consumption"]["enabled"]:
+        #     return True
+        #
+        # if self._button_key == "enable_dynamic_charging" and control_mode["modes"]["dynamic_charging"]["available"] and not control_mode["modes"]["dynamic_charging"]["enabled"]:
+        #     return True
+        #
+        # if self._button_key == "enable_home_optimization" and control_mode["modes"]["home_optimization"]["available"] and not control_mode["modes"]["home_optimization"]["enabled"]:
+        #     return True
+        #
+        # return False
 
     @property
     def device_info(self):
