@@ -46,11 +46,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
     entities = []
     for uuid, connection in coordinator.connections.items():
-        pv_installations = coordinator.getConnectionValue(uuid, PV_INSTALL)
-        p1_installations = coordinator.getConnectionValue(uuid, P1_INSTALL)
-        summary = coordinator.getConnectionValue(uuid, SUMMARY)
-        charge_point = coordinator.getConnectionValue(uuid, CHARGE_POINT)
-        battery = coordinator.getConnectionValue(uuid, BATTERY)
+        pv_installations = coordinator.get_connection_value(uuid, PV_INSTALL)
+        p1_installations = coordinator.get_connection_value(uuid, P1_INSTALL)
+        summary = coordinator.get_connection_value(uuid, SUMMARY)
+        charge_point = coordinator.get_connection_value(uuid, CHARGE_POINT)
+        battery = coordinator.get_connection_value(uuid, BATTERY)
 
         _LOGGER.debug("Setup sensors for connnection %s", uuid)
 
@@ -189,7 +189,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         if not self.entity_description.last_reset_key:
             return None
 
-        value = self.coordinator.getConnectionValue(
+        value = self.coordinator.get_connection_value(
             self._connection_uuid,
             self.entity_description.last_reset_key.format(install_index=self._install_index),
         )
@@ -265,7 +265,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
 
         attrs = {}
         for attribute in self.entity_description.attributes:
-            value = self.coordinator.getConnectionValue(
+            value = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 attribute.key.format(install_index=self._install_index),
             )
@@ -275,7 +275,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         return attrs
 
     def _value_from_coordinator(self):
-        raw_value = value = self.coordinator.getConnectionValue(
+        raw_value = value = self.coordinator.get_connection_value(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index),
         )
@@ -311,7 +311,7 @@ class ZonneplanPvSensor(ZonneplanSensor):
         if self._install_index < 0:
             return self._connection_uuid
         else:
-            return self.coordinator.getConnectionValue(
+            return self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "pv_installation.{install_index}.uuid".format(
                     install_index=self._install_index
@@ -330,33 +330,33 @@ class ZonneplanPvSensor(ZonneplanSensor):
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
             device_info["via_device"] = (DOMAIN, self._connection_uuid)
-            device_info["name"] = self.coordinator.getConnectionValue(
+            device_info["name"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "pv_installation.{install_index}.meta.name".format(
                     install_index=self._install_index
                 ),
             ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
 
-            device_info["model"] = self.coordinator.getConnectionValue(
+            device_info["model"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "pv_installation.{install_index}.meta.name".format(
                     install_index=self._install_index
                 ),
-            ) + " " + str(self.coordinator.getConnectionValue(
+            ) + " " + str(self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "pv_installation.{install_index}.meta.panel_count".format(
                     install_index=self._install_index
                 ),
             )) + " panels"
 
-            device_info["serial_number"] = self.coordinator.getConnectionValue(
+            device_info["serial_number"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "pv_installation.{install_index}.meta.sgn_serial_number".format(
                     install_index=self._install_index
                 ),
             )
             device_info["sw_version"] = str(
-                self.coordinator.getConnectionValue(
+                self.coordinator.get_connection_value(
                     self._connection_uuid,
                     "pv_installation.{install_index}.meta.module_firmware_version".format(
                         install_index=self._install_index
@@ -365,7 +365,7 @@ class ZonneplanPvSensor(ZonneplanSensor):
                 or "unknown"
             )
             device_info["hw_version"] = str(
-                self.coordinator.getConnectionValue(
+                self.coordinator.get_connection_value(
                     self._connection_uuid,
                     "pv_installation.{install_index}.meta.inverter_firmware_version".format(
                         install_index=self._install_index
@@ -384,7 +384,7 @@ class ZonneplanP1Sensor(ZonneplanSensor):
         if self._install_index < 0:
             return self._connection_uuid
         else:
-            return self.coordinator.getConnectionValue(
+            return self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "p1_installation.{install_index}.uuid".format(
                     install_index=self._install_index
@@ -404,25 +404,25 @@ class ZonneplanP1Sensor(ZonneplanSensor):
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
             device_info["via_device"] = (DOMAIN, self._connection_uuid)
-            device_info["name"] = self.coordinator.getConnectionValue(
+            device_info["name"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "p1_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
-            device_info["model"] = self.coordinator.getConnectionValue(
+            device_info["model"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "p1_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             )
-            device_info["serial_number"] = self.coordinator.getConnectionValue(
+            device_info["serial_number"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "p1_installation.{install_index}.meta.sgn_serial_number".format(
                     install_index=self._install_index
                 ),
             )
-            device_info["sw_version"] = self.coordinator.getConnectionValue(
+            device_info["sw_version"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "p1_installation.{install_index}.meta.sgn_firmware".format(
                     install_index=self._install_index
@@ -439,7 +439,7 @@ class ZonneplanChargePointSensor(ZonneplanSensor):
         if self._install_index < 0:
             return self._connection_uuid
         else:
-            return self.coordinator.getConnectionValue(
+            return self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.uuid".format(
                     install_index=self._install_index
@@ -458,19 +458,19 @@ class ZonneplanChargePointSensor(ZonneplanSensor):
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
             device_info["via_device"] = (DOMAIN, self._connection_uuid)
-            device_info["name"] = self.coordinator.getConnectionValue(
+            device_info["name"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
-            device_info["model"] = self.coordinator.getConnectionValue(
+            device_info["model"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             )
-            device_info["serial_number"] = self.coordinator.getConnectionValue(
+            device_info["serial_number"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
@@ -487,7 +487,7 @@ class ZonneplanBatterySensor(ZonneplanSensor):
         if self._install_index < 0:
             return self._connection_uuid
         else:
-            return self.coordinator.getConnectionValue(
+            return self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "home_battery_installation.{install_index}.uuid".format(
                     install_index=self._install_index
@@ -506,19 +506,19 @@ class ZonneplanBatterySensor(ZonneplanSensor):
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
             device_info["via_device"] = (DOMAIN, self._connection_uuid)
-            device_info["name"] = self.coordinator.getConnectionValue(
+            device_info["name"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "home_battery_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
-            device_info["model"] = self.coordinator.getConnectionValue(
+            device_info["model"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "home_battery_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             )
-            device_info["serial_number"] = self.coordinator.getConnectionValue(
+            device_info["serial_number"] = self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "home_battery_installation.{install_index}.meta.identifier".format(
                     install_index=self._install_index

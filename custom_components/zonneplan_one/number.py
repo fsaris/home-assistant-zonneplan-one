@@ -25,7 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     entities = []
     for uuid, connection in coordinator.connections.items():
 
-        battery = coordinator.getConnectionValue(uuid, BATTERY)
+        battery = coordinator.get_connection_value(uuid, BATTERY)
         if battery:
             _LOGGER.debug("Setup battery number entities for connection %s", uuid)
 
@@ -61,11 +61,11 @@ class ZonneplanBatteryNumber(ZonneplanBatteryEntity, NumberEntity):
         self._number_key = number_key
         self.entity_description = description
 
-        self._attr_native_min_value = self.coordinator.getConnectionValue(
+        self._attr_native_min_value = self.coordinator.get_connection_value(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index).replace("_watts", "_limits.min_watts"),
         ) or 0
-        self._attr_native_max_value = self.coordinator.getConnectionValue(
+        self._attr_native_max_value = self.coordinator.get_connection_value(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index).replace("_watts", "_limits.max_watts"),
         ) or 2000
@@ -73,7 +73,7 @@ class ZonneplanBatteryNumber(ZonneplanBatteryEntity, NumberEntity):
 
     @property
     def native_value(self) -> float:
-        return self.coordinator.getConnectionValue(
+        return self.coordinator.get_connection_value(
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index),
         )

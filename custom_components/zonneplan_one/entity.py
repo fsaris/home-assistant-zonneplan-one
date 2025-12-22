@@ -24,14 +24,14 @@ class ZonneplanBatteryEntity(CoordinatorEntity):
         super().__init__(coordinator)
         self._connection_uuid = connection_uuid
         self._install_index = install_index
-        self._battery_uuid = self.coordinator.getConnectionValue(
+        self._battery_uuid = self.coordinator.get_connection_value(
             self._connection_uuid, f"home_battery_installation.{install_index}.uuid"
         )
 
     @property
     def install_uuid(self) -> str:
         """Return the install UUID."""
-        return self.coordinator.getConnectionValue(
+        return self.coordinator.get_connection_value(
             self._connection_uuid,
             f"home_battery_installation.{self._install_index}.uuid",
         )
@@ -43,7 +43,7 @@ class ZonneplanBatteryEntity(CoordinatorEntity):
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self._connection_uuid),
             "manufacturer": "Zonneplan",
-            "name": self.coordinator.getConnectionValue(
+            "name": self.coordinator.get_connection_value(
                 self._connection_uuid,
                 f"home_battery_installation.{self._install_index}.label",
             )
@@ -52,11 +52,11 @@ class ZonneplanBatteryEntity(CoordinatorEntity):
                 if self._install_index and self._install_index > 0
                 else ""
             ),
-            "model": self.coordinator.getConnectionValue(
+            "model": self.coordinator.get_connection_value(
                 self._connection_uuid,
                 f"home_battery_installation.{self._install_index}.meta.host_device_model_name",
             ),
-            "serial_number": self.coordinator.getConnectionValue(
+            "serial_number": self.coordinator.get_connection_value(
                 self._connection_uuid,
                 f"home_battery_installation.{self._install_index}.meta.identifier",
             ),

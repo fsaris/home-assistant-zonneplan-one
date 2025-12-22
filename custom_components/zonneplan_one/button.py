@@ -36,7 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
         _LOGGER.debug("Setup buttons for connnection %s", uuid)
 
-        charge_point = coordinator.getConnectionValue(uuid, CHARGE_POINT)
+        charge_point = coordinator.get_connection_value(uuid, CHARGE_POINT)
         if charge_point:
             for install_index in range(len(charge_point)):
                 for sensor_key in BUTTON_TYPES[CHARGE_POINT]:
@@ -50,7 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
                         )
                     )
 
-        battery = coordinator.getConnectionValue(uuid, BATTERY)
+        battery = coordinator.get_connection_value(uuid, BATTERY)
         if battery:
             for install_index in range(len(battery)):
                 for sensor_key in BUTTON_TYPES[BATTERY]:
@@ -91,7 +91,7 @@ class ZonneplanChargePointButton(CoordinatorEntity, ButtonEntity):
     @property
     def install_uuid(self) -> str:
         """Return install ID."""
-        return self.coordinator.getConnectionValue(
+        return self.coordinator.get_connection_value(
             self._connection_uuid,
             "charge_point_installation.{install_index}.uuid".format(
                 install_index=self._install_index
@@ -109,7 +109,7 @@ class ZonneplanChargePointButton(CoordinatorEntity, ButtonEntity):
         if not self.coordinator.last_update_success:
             return False
 
-        state = self.coordinator.getConnectionValue(self._connection_uuid, "charge_point_data.state")
+        state = self.coordinator.get_connection_value(self._connection_uuid, "charge_point_data.state")
 
         if not state["connectivity_state"]:
             return False
@@ -133,19 +133,19 @@ class ZonneplanChargePointButton(CoordinatorEntity, ButtonEntity):
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self._connection_uuid),
             "manufacturer": "Zonneplan",
-            "name": self.coordinator.getConnectionValue(
+            "name": self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
-            "model": self.coordinator.getConnectionValue(
+            "model": self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.label".format(
                     install_index=self._install_index
                 ),
             ),
-            "serial_number": self.coordinator.getConnectionValue(
+            "serial_number": self.coordinator.get_connection_value(
                 self._connection_uuid,
                 "charge_point_installation.{install_index}.meta.serial_number".format(
                     install_index=self._install_index
@@ -156,16 +156,16 @@ class ZonneplanChargePointButton(CoordinatorEntity, ButtonEntity):
     async def async_press(self) -> None:
         """Handle the button press."""
 
-        charge_point_uuid = self.coordinator.getConnectionValue(
+        charge_point_uuid = self.coordinator.get_connection_value(
             self._connection_uuid, "charge_point_data.uuid"
         )
 
         if self._button_key == "start":
-            await self.coordinator.async_startCharge(
+            await self.coordinator.async_start_charge(
                 self._connection_uuid, charge_point_uuid
             )
         elif self._button_key == "stop":
-            await self.coordinator.async_stopCharge(
+            await self.coordinator.async_stop_charge(
                 self._connection_uuid, charge_point_uuid
             )
         else:
@@ -204,7 +204,7 @@ class ZonneplanBatteryButton(ZonneplanBatteryEntity, ButtonEntity):
         if not self.coordinator.last_update_success:
             return False
 
-        control_mode = self.coordinator.getConnectionValue(self._connection_uuid, "battery_control_mode")
+        control_mode = self.coordinator.get_connection_value(self._connection_uuid, "battery_control_mode")
 
         if self._button_key == "enable_self_consumption" and control_mode["modes"]["self_consumption"]["available"] and not \
                 control_mode["modes"]["self_consumption"]["enabled"]:
