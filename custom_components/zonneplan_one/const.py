@@ -367,6 +367,52 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="gas_data.measurement_groups.0.date",
             ),
+
+
+            "electricity_delivery_costs_incl_tax": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups[type=days].meta.delivery_costs_incl_tax",
+                name="Electricity delivery costs this month",
+                value_factor=0.0000001,
+                device_class=SensorDeviceClass.MONETARY,
+                native_unit_of_measurement='EUR',
+                entity_registry_enabled_default=False,
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="electricity_data.measurement_groups.0.date",
+            ),
+            "electricity_production_costs_incl_tax": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups[type=months].meta.delivery_costs_incl_tax",
+                name="Electricity delivery costs this year",
+                value_factor=0.0000001,
+                device_class=SensorDeviceClass.MONETARY,
+                native_unit_of_measurement='EUR',
+                entity_registry_enabled_default=False,
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="electricity_data.measurement_groups.0.date",
+                none_value_behaviour=NONE_IS_ZERO,
+            ),
+
+            "electricity_delivery_costs_incl_tax": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups[type=days].meta.production_costs_incl_tax",
+                name="Electricity production costs this month",
+                value_factor=0.0000001,
+                device_class=SensorDeviceClass.MONETARY,
+                native_unit_of_measurement='EUR',
+                entity_registry_enabled_default=False,
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="electricity_data.measurement_groups.0.date",
+            ),
+            "electricity_production_costs_incl_tax": ZonneplanSensorEntityDescription(
+                key="electricity_data.measurement_groups[type=months].meta.production_costs_incl_tax",
+                name="Electricity production costs this year",
+                value_factor=0.0000001,
+                device_class=SensorDeviceClass.MONETARY,
+                native_unit_of_measurement='EUR',
+                entity_registry_enabled_default=False,
+                state_class=SensorStateClass.TOTAL,
+                last_reset_key="electricity_data.measurement_groups.0.date",
+                none_value_behaviour=NONE_IS_ZERO,
+            ),
+            
         },
         "install": {
             "electricity_last_measured_delivery_value": ZonneplanSensorEntityDescription(
