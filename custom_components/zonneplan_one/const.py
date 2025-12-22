@@ -2,7 +2,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from voluptuous.validators import Number
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
@@ -42,20 +41,20 @@ class Attribute:
     label: str
 
 
-@dataclass
+@dataclass(frozen=True, kw_only=True)
 class ZonneplanSensorEntityDescription(SensorEntityDescription):
     """A class that describes Zonneplan sensor entities."""
 
     entity_registry_enabled_default: bool = False
-    value_factor: Number = None
+    value_factor: float | None = None
     none_value_behaviour: str = ""
-    daily_update_hour: None | Number = None
+    daily_update_hour: int | None = None
     attributes: None | list[Attribute] = None
     last_reset_key: None | str = None
     has_entity_name: bool = True
 
 
-@dataclass
+@dataclass(frozen=True, kw_only=True)
 class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
     """A class that describes Zonneplan binary sensor entities."""
 
@@ -64,7 +63,7 @@ class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
     has_entity_name: bool = True
 
 
-@dataclass
+@dataclass(frozen=True, kw_only=True)
 class ZonneplanButtonEntityDescription(ButtonEntityDescription):
     """A class that describes Zonneplan button entities."""
 
@@ -73,7 +72,7 @@ class ZonneplanButtonEntityDescription(ButtonEntityDescription):
 
 
 """Available sensors"""
-SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
+SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, dict[str, ZonneplanSensorEntityDescription]]] = {
     SUMMARY: {
         "usage": ZonneplanSensorEntityDescription(
             key="summary_data.usage.value",
@@ -763,7 +762,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
     },
 }
 
-BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = {
+BINARY_SENSORS_TYPES: dict[str, dict[str, ZonneplanBinarySensorEntityDescription]] = {
     BATTERY: {
         "dynamic_charging_enabled": ZonneplanBinarySensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.dynamic_charging_enabled",
@@ -870,7 +869,7 @@ BINARY_SENSORS_TYPES: dict[str, list[ZonneplanBinarySensorEntityDescription]] = 
     }
 }
 
-BUTTON_TYPES: dict[str, list[ZonneplanButtonEntityDescription]] = {
+BUTTON_TYPES: dict[str, dict[str, ZonneplanButtonEntityDescription]] = {
     CHARGE_POINT: {
         "start": ZonneplanButtonEntityDescription(
             key="charge_point.start",
