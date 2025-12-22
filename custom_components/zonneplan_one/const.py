@@ -367,7 +367,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="gas_data.measurement_groups.0.date",
             ),
-            "electricity_delivery_costs_incl_tax": ZonneplanSensorEntityDescription(
+            "electricity_delivery_costs_this_month": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups[type=days].meta.delivery_costs_incl_tax",
                 name="Electricity delivery costs this month",
                 value_factor=0.0000001,
@@ -377,7 +377,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="electricity_data.measurement_groups.0.date",
             ),
-            "electricity_production_costs_incl_tax": ZonneplanSensorEntityDescription(
+            "electricity_delivery_costs_this_year": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups[type=months].meta.delivery_costs_incl_tax",
                 name="Electricity delivery costs this year",
                 value_factor=0.0000001,
@@ -388,7 +388,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 last_reset_key="electricity_data.measurement_groups.0.date",
                 none_value_behaviour=NONE_IS_ZERO,
             ),
-            "electricity_delivery_costs_incl_tax": ZonneplanSensorEntityDescription(
+            "electricity_production_costs_this_month": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups[type=days].meta.production_costs_incl_tax",
                 name="Electricity production costs this month",
                 value_factor=0.0000001,
@@ -398,7 +398,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="electricity_data.measurement_groups.0.date",
             ),
-            "electricity_production_costs_incl_tax": ZonneplanSensorEntityDescription(
+            "electricity_production_costs_this_year": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups[type=months].meta.production_costs_incl_tax",
                 name="Electricity production costs this year",
                 value_factor=0.0000001,
