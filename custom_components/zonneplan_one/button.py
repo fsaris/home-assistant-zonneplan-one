@@ -239,7 +239,7 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
             ) + (f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""),
             "model": self.coordinator.getConnectionValue(
                 self._connection_uuid,
-                "home_battery_installation.{install_index}.host_device_model_name".format(
+                "home_battery_installation.{install_index}.meta.host_device_model_name".format(
                     install_index=self._install_index
                 ),
             ),

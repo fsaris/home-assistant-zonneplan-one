@@ -6,7 +6,7 @@ import logging
 
 from ..const import VERSION
 
-APP_VERSION = "4.22.3"
+APP_VERSION = "5.10.1"
 LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"
 OAUTH2_TOKEN_URI = "https://app-api.zonneplan.nl/oauth/token"
 

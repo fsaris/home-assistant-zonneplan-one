@@ -55,6 +55,14 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             f"api/contracts/{contract_uuid}/home-battery/control-mode"
         )
 
+    async def async_get_battery_home_optimization(
+        self, contract_uuid: str
+    ) -> dict | None:
+        """Get battery control mode"""
+        return await self._async_get(
+            f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization"
+        )
+
     async def _async_get(self, path: str) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 
@@ -87,13 +95,15 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return response_json["data"]
 
-    async def async_post(self, connection_uuid: str, path: str) -> dict:
+    async def async_post(self, connection_uuid: str, path: str, params=None) -> dict:
+        if params is None:
+            params = {}
         _LOGGER.info("POST: %s", path)
 
         response = await self._oauth_session.async_request(
             "POST",
             "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
-            json={},
+            json=params,
             headers=self._request_headers,
         )
 
@@ -153,5 +163,5 @@ class ZonneplanOAuth2Implementation(
         return new_token
 
     async def async_generate_authorize_url(self, flow_id: str) -> str:
-        """Generate an url for the user to authorize."""
+        """Generate a url for the user to authorize."""
         return ""
