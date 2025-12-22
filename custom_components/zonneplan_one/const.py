@@ -2,6 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
+from homeassistant.components.number import NumberEntityDescription, NumberMode
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
@@ -67,6 +68,14 @@ class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
 @dataclass(frozen=True, kw_only=True)
 class ZonneplanButtonEntityDescription(ButtonEntityDescription):
     """A class that describes Zonneplan button entities."""
+
+    entity_registry_enabled_default: bool = True
+    has_entity_name: bool = True
+
+
+@dataclass(frozen=True, kw_only=True)
+class ZonneplanNumberEntityDescription(NumberEntityDescription):
+    """A class that describes Zonneplan number entities."""
 
     entity_registry_enabled_default: bool = True
     has_entity_name: bool = True
@@ -893,6 +902,19 @@ BUTTON_TYPES: dict[str, dict[str, ZonneplanButtonEntityDescription]] = {
         "enable_home_optimization": ZonneplanButtonEntityDescription(
             key="battery.enable_home_optimization",
             name="Enable Home optimization",
+        ),
+    }
+}
+
+NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
+    BATTERY: {
+        "max_desired_discharge_power_watts": ZonneplanNumberEntityDescription(
+            key="battery_home_optimization.max_desired_discharge_power_watts",
+            name="Max desired discharge power",
+        ),
+        "max_desired_charge_power_watts": ZonneplanNumberEntityDescription(
+            key="battery_home_optimization.max_desired_charge_power_watts",
+            name="Max desired charge power",
         ),
     }
 }

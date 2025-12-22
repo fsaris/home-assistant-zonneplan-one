@@ -14,7 +14,7 @@ from . import api, config_flow
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import DOMAIN
 
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON, Platform.NUMBER]
 
 _LOGGER = logging.getLogger(__name__)
 

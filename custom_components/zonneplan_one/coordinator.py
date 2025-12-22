@@ -449,6 +449,33 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
         return rv
 
+    def set_connection_value(self, connection_uuid: str, value_path: str, value: str | int):
+        if not connection_uuid in self.data:
+            return
+
+        keys = value_path.split(".")
+        rv = self.data[connection_uuid]
+        for key in keys[:-1]:
+            if rv is None:
+                return
+
+            if key.isdigit():
+                key = int(key)
+                if not type(rv) is list or len(rv) <= key:
+                    return
+
+            elif not key in rv:
+                return
+            rv = rv[key]
+
+        last_key = keys[-1]
+        if last_key.isdigit():
+            last_key = int(last_key)
+            if type(rv) is list and len(rv) > last_key:
+                rv[last_key] = value
+        else:
+            rv[last_key] = value
+
     async def _async_getChargePointData(self, connection_uuid: str, charge_point_uuid: str) -> dict:
         return await self.api.async_get(connection_uuid, "/charge-points/" + charge_point_uuid)
 
@@ -529,26 +556,50 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     async def async_enable_home_optimization(
             self, connection_uuid: str, install_index: int, battery_uuid: str
     ) -> None:
-        response = await self.api.async_post(
+        charge_power = self.getConnectionValue(
+            connection_uuid, "battery_home_optimization.max_desired_charge_power_watts"
+        )
+        discharge_power = self.getConnectionValue(
             connection_uuid,
-            "/home-battery-installation/" + battery_uuid + "/actions/enable_home_optimization",
+            "battery_home_optimization.max_desired_discharge_power_watts",
         )
 
-        if response:
-            if "max_desired_charge_power_w" in response:
-                self.data[connection_uuid]["battery_home_optimization"]["max_desired_discharge_power_watts"] = response["max_desired_charge_power_w"]
-            if "max_desired_charge_power_w" in response:
-                self.data[connection_uuid]["battery_home_optimization"]["max_desired_charge_power_watts"] = response["max_desired_charge_power_w"]
+        if (charge_power is None) ^ (discharge_power is None):
+            _LOGGER.info(
+                "skipped async_enable_home_optimization as only 1 param is set (need both or none): charge=%s, discharge=%s",
+                charge_power,
+                discharge_power,
+            )
+            return
+
+        params = {}
+        if charge_power is not None:
+            params = {
+                "max_desired_charge_power_w": charge_power,
+                "max_desired_discharge_power_w": discharge_power,
+            }
+
+        _LOGGER.info("async_enable_home_optimization: params %s", params)
+        response = await self.api.async_post(
+            connection_uuid,
+            f"/home-battery-installation/{battery_uuid}/actions/enable_home_optimization",
+            params
+        )
+
+        _LOGGER.debug("enable_home_optimization response: %s", response)
+
+        if "max_desired_discharge_power_w" in response:
+            self.data[connection_uuid]["battery_home_optimization"]["max_desired_discharge_power_watts"] = response["max_desired_discharge_power_w"]
+        if "max_desired_charge_power_w" in response:
+            self.data[connection_uuid]["battery_home_optimization"]["max_desired_charge_power_watts"] = response["max_desired_charge_power_w"]
 
         if self.getConnectionValue(connection_uuid, "battery_control_mode.modes.self_consumption.enabled"):
             await self.api.async_post(
                 connection_uuid,
-                "/home-battery-installation/" + battery_uuid + "/actions/disable_self_consumption",
+                f"/home-battery-installation/{battery_uuid}/actions/disable_self_consumption",
             )
 
         self.data[connection_uuid]["battery_control_mode"]["processing"] = True
-
-        self.async_update_listeners()
 
         await self.async_fetch_battery_control_mode(connection_uuid, battery_uuid)
 
@@ -585,4 +636,11 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         if battery_control_mode:
             self.data[connection_uuid]["battery_control_mode"] = battery_control_mode
             _LOGGER.info("battery_control_mode %s", battery_control_mode)
-            self.async_update_listeners()
+        else:
+            self.data[connection_uuid]["battery_control_mode"]["processing"] = False
+
+        battery_home_optimization = await self.api.async_get_battery_home_optimization(battery_uuid)
+        if battery_home_optimization:
+            self.data[connection_uuid]["battery_home_optimization"] = battery_home_optimization
+
+        self.async_update_listeners()

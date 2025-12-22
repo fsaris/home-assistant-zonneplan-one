@@ -13,11 +13,12 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class AsyncConfigEntryAuth(ZonneplanApi):
     def __init__(
-        self,
-        websession: ClientSession,
-        oauth_session: config_entry_oauth2_flow.OAuth2Session = None,
+            self,
+            websession: ClientSession,
+            oauth_session: config_entry_oauth2_flow.OAuth2Session = None,
     ):
         """Initialize Zonneplan auth."""
         super().__init__(websession)
@@ -39,7 +40,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         return await self._async_get("connections/" + connection_uuid + path)
 
     async def async_get_battery_chart(
-        self, contract_uuid: str, chart: str, chart_date: date
+            self, contract_uuid: str, chart: str, chart_date: date
     ) -> dict | None:
         """Get battery chart data for the given contract and date."""
         chart_date_str = chart_date.isoformat()
@@ -48,7 +49,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         )
 
     async def async_get_battery_control_mode(
-        self, contract_uuid: str
+            self, contract_uuid: str
     ) -> dict | None:
         """Get battery control mode"""
         return await self._async_get(
@@ -56,7 +57,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         )
 
     async def async_get_battery_home_optimization(
-        self, contract_uuid: str
+            self, contract_uuid: str
     ) -> dict | None:
         """Get battery control mode"""
         return await self._async_get(
@@ -98,7 +99,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
     async def async_post(self, connection_uuid: str, path: str, params=None) -> dict:
         if params is None:
             params = {}
-        _LOGGER.info("POST: %s", path)
+        _LOGGER.info("POST: %s?%s", path, params)
 
         response = await self._oauth_session.async_request(
             "POST",
