@@ -476,10 +476,6 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             key="battery_data.contracts.{install_index}.meta.inverter_state",
             name="Inverter state",
         ),
-        "manual_control_state": ZonneplanSensorEntityDescription(
-            key="battery_data.contracts.{install_index}.meta.manual_control_state",
-            name="Manual control state",
-        ),
         "total_earned": ZonneplanSensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.total_earned",
             name="Total",
