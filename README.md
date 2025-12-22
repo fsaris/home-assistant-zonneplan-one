@@ -125,7 +125,9 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Home optimization enabled `on/off`
   - Self consumption enabled `on/off`
   - Control mode `home_optimization/dynamic_charging/self_consumption`
-  - Buttons to set control mode
+  - Select to set control mode
+  - Max discharge power (Home optimization) `number input in: W`
+  - Max charge power (Home optimization) `number input in: W`
 
 </details>
 

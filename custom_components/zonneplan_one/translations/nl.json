@@ -29,5 +29,16 @@
       "failed_to_request_login": "Het opvragen van een login link ging mis *(controleer de logs)*",
       "no_password": "Nog een wachtwoord ontvangen *(heb je op de link uit de mail van Zonneplan geklikt?)*"
     }
+  },
+  "entity": {
+    "select": {
+      "battery_control_mode": {
+        "state": {
+          "dynamic_charging": "Powerplay",
+          "home_optimization": "Huisoptimalisatie",
+          "self_consumption": "Zelfconsumptie"
+        }
+      }
+    }
   }
 }

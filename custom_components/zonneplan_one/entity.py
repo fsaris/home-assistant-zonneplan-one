@@ -1,4 +1,6 @@
 """Zonneplan Battery Entity."""
+from typing import Optional
+
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -13,17 +15,20 @@ class ZonneplanBatteryEntity(CoordinatorEntity):
     _connection_uuid: str
     _install_index: int
     _battery_uuid: str
+    _key: str
 
     def __init__(
         self,
         coordinator: ZonneplanUpdateCoordinator,
         connection_uuid: str,
         install_index: int,
+        _key: str,
     ) -> None:
         """Initialize the entity."""
         super().__init__(coordinator)
         self._connection_uuid = connection_uuid
         self._install_index = install_index
+        self._key = _key
         self._battery_uuid = self.coordinator.get_connection_value(
             self._connection_uuid, f"home_battery_installation.{install_index}.uuid"
         )
@@ -35,6 +40,11 @@ class ZonneplanBatteryEntity(CoordinatorEntity):
             self._connection_uuid,
             f"home_battery_installation.{self._install_index}.uuid",
         )
+
+    @property
+    def unique_id(self) -> Optional[str]:
+        """Return a unique ID."""
+        return self.install_uuid + "_" + self._key
 
     @property
     def device_info(self) -> DeviceInfo:

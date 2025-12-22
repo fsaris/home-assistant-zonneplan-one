@@ -15,13 +15,11 @@ from homeassistant.components.button import (
 
 from .coordinator import ZonneplanUpdateCoordinator
 from .const import (
-    BATTERY,
     DOMAIN,
     CHARGE_POINT,
     BUTTON_TYPES,
     ZonneplanButtonEntityDescription,
 )
-from .entity import ZonneplanBatteryEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,20 +45,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
                             coordinator,
                             install_index,
                             BUTTON_TYPES[CHARGE_POINT][sensor_key],
-                        )
-                    )
-
-        battery = coordinator.get_connection_value(uuid, BATTERY)
-        if battery:
-            for install_index in range(len(battery)):
-                for sensor_key in BUTTON_TYPES[BATTERY]:
-                    entities.append(
-                        ZonneplanBatteryButton(
-                            uuid,
-                            sensor_key,
-                            coordinator,
-                            install_index,
-                            BUTTON_TYPES[BATTERY][sensor_key],
                         )
                     )
 
@@ -167,77 +151,6 @@ class ZonneplanChargePointButton(CoordinatorEntity, ButtonEntity):
         elif self._button_key == "stop":
             await self.coordinator.async_stop_charge(
                 self._connection_uuid, charge_point_uuid
-            )
-        else:
-            _LOGGER.warning("Unknown button action for %s", self._button_key)
-
-
-class ZonneplanBatteryButton(ZonneplanBatteryEntity, ButtonEntity):
-    """Class for a zonneplan battery button."""
-
-    coordinator: ZonneplanUpdateCoordinator
-    entity_description: ZonneplanButtonEntityDescription
-
-    def __init__(
-            self,
-            connection_uuid,
-            button_key: str,
-            coordinator: ZonneplanUpdateCoordinator,
-            install_index: int,
-            description: ZonneplanButtonEntityDescription,
-    ) -> None:
-        """Initialize the button."""
-        super().__init__(coordinator, connection_uuid, install_index)
-        self._connection_uuid = connection_uuid
-        self._button_key = button_key
-        self._install_index = install_index
-        self.entity_description = description
-
-    @property
-    def unique_id(self) -> Optional[str]:
-        """Return a unique ID."""
-        return self.install_uuid + "_" + self._button_key
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        if not self.coordinator.last_update_success:
-            return False
-
-        control_mode = self.coordinator.get_connection_value(self._connection_uuid, "battery_control_mode")
-
-        if self._button_key == "enable_self_consumption" and control_mode["modes"]["self_consumption"]["available"] and not \
-                control_mode["modes"]["self_consumption"]["enabled"]:
-            return True
-
-        if self._button_key == "enable_dynamic_charging" and control_mode["modes"]["dynamic_charging"]["available"] and (
-                control_mode["modes"]["self_consumption"]["enabled"] or control_mode["modes"]["home_optimization"]["enabled"]):
-            return True
-
-        if self._button_key == "enable_home_optimization" and control_mode["modes"]["home_optimization"]["available"] and not \
-                control_mode["modes"]["home_optimization"]["enabled"]:
-            return True
-
-        return False
-
-    async def async_press(self) -> None:
-        """Handle the button press."""
-
-        if not self._battery_uuid:
-            _LOGGER.warning("No battery UUID found for %s", self._button_key)
-            return
-
-        if self._button_key == "enable_self_consumption":
-            await self.coordinator.async_enable_self_consumption(
-                self._connection_uuid, self._install_index, self._battery_uuid
-            )
-        elif self._button_key == "enable_dynamic_charging":
-            await self.coordinator.async_enable_dynamic_charging(
-                self._connection_uuid, self._install_index, self._battery_uuid
-            )
-        elif self._button_key == "enable_home_optimization":
-            await self.coordinator.async_enable_home_optimization(
-                self._connection_uuid, self._install_index, self._battery_uuid
             )
         else:
             _LOGGER.warning("Unknown button action for %s", self._button_key)

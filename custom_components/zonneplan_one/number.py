@@ -1,4 +1,4 @@
-"""Zonneplan button"""
+"""Zonneplan number"""
 from typing import Optional
 
 from homeassistant.components.number import NumberEntity
@@ -57,8 +57,7 @@ class ZonneplanBatteryNumber(ZonneplanBatteryEntity, NumberEntity):
             description: ZonneplanNumberEntityDescription,
     ) -> None:
         """Initialize the button."""
-        super().__init__(coordinator, connection_uuid, install_index)
-        self._number_key = number_key
+        super().__init__(coordinator, connection_uuid, install_index, number_key)
         self.entity_description = description
 
         self._attr_native_min_value = self.coordinator.get_connection_value(
@@ -81,8 +80,3 @@ class ZonneplanBatteryNumber(ZonneplanBatteryEntity, NumberEntity):
         self.coordinator.set_connection_value(self._connection_uuid, self.entity_description.key.format(install_index=self._install_index), int(value))
 
         await self.coordinator.async_enable_home_optimization(self._connection_uuid, self._install_index, self._battery_uuid)
-
-    @property
-    def unique_id(self) -> Optional[str]:
-        """Return a unique ID."""
-        return self.install_uuid + "_" + self._number_key

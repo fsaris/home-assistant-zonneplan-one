@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from homeassistant.components.number import NumberEntityDescription
+from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
@@ -76,6 +77,14 @@ class ZonneplanButtonEntityDescription(ButtonEntityDescription):
 @dataclass(frozen=True, kw_only=True)
 class ZonneplanNumberEntityDescription(NumberEntityDescription):
     """A class that describes Zonneplan number entities."""
+
+    entity_registry_enabled_default: bool = True
+    has_entity_name: bool = True
+
+
+@dataclass(frozen=True, kw_only=True)
+class ZonneplanSelectEntityDescription(SelectEntityDescription):
+    """A class that describes Zonneplan select entities."""
 
     entity_registry_enabled_default: bool = True
     has_entity_name: bool = True
@@ -886,31 +895,27 @@ BUTTON_TYPES: dict[str, dict[str, ZonneplanButtonEntityDescription]] = {
             name="Stop charge",
         ),
     },
-    BATTERY: {
-        "enable_self_consumption": ZonneplanButtonEntityDescription(
-            key="battery.enable_self_consumption",
-            name="Enable self consumption",
-        ),
-        "enable_dynamic_charging": ZonneplanButtonEntityDescription(
-            key="battery.enable_dynamic_charging",
-            name="Enable powerplay",
-        ),
-        "enable_home_optimization": ZonneplanButtonEntityDescription(
-            key="battery.enable_home_optimization",
-            name="Enable Home optimization",
-        ),
-    }
 }
 
 NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
     BATTERY: {
         "max_desired_discharge_power_watts": ZonneplanNumberEntityDescription(
             key="battery_home_optimization.max_desired_discharge_power_watts",
-            name="Max desired discharge power",
+            name="Max discharge power (Home optimization)",
         ),
         "max_desired_charge_power_watts": ZonneplanNumberEntityDescription(
             key="battery_home_optimization.max_desired_charge_power_watts",
-            name="Max desired charge power",
+            name="Max charge power (Home optimization)",
         ),
+    }
+}
+
+SELECT_TYPES = {
+    BATTERY: {
+        "control_mode": ZonneplanSelectEntityDescription(
+            key="battery_control_mode.control_mode",
+            name="Battery control mode",
+            translation_key="battery_control_mode"
+        )
     }
 }
