@@ -376,6 +376,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="electricity_data.measurement_groups.0.date",
+                none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_delivery_costs_this_year": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups[type=months].meta.delivery_costs_incl_tax",
@@ -397,6 +398,7 @@ SENSOR_TYPES: dict[str, list[ZonneplanSensorEntityDescription]] = {
                 entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="electricity_data.measurement_groups.0.date",
+                none_value_behaviour=NONE_IS_ZERO,
             ),
             "electricity_production_costs_this_year": ZonneplanSensorEntityDescription(
                 key="electricity_data.measurement_groups[type=months].meta.production_costs_incl_tax",
