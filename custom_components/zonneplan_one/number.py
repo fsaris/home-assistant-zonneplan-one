@@ -69,7 +69,6 @@ class ZonneplanBatteryNumber(ZonneplanBatteryEntity, NumberEntity):
             self._connection_uuid,
             self.entity_description.key.format(install_index=self._install_index).replace("_watts", "_limits.max_watts"),
         ) or 2000
-        self._attr_native_step = 1
 
     @property
     def native_value(self) -> float:
