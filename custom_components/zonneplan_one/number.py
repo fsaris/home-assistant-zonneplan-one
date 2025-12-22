@@ -70,6 +70,16 @@ class ZonneplanBatteryNumber(ZonneplanBatteryEntity, NumberEntity):
         ) or 2000
 
     @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        if not self.coordinator.last_update_success:
+            return False
+
+        control_mode = self.coordinator.get_connection_value(self._connection_uuid, "battery_control_mode.control_mode")
+
+        return True if control_mode == "home_optimization" else False
+
+    @property
     def native_value(self) -> float:
         return self.coordinator.get_connection_value(
             self._connection_uuid,

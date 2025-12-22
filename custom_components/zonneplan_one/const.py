@@ -2,7 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from homeassistant.components.number import NumberEntityDescription
+from homeassistant.components.number import NumberEntityDescription, NumberMode
 from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -463,7 +463,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         "battery_control_mode": ZonneplanSensorEntityDescription(
             key="battery_control_mode.control_mode",
             name="Battery control mode",
-            entity_registry_enabled_default=True,
+            entity_registry_enabled_default=False,
         ),
         "state_of_charge": ZonneplanSensorEntityDescription(
             key="battery_data.contracts.{install_index}.meta.state_of_charge",
@@ -902,10 +902,14 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
         "max_desired_discharge_power_watts": ZonneplanNumberEntityDescription(
             key="battery_home_optimization.max_desired_discharge_power_watts",
             name="Max discharge power (Home optimization)",
+            mode=NumberMode.SLIDER,
+            native_step=100,
         ),
         "max_desired_charge_power_watts": ZonneplanNumberEntityDescription(
             key="battery_home_optimization.max_desired_charge_power_watts",
             name="Max charge power (Home optimization)",
+            mode=NumberMode.SLIDER,
+            native_step=100,
         ),
     }
 }
