@@ -35,6 +35,7 @@ NONE_USE_PREVIOUS = "none-is-previous"
 
 VERSION = "2025.12.0"
 
+
 @dataclass
 class Attribute:
     key: str

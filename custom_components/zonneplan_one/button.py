@@ -1,6 +1,7 @@
 """Zonneplan button"""
 from typing import Optional
 
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
@@ -70,6 +71,7 @@ class ZonneplanChargePointButton(CoordinatorEntity, ButtonEntity):
     """Abstract class for a zonneplan sensor."""
 
     coordinator: ZonneplanUpdateCoordinator
+    entity_description: ZonneplanButtonEntityDescription
 
     def __init__(
         self,
@@ -121,9 +123,12 @@ class ZonneplanChargePointButton(CoordinatorEntity, ButtonEntity):
         if self._button_key == "start" and state["state"] == "VehicleDetected":
             return True
 
+        return False
+
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
+
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self._connection_uuid),
@@ -171,6 +176,7 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
     """Class for a zonneplan battery button."""
 
     coordinator: ZonneplanUpdateCoordinator
+    entity_description: ZonneplanButtonEntityDescription
 
     def __init__(
         self,
@@ -225,8 +231,9 @@ class ZonneplanBatteryButton(CoordinatorEntity, ButtonEntity):
         return False
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
+
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self._connection_uuid),

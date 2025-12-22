@@ -5,13 +5,13 @@ from aiohttp import ClientSession
 
 import logging
 
+from .zonneplan_api.types import ZonneplanAccountsData
 from homeassistant.helpers import config_entry_oauth2_flow
 from .zonneplan_api.api import ZonneplanApi
 
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
-
 
 class AsyncConfigEntryAuth(ZonneplanApi):
     def __init__(
@@ -32,7 +32,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return self._oauth_session.token["access_token"]
 
-    async def async_get_user_accounts(self) -> dict | None:
+    async def async_get_user_accounts(self) -> ZonneplanAccountsData | None:
         return await self._async_get("user-accounts/me")
 
     async def async_get(self, connection_uuid: str, path: str) -> dict | None:

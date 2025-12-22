@@ -11,8 +11,8 @@ import inspect
 import os
 from aiohttp.client_exceptions import ClientResponseError
 
-from homeassistant.core import ( 
-    HassJob, 
+from homeassistant.core import (
+    HassJob,
     HomeAssistant
 )
 from homeassistant.helpers.debounce import Debouncer
@@ -34,9 +34,10 @@ def getGasPriceFromSummary(summary):
 
     for hour in summary["price_per_hour"]:
         if "gas_price" in hour:
-           return hour["gas_price"]
+            return hour["gas_price"]
 
     return None
+
 
 def getNextGasPriceFromSummary(summary):
     if not "price_per_hour" in summary:
@@ -52,13 +53,14 @@ def getNextGasPriceFromSummary(summary):
 
     return None
 
+
 class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
     """Zonneplan status update coordinator"""
 
     def __init__(
-        self,
-        hass: HomeAssistant,
-        api: AsyncConfigEntryAuth,
+            self,
+            hass: HomeAssistant,
+            api: AsyncConfigEntryAuth,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -80,6 +82,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
         self._test_file = None
         self._last_battery_chart_fetch: dict[str, datetime] = {}
+
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
@@ -101,7 +104,6 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
             return result
 
-
         result = self.data
         accounts = None
 
@@ -112,14 +114,15 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if not accounts and not result:
                 return result
         else:
-            _LOGGER.debug("Last time accounts are fetched: %s, next time to fetch: %s", self.last_accounts_update, self.last_accounts_update + timedelta(minutes=59))
+            _LOGGER.debug("Last time accounts are fetched: %s, next time to fetch: %s", self.last_accounts_update,
+                          self.last_accounts_update + timedelta(minutes=59))
 
         if accounts:
             self.last_accounts_update = dt_util.now()
             _LOGGER.info("_async_update_data: parse addresses")
             # Flatten all found connections
-            for address_group in accounts["address_groups"]:
-                for connection in address_group["connections"]:
+            for address_group in accounts.get("address_groups") or []:
+                for connection in address_group.get("connections") or []:
                     if not connection["uuid"] in result:
                         result[connection["uuid"]] = {
                             "uuid": connection["uuid"],
@@ -170,7 +173,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             # Electricity summary also contains gas data - only need to retrieve summary once
             # Prevent duplicate sensors being setup if there is also an electricity contract
             if (
-                "electricity" in connection or "gas" in connection
+                    "electricity" in connection or "gas" in connection
             ) and summary_retrieved == False:
                 summary_retrieved = True
                 summary = await self.api.async_get(uuid, "/summary")
@@ -208,7 +211,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         return result
 
     async def _async_enrich_battery_charts(
-        self, battery_data: dict | None, existing_battery_data: dict | None = None
+            self, battery_data: dict | None, existing_battery_data: dict | None = None
     ) -> None:
         """Fetch and attach chart data for battery contracts."""
         if not battery_data or not battery_data.get("contracts"):
@@ -226,9 +229,9 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 continue
 
             existing_charts = (
-                contract.get("charts")
-                or self._get_existing_battery_charts(existing_battery_data, contract_uuid)
-                or {}
+                    contract.get("charts")
+                    or self._get_existing_battery_charts(existing_battery_data, contract_uuid)
+                    or {}
             )
             charts = dict(existing_charts)
 
@@ -243,7 +246,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 contract_uuid, "months", current_year_date
             )
             if months_this_year and (
-                parsed := self._parse_month_chart(months_this_year, current_year_date.year)
+                    parsed := self._parse_month_chart(months_this_year, current_year_date.year)
             ):
                 charts["this_year"] = parsed
                 fetched = True
@@ -252,7 +255,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 contract_uuid, "months", last_year_date
             )
             if months_last_year and (
-                parsed := self._parse_month_chart(months_last_year, last_year_date.year)
+                    parsed := self._parse_month_chart(months_last_year, last_year_date.year)
             ):
                 charts["last_year"] = parsed
                 fetched = True
@@ -261,7 +264,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 contract_uuid, "days", current_month_date
             )
             if days_this_month and (
-                parsed := self._parse_day_chart(days_this_month, current_month_date)
+                    parsed := self._parse_day_chart(days_this_month, current_month_date)
             ):
                 charts["this_month"] = parsed
                 fetched = True
@@ -270,7 +273,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 contract_uuid, "days", last_month_date
             )
             if days_last_month and (
-                parsed := self._parse_day_chart(days_last_month, last_month_date)
+                    parsed := self._parse_day_chart(days_last_month, last_month_date)
             ):
                 charts["last_month"] = parsed
                 fetched = True
@@ -283,7 +286,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 contract["charts"] = existing_charts
 
     def _merge_battery_charts(
-        self, existing_battery_data: dict | None, new_battery_data: dict | None
+            self, existing_battery_data: dict | None, new_battery_data: dict | None
     ) -> None:
         """Carry over previously fetched charts when the API returns 304."""
         if not existing_battery_data or not new_battery_data:
@@ -305,7 +308,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 contract["charts"] = previous_contract["charts"]
 
     def _get_existing_battery_charts(
-        self, battery_data: dict | None, contract_uuid: str
+            self, battery_data: dict | None, contract_uuid: str
     ) -> dict | None:
         contract = self._get_battery_contract(battery_data, contract_uuid)
         if contract:
@@ -313,7 +316,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         return None
 
     def _get_battery_contract(
-        self, battery_data: dict | None, contract_uuid: str
+            self, battery_data: dict | None, contract_uuid: str
     ) -> dict | None:
         if not battery_data:
             return None
@@ -447,7 +450,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         return rv
 
     async def _async_getChargePointData(self, connection_uuid: str, charge_point_uuid: str) -> dict:
-        return await self.api.async_get(connection_uuid, "/charge-points/" + charge_point_uuid )
+        return await self.api.async_get(connection_uuid, "/charge-points/" + charge_point_uuid)
 
     async def async_updateChargePointData(self, connection_uuid: str, charge_point_uuid: str) -> None:
         charge_point = await self._async_getChargePointData(connection_uuid, charge_point_uuid)
@@ -456,7 +459,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             self.async_update_listeners()
 
     async def async_startCharge(
-        self, connection_uuid: str, charge_point_uuid: str
+            self, connection_uuid: str, charge_point_uuid: str
     ) -> None:
         await self.api.async_post(
             connection_uuid,
@@ -469,7 +472,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         await self.async_fetchChargePointData()
 
     async def async_stopCharge(
-        self, connection_uuid: str, charge_point_uuid: str
+            self, connection_uuid: str, charge_point_uuid: str
     ) -> None:
         await self.api.async_post(
             connection_uuid,
@@ -483,7 +486,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         await self.async_fetchChargePointData()
 
     async def async_enable_self_consumption(
-        self, connection_uuid: str, install_index: int, battery_uuid: str
+            self, connection_uuid: str, install_index: int, battery_uuid: str
     ) -> None:
         await self.api.async_post(
             connection_uuid,
@@ -503,7 +506,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         await self.async_fetch_battery_control_mode(connection_uuid, battery_uuid)
 
     async def async_enable_dynamic_charging(
-        self, connection_uuid: str, install_index: int, battery_uuid: str
+            self, connection_uuid: str, install_index: int, battery_uuid: str
     ) -> None:
 
         if self.getConnectionValue(connection_uuid, "battery_control_mode.modes.home_optimization.enabled"):
@@ -524,7 +527,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         await self.async_fetch_battery_control_mode(connection_uuid, battery_uuid)
 
     async def async_enable_home_optimization(
-        self, connection_uuid: str, install_index: int, battery_uuid: str
+            self, connection_uuid: str, install_index: int, battery_uuid: str
     ) -> None:
         response = await self.api.async_post(
             connection_uuid,
@@ -568,7 +571,6 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             charge_point_uuid = self.getConnectionValue(connection_uuid, "charge_point_data.uuid")
             if processing and charge_point_uuid:
                 await self.async_updateChargePointData(connection_uuid, charge_point_uuid)
-
 
         if self._processing_charge_point_update():
             self._delayed_fetch_charge_point = async_call_later(

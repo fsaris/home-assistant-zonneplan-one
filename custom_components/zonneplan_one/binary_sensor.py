@@ -1,13 +1,14 @@
 """Zonneplan binary sensor"""
 from typing import Optional, Any
-from voluptuous.validators import Number
 
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
 import logging
-from homeassistant.core import ( 
-    callback, 
+from collections.abc import Mapping
+from homeassistant.core import (
+    callback,
     HomeAssistant
 )
 from homeassistant.helpers.restore_state import RestoreEntity
@@ -87,13 +88,14 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
     """Abstract class for a zonneplan sensor."""
 
     coordinator: ZonneplanUpdateCoordinator
+    entity_description: ZonneplanBinarySensorEntityDescription
 
     def __init__(
             self,
             connection_uuid,
             sensor_key: str,
             coordinator: ZonneplanUpdateCoordinator,
-            install_index: Number,
+            install_index: int,
             description: ZonneplanBinarySensorEntityDescription,
     ):
         """Initialize the sensor."""
@@ -133,10 +135,10 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
         return bool(is_on)
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
 
         if not self.entity_description.attributes:
-            return
+            return None
 
         attrs = {}
         for attribute in self.entity_description.attributes:
@@ -165,8 +167,9 @@ class ZonneplanPvBinarySensor(ZonneplanBinarySensor):
             )
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
+
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self._connection_uuid),
@@ -212,8 +215,9 @@ class ZonneplanChargePointBinarySensor(ZonneplanBinarySensor):
             )
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
+
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self._connection_uuid),
@@ -254,8 +258,9 @@ class ZonneplanBatteryBinarySensor(ZonneplanBinarySensor):
             )
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
+
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self._connection_uuid),

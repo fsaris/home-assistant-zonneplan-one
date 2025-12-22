@@ -1,16 +1,17 @@
 """Zonneplan Sensor"""
 from typing import Optional, Any
-from voluptuous.validators import Number
 from datetime import datetime
 from pytz import timezone
 
+from collections.abc import Mapping
 
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
 import logging
-from homeassistant.core import ( 
-    callback, 
+from homeassistant.core import (
+    callback,
     HomeAssistant
 )
 from homeassistant.helpers.restore_state import RestoreEntity
@@ -144,14 +145,15 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
     """Abstract class for a zonneplan sensor."""
 
     coordinator: ZonneplanUpdateCoordinator
+    entity_description: ZonneplanSensorEntityDescription
 
     def __init__(
-        self,
-        connection_uuid,
-        sensor_key: str,
-        coordinator: ZonneplanUpdateCoordinator,
-        install_index: Number,
-        description: ZonneplanSensorEntityDescription,
+            self,
+            connection_uuid,
+            sensor_key: str,
+            coordinator: ZonneplanUpdateCoordinator,
+            install_index: int,
+            description: ZonneplanSensorEntityDescription,
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
@@ -173,7 +175,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         return self.install_uuid + "_" + self._sensor_key
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
         return {
             "identifiers": {(DOMAIN, self._connection_uuid)},
@@ -204,8 +206,8 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         value = self._value_from_coordinator()
 
         if (
-            value is None
-            and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS
+                value is None
+                and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS
         ):
             return
 
@@ -256,9 +258,10 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         return False
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
+
         if not self.entity_description.attributes:
-            return
+            return None
 
         attrs = {}
         for attribute in self.entity_description.attributes:
@@ -266,7 +269,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
                 self._connection_uuid,
                 attribute.key.format(install_index=self._install_index),
             )
-            _LOGGER.debug(f"Update {self.name}.attribute[{attribute.label}]: {value}")
+            _LOGGER.debug(f'Update {self.name}.attribute[{attribute.label}]: {value}')
             attrs[attribute.label] = value
 
         return attrs
@@ -278,8 +281,8 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         )
 
         if (
-            value is None
-            and self.entity_description.none_value_behaviour == NONE_IS_ZERO
+                value is None
+                and self.entity_description.none_value_behaviour == NONE_IS_ZERO
         ):
             value = 0
 
@@ -289,9 +292,9 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
                 if isinstance(value, str):
                     value = dt_util.parse_datetime(value)
                 elif value > 100000000000000:
-                    value = datetime.fromtimestamp(value/1000000, timezone('Europe/Amsterdam'))
+                    value = datetime.fromtimestamp(value / 1000000, timezone('Europe/Amsterdam'))
                 else:
-                    value = datetime.fromtimestamp(value/1000, timezone('Europe/Amsterdam'))
+                    value = datetime.fromtimestamp(value / 1000, timezone('Europe/Amsterdam'))
 
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
@@ -316,9 +319,9 @@ class ZonneplanPvSensor(ZonneplanSensor):
             )
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
-        device_info = {
+        device_info: DeviceInfo = {
             "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
             "name": "Zonneplan",
@@ -353,23 +356,23 @@ class ZonneplanPvSensor(ZonneplanSensor):
                 ),
             )
             device_info["sw_version"] = str(
-                    self.coordinator.getConnectionValue(
-                        self._connection_uuid,
-                        "pv_installation.{install_index}.meta.module_firmware_version".format(
-                            install_index=self._install_index
-                        ),
-                    )
-                    or "unknown"
+                self.coordinator.getConnectionValue(
+                    self._connection_uuid,
+                    "pv_installation.{install_index}.meta.module_firmware_version".format(
+                        install_index=self._install_index
+                    ),
                 )
+                or "unknown"
+            )
             device_info["hw_version"] = str(
-                    self.coordinator.getConnectionValue(
-                        self._connection_uuid,
-                        "pv_installation.{install_index}.meta.inverter_firmware_version".format(
-                            install_index=self._install_index
-                        ),
-                    )
-                    or "unknown"
+                self.coordinator.getConnectionValue(
+                    self._connection_uuid,
+                    "pv_installation.{install_index}.meta.inverter_firmware_version".format(
+                        install_index=self._install_index
+                    ),
                 )
+                or "unknown"
+            )
 
         return device_info
 
@@ -389,9 +392,10 @@ class ZonneplanP1Sensor(ZonneplanSensor):
             )
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
-        device_info = {
+
+        device_info: DeviceInfo = {
             "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
             "name": "Zonneplan",
@@ -443,9 +447,9 @@ class ZonneplanChargePointSensor(ZonneplanSensor):
             )
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
-        device_info = {
+        device_info: DeviceInfo = {
             "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
             "name": "Zonneplan",
@@ -491,9 +495,9 @@ class ZonneplanBatterySensor(ZonneplanSensor):
             )
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
-        device_info = {
+        device_info: DeviceInfo = {
             "identifiers": {(DOMAIN, self._connection_uuid)},
             "manufacturer": "Zonneplan",
             "name": "Zonneplan",
