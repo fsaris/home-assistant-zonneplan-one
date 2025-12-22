@@ -904,12 +904,14 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
             name="Max discharge power (Home optimization)",
             mode=NumberMode.SLIDER,
             native_step=100,
+            icon="mdi:battery-arrow-down-outline",
         ),
         "max_desired_charge_power_watts": ZonneplanNumberEntityDescription(
             key="battery_home_optimization.max_desired_charge_power_watts",
             name="Max charge power (Home optimization)",
             mode=NumberMode.SLIDER,
             native_step=100,
+            icon="mdi:battery-arrow-up-outline",
         ),
     }
 }
@@ -919,7 +921,8 @@ SELECT_TYPES = {
         "control_mode": ZonneplanSelectEntityDescription(
             key="battery_control_mode.control_mode",
             name="Battery control mode",
-            translation_key="battery_control_mode"
+            translation_key="battery_control_mode",
+            icon="mdi:battery-sync-outline",
         )
     }
 }
