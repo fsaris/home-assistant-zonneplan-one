@@ -29,5 +29,16 @@
       "failed_to_request_login": "Failed to request login link *(check logs)*",
       "no_password": "No password received yet *(did you follow the link from the email?)*"
     }
+  },
+  "entity": {
+    "select": {
+      "battery_control_mode": {
+        "state": {
+          "dynamic_charging": "Dynamic charging",
+          "home_optimization": "Home optimization",
+          "self_consumption": "Self consumption"
+        }
+      }
+    }
   }
 }

@@ -6,7 +6,7 @@ import logging
 
 from ..const import VERSION
 
-APP_VERSION = "4.22.3"
+APP_VERSION = "5.10.1"
 LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"
 OAUTH2_TOKEN_URI = "https://app-api.zonneplan.nl/oauth/token"
 
@@ -23,16 +23,15 @@ class ZonneplanApi:
             "x-ha-integration": VERSION,
         }
 
-    async def async_request_temp_pass(self, email: str) -> str:
+    async def async_request_temp_pass(self, email: str) -> str | None:
         try:
             timeout = aiohttp.ClientTimeout(total=10)
             async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with await session.post(
-                    LOGIN_REQUEST_URI,
-                    json={"email": email},
-                    headers=self._request_headers,
+                        LOGIN_REQUEST_URI,
+                        json={"email": email},
+                        headers=self._request_headers,
                 ) as response:
-
                     response.raise_for_status()
                     _LOGGER.debug("ZonneplanAPI validated status: %s (%s)", response.status, response)
 
@@ -54,9 +53,8 @@ class ZonneplanApi:
             timeout = aiohttp.ClientTimeout(total=10)
             async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.get(
-                    LOGIN_REQUEST_URI + "/" + uuid, headers=self._request_headers
+                        LOGIN_REQUEST_URI + "/" + uuid, headers=self._request_headers
                 ) as response:
-
                     response.raise_for_status()
                     _LOGGER.debug("Temporary password validated status: %s (%s)", response.status, response)
 
@@ -71,10 +69,10 @@ class ZonneplanApi:
         _LOGGER.debug("Temporary password response status: %s", response.status)
 
         if (
-            "data" in response_json
-            and "is_activated" in response_json["data"]
-            and response_json["data"]["is_activated"]
-            and "password" in response_json["data"]
+                "data" in response_json
+                and "is_activated" in response_json["data"]
+                and response_json["data"]["is_activated"]
+                and "password" in response_json["data"]
         ):
             grant_params = {
                 "grant_type": "one_time_password",
@@ -98,12 +96,11 @@ class ZonneplanApi:
         timeout = aiohttp.ClientTimeout(total=30)
         async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.post(
-                OAUTH2_TOKEN_URI,
-                headers=self._request_headers,
-                json=grant_params,
-                allow_redirects=True,
+                    OAUTH2_TOKEN_URI,
+                    headers=self._request_headers,
+                    json=grant_params,
+                    allow_redirects=True,
             ) as response:
-
                 _LOGGER.debug("ZonneplanAPI oAuth Token response header: %s", response.headers)
                 _LOGGER.debug("ZonneplanAPI oAuth Token response status: %s", response.status)
 

@@ -29,5 +29,363 @@
       "failed_to_request_login": "Het opvragen van een login link ging mis *(controleer de logs)*",
       "no_password": "Nog een wachtwoord ontvangen *(heb je op de link uit de mail van Zonneplan geklikt?)*"
     }
+  },
+  "entity": {
+    "sensor": {
+      "usage": {
+        "name": "Huidig verbruik"
+      },
+      "usage_measured_at": {
+        "name": "Huidig verbruik gemeten op"
+      },
+      "sustainability_score": {
+        "name": "Duurzaamheidsscore"
+      },
+      "current_tariff_group": {
+        "name": "Huidige tariefgroep",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
+      },
+      "current_electricity_tariff": {
+        "name": "Huidig elektriciteitstarief"
+      },
+      "current_gas_tariff": {
+        "name": "Huidig gastarief"
+      },
+      "next_gas_tariff": {
+        "name": "Volgend gastarief"
+      },
+      "status_message": {
+        "name": "Statusbericht"
+      },
+      "status_tip": {
+        "name": "Statustip"
+      },
+      "forecast_tariff_hour_1": {
+        "name": "Verwacht tarief uur 1"
+      },
+      "forecast_tariff_hour_2": {
+        "name": "Verwacht tarief uur 2"
+      },
+      "forecast_tariff_hour_3": {
+        "name": "Verwacht tarief uur 3"
+      },
+      "forecast_tariff_hour_4": {
+        "name": "Verwacht tarief uur 4"
+      },
+      "forecast_tariff_hour_5": {
+        "name": "Verwacht tarief uur 5"
+      },
+      "forecast_tariff_hour_6": {
+        "name": "Verwacht tarief uur 6"
+      },
+      "forecast_tariff_hour_7": {
+        "name": "Verwacht tarief uur 7"
+      },
+      "forecast_tariff_hour_8": {
+        "name": "Verwacht tarief uur 8"
+      },
+      "forecast_tariff_group_hour_1": {
+        "name": "Verwachte tariefgroep uur 1"
+      },
+      "forecast_tariff_group_hour_2": {
+        "name": "Verwachte tariefgroep uur 2"
+      },
+      "forecast_tariff_group_hour_3": {
+        "name": "Verwachte tariefgroep uur 3"
+      },
+      "forecast_tariff_group_hour_4": {
+        "name": "Verwachte tariefgroep uur 4"
+      },
+      "forecast_tariff_group_hour_5": {
+        "name": "Verwachte tariefgroep uur 5"
+      },
+      "forecast_tariff_group_hour_6": {
+        "name": "Verwachte tariefgroep uur 6"
+      },
+      "forecast_tariff_group_hour_7": {
+        "name": "Verwachte tariefgroep uur 7"
+      },
+      "forecast_tariff_group_hour_8": {
+        "name": "Verwachte tariefgroep uur 8"
+      },
+      "yield_total": {
+        "name": "Opbrengst totaal"
+      },
+      "last_measured_value": {
+        "name": "Laatst gemeten waarde"
+      },
+      "first_measured": {
+        "name": "Eerst gemeten"
+      },
+      "last_measured": {
+        "name": "Laatst gemeten"
+      },
+      "powerplay_total": {
+        "name": "Powerplay totaal"
+      },
+      "powerplay_today": {
+        "name": "Powerplay vandaag"
+      },
+      "yield_today": {
+        "name": "Opbrengst vandaag"
+      },
+      "electricity_consumption_today": {
+        "name": "Elektriciteitsverbruik vandaag"
+      },
+      "electricity_returned_today": {
+        "name": "Elektriciteit teruggeleverd vandaag"
+      },
+      "electricity_delivery_costs_today": {
+        "name": "Elektriciteitsleveringskosten vandaag"
+      },
+      "electricity_delivery_costs_this_month": {
+        "name": "Elektriciteitsleveringskosten deze maand"
+      },
+      "electricity_delivery_costs_this_year": {
+        "name": "Elektriciteitsleveringskosten dit jaar"
+      },
+      "electricity_production_costs_today": {
+        "name": "Elektriciteitsproductiekosten vandaag"
+      },
+      "electricity_production_costs_this_month": {
+        "name": "Elektriciteitsproductiekosten deze maand"
+      },
+      "electricity_production_costs_this_year": {
+        "name": "Elektriciteitsproductiekosten dit jaar"
+      },
+      "gas_consumption_today": {
+        "name": "Gasverbruik vandaag"
+      },
+      "gas_delivery_costs_today": {
+        "name": "Gasleveringskosten vandaag"
+      },
+      "electricity_consumption": {
+        "name": "Elektriciteitsverbruik"
+      },
+      "electricity_production": {
+        "name": "Elektriciteitsproductie"
+      },
+      "electricity_average": {
+        "name": "Elektriciteitsgemiddelde"
+      },
+      "electricity_first_measured": {
+        "name": "Elektriciteit eerst gemeten"
+      },
+      "electricity_last_measured": {
+        "name": "Elektriciteitverbruik laatst gemeten"
+      },
+      "electricity_last_measured_production": {
+        "name": "Elektriciteit terug levering laatst gemeten"
+      },
+      "gas_first_measured": {
+        "name": "Gas eerst gemeten"
+      },
+      "gas_last_measured": {
+        "name": "Gas laatst gemeten"
+      },
+      "dsmr_version": {
+        "name": "DSMR versie"
+      },
+      "battery_state": {
+        "name": "Batterijstatus",
+        "state": {
+          "Operative": "Stand-by",
+          "Charging": "Opladen",
+          "Discharging": "Ontladen"
+        }
+      },
+      "battery_control_mode": {
+        "name": "Batterijbesturingsmodus",
+        "state": {
+          "dynamic_charging": "Powerplay",
+          "home_optimization": "Huisoptimalisatie",
+          "self_consumption": "Zelfconsumptie"
+        }
+      },
+      "state_of_charge": {
+        "name": "Percentage"
+      },
+      "power": {
+        "name": "Vermogen"
+      },
+      "inverter_state": {
+        "name": "Omvormerstatus",
+        "state": {
+          "Operative": "In werking"
+        }
+      },
+      "total_earned": {
+        "name": "Totaal verdiend"
+      },
+      "result_this_year": {
+        "name": "Resultaat dit jaar"
+      },
+      "result_last_year": {
+        "name": "Resultaat vorig jaar"
+      },
+      "total_day": {
+        "name": "Vandaag"
+      },
+      "average_day": {
+        "name": "Gemiddelde dag"
+      },
+      "result_this_month": {
+        "name": "Resultaat deze maand"
+      },
+      "result_last_month": {
+        "name": "Resultaat vorige maand"
+      },
+      "delivery_today": {
+        "name": "Levering vandaag"
+      },
+      "production_today": {
+        "name": "Productie vandaag"
+      },
+      "battery_cycles": {
+        "name": "Batterijcycli"
+      },
+      "charge_point_state": {
+        "name": "Laadpaalstatus",
+        "state": {
+          "Charging": "Opladen",
+          "Standby": "Stand-by",
+          "VehicleDetected": "Voertuig gedetecteerd"
+        }
+      },
+      "charge_point_power": {
+        "name": "Laadpaalvermogen"
+      },
+      "charge_point_energy_delivered_session": {
+        "name": "Laadpaal energie geleverd sessie"
+      },
+      "charge_point_session_cost": {
+        "name": "Laadpaal sessiekosten"
+      },
+      "charge_point_cost_total": {
+        "name": "Laadpaal kosten totaal"
+      },
+      "charge_point_session_flex_result": {
+        "name": "Laadpaal sessie flex resultaat"
+      },
+      "charge_point_session_average_costs": {
+        "name": "Laadpaal sessie gemiddelde kosten"
+      },
+      "charge_point_next_schedule_start": {
+        "name": "Laadpaal volgende schema start"
+      },
+      "charge_point_next_schedule_end": {
+        "name": "Laadpaal volgende schema einde"
+      },
+      "charge_point_dynamic_load_balancing_health": {
+        "name": "Laadpaal dynamic load balancing gezondheid"
+      },
+      "charge_point_start_mode": {
+        "name": "Laadpaal startmodus"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Laadpaal dynamic load gewenste afstand"
+      },
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Laadpaal dynamic load gewenste eindtijd"
+      },
+      "charge_point_session_start_time": {
+        "name": "Laadpaal sessie starttijd"
+      },
+      "charge_point_session_charged_distance": {
+        "name": "Laadpaal sessie geladen afstand"
+      }
+    },
+    "binary_sensor": {
+      "dynamic_charging_enabled": {
+        "name": "Powerplay"
+      },
+      "dynamic_load_balancing_enabled": {
+        "name": "Dynamische load balancing ingeschakeld"
+      },
+      "dynamic_load_balancing_overload_active": {
+        "name": "Dynamische load balancing overbelasting"
+      },
+      "manual_control_enabled": {
+        "name": "Handmatige bediening ingeschakeld"
+      },
+      "self_consumption_enabled": {
+        "name": "Zelfconsumptie ingeschakeld"
+      },
+      "home_optimization_enabled": {
+        "name": "Huisoptimalisatie ingeschakeld"
+      },
+      "home_optimization_active": {
+        "name": "Huisoptimalisatie"
+      },
+      "grid_congestion_active": {
+        "name": "Netcongestie"
+      },
+      "powerplay_enabled": {
+        "name": "Powerplay"
+      },
+      "power_limit_active": {
+        "name": "Vermogenslimiet"
+      },
+      "charge_point_connectivity_state": {
+        "name": "Laadpaal verbindingsstatus"
+      },
+      "charge_point_can_charge": {
+        "name": "Laadpaal kan laden"
+      },
+      "charge_point_can_schedule": {
+        "name": "Laadpaal kan plannen"
+      },
+      "charge_point_charging_manually": {
+        "name": "Laadpaal handmatig laden"
+      },
+      "charge_point_charging_automatically": {
+        "name": "Laadpaal automatisch laden"
+      },
+      "charge_point_plug_and_charge": {
+        "name": "Laadpaal plug and charge"
+      },
+      "charge_point_overload_protection_active": {
+        "name": "Laadpaal overbelastingsbeveiliging actief"
+      },
+      "charge_point_dynamic_charging_enabled": {
+        "name": "Laadpaal Powerplay ingeschakeld"
+      },
+      "charge_point_dynamic_charging_flex_enabled": {
+        "name": "Laadpaal Powerplay flex ingeschakeld"
+      },
+      "charge_point_dynamic_charging_flex_suppressed": {
+        "name": "Laadpaal Powerplay flex onderdrukt"
+      }
+    },
+    "button": {
+      "start_charge": {
+        "name": "Start laden"
+      },
+      "stop_charge": {
+        "name": "Stop laden"
+      }
+    },
+    "number": {
+      "max_discharge_power": {
+        "name": "Leveren aan huis (Huisoptimalisatie)"
+      },
+      "max_charge_power": {
+        "name": "Zonnestroom opslaan (Huisoptimalisatie)"
+      }
+    },
+    "select": {
+      "battery_control_mode": {
+        "name": "Batterijbesturingsmodus",
+        "state": {
+          "dynamic_charging": "Powerplay",
+          "home_optimization": "Huisoptimalisatie",
+          "self_consumption": "Zelfconsumptie"
+        }
+      }
+    }
   }
 }
