@@ -131,7 +131,7 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
             self.entity_description.key.format(install_index=self._install_index),
         )
 
-        _LOGGER.debug("update binary sensor %s [%s]", self.name, is_on)
+        _LOGGER.debug("update binary sensor %s [%s]", self.unique_id, is_on)
         return bool(is_on)
 
     @property
@@ -146,7 +146,7 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
                 self._connection_uuid,
                 attribute.key.format(install_index=self._install_index),
             )
-            _LOGGER.debug(f'Update {self.name}.attribute[{attribute.label}]: {value}')
+            _LOGGER.debug(f'Update {self.unique_id}.attribute[{attribute.label}]: {value}')
             attrs[attribute.label] = value
 
         return attrs

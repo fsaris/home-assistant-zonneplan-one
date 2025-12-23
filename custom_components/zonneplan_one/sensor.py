@@ -197,7 +197,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         if value:
             value = dt_util.parse_datetime(value)
 
-        _LOGGER.debug(f"Last update {self.name}: {value}")
+        _LOGGER.debug(f"Last update {self.unique_id}: {value}")
 
         return value
 
@@ -213,11 +213,11 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
 
         if self.skip_update_based_on_daily_update_hour():
             _LOGGER.info(
-                f"Skip update {self.name} until {self.entity_description.daily_update_hour}h"
+                f"Skip update {self.unique_id} until {self.entity_description.daily_update_hour}h"
             )
             return
 
-        _LOGGER.debug(f"Update {self.name}: {value}")
+        _LOGGER.debug(f"Update {self.unique_id}: {value}")
 
         self._attr_native_value = value
         self.async_write_ha_state()
@@ -244,14 +244,14 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
         # Is it time already to update the value today? No then we skip
         if update_today > dt_util.now():
             _LOGGER.debug(
-                f"Skipped update {self.name}: {update_today} (update today) > {dt_util.now()} (now)"
+                f"Skipped update {self.unique_id}: {update_today} (update today) > {dt_util.now()} (now)"
             )
             return True
 
         # Already updated today after daily_update_hour? Then skip
         if dt_util.as_local(state.last_updated) >= update_today:
             _LOGGER.debug(
-                f"Skipped update {self.name}: {dt_util.as_local(state.last_updated)} (last update) >= {update_today} (update today)"
+                f"Skipped update {self.unique_id}: {dt_util.as_local(state.last_updated)} (last update) >= {update_today} (update today)"
             )
             return True
 
@@ -269,7 +269,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
                 self._connection_uuid,
                 attribute.key.format(install_index=self._install_index),
             )
-            _LOGGER.debug(f'Update {self.name}.attribute[{attribute.label}]: {value}')
+            _LOGGER.debug(f'Update {self.unique_id}.attribute[{attribute.label}]: {value}')
             attrs[attribute.label] = value
 
         return attrs
@@ -299,7 +299,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity):
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
 
-        _LOGGER.debug(f"Value {self.name}: {value} [{raw_value}]")
+        _LOGGER.debug(f"Value {self.unique_id}: {value} [{raw_value}]")
 
         return value
 
