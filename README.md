@@ -44,7 +44,11 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - Current electricity usage
    - Sustainability score
    - Electricity delivery costs today
+   - Electricity delivery costs this month
+   - Electricity delivery costs this year
    - Electricity production costs today
+   - Electricity production costs this month
+   - Electricity production costs this year
    - Gas delivery costs today
 </details>
      
