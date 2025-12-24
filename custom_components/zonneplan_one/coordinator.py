@@ -158,7 +158,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         result = self.data
         accounts = None
 
-        _LOGGER.info("_async_update_data: start")
+        _LOGGER.debug("_async_update_data: start")
         # Get all info of all connections (part of your account info)
         if not result or not self.last_accounts_update or self.last_accounts_update < dt_util.now() - timedelta(minutes=59):
             accounts = await self.api.async_get_user_accounts()
@@ -170,7 +170,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
 
         if accounts:
             self.last_accounts_update = dt_util.now()
-            _LOGGER.info("_async_update_data: parse addresses")
+            _LOGGER.debug("_async_update_data: parse addresses")
             # Flatten all found connections
             for address_group in accounts.get("address_groups") or []:
                 for connection in address_group.get("connections") or []:
@@ -200,7 +200,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                             result[connection["uuid"]][contract["type"]] = []
                         result[connection["uuid"]][contract["type"]].append(contract)
 
-        _LOGGER.info("_async_update_data: fetch live data")
+        _LOGGER.debug("_async_update_data: fetch live data")
 
         # Update last live data for each connection
         summary_retrieved = False
@@ -256,7 +256,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 if battery_home_optimization:
                     result[uuid]["battery_home_optimization"] = battery_home_optimization
 
-        _LOGGER.info("_async_update_data: done")
+        _LOGGER.debug("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
 
         return result
