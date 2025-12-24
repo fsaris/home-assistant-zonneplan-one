@@ -274,6 +274,36 @@
       },
       "charge_point_session_charged_distance": {
         "name": "Charge point session charged distance"
+      },
+      "electricity_home_consumption_delivery_costs_this_month": {
+        "name": "Delivery costs this month"
+      },
+      "electricity_home_consumption_delivery_costs_this_year": {
+        "name": "Delivery costs this year"
+      },
+      "electricity_home_consumption_production_costs_this_month": {
+        "name": "Production costs this month"
+      },
+      "electricity_home_consumption_production_costs_this_year": {
+        "name": "Production costs this year"
+      },
+      "electricity_home_consumption_energy_delivered_sum_today": {
+        "name": "Delivery today"
+      },
+      "electricity_home_consumption_energy_delivered_sum_this_month": {
+        "name": "Delivery this month"
+      },
+      "electricity_home_consumption_energy_delivered_sum_this_year": {
+        "name": "Delivery this year"
+      },
+      "electricity_home_consumption_energy_produced_sum_today": {
+        "name": "Production today"
+      },
+      "electricity_home_consumption_energy_produced_sum_this_month": {
+        "name": "Production this month"
+      },
+      "electricity_home_consumption_energy_produced_sum_this_year": {
+        "name": "Production this year"
       }
     },
     "binary_sensor": {

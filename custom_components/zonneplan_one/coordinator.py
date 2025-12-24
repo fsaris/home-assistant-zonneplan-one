@@ -29,7 +29,7 @@ BATTERY_CHART_UPDATE_INTERVAL = timedelta(hours=12)
 
 
 def get_gas_price_from_summary(summary):
-    if not "price_per_hour" in summary:
+    if "price_per_hour" not in summary:
         return None
 
     for hour in summary["price_per_hour"]:
@@ -40,7 +40,7 @@ def get_gas_price_from_summary(summary):
 
 
 def get_next_gas_price_from_summary(summary):
-    if not "price_per_hour" in summary:
+    if "price_per_hour" not in summary:
         return None
 
     first_price_found = False
@@ -174,7 +174,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             # Flatten all found connections
             for address_group in accounts.get("address_groups") or []:
                 for connection in address_group.get("connections") or []:
-                    if not connection["uuid"] in result:
+                    if connection["uuid"] not in result:
                         result[connection["uuid"]] = {
                             "uuid": connection["uuid"],
                             "pv_data": {},
@@ -196,7 +196,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                         del result[connection["uuid"]]["home_battery_installation"]
 
                     for contract in connection["contracts"]:
-                        if not contract["type"] in result[connection["uuid"]]:
+                        if contract["type"] not in result[connection["uuid"]]:
                             result[connection["uuid"]][contract["type"]] = []
                         result[connection["uuid"]][contract["type"]].append(contract)
 
@@ -225,7 +225,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             # Prevent duplicate sensors being setup if there is also an electricity contract
             if (
                     "electricity" in connection or "gas" in connection
-            ) and summary_retrieved == False:
+            ) and not summary_retrieved:
                 summary_retrieved = True
                 summary = await self.api.async_get(uuid, "/summary")
                 if summary:
@@ -255,6 +255,12 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 battery_home_optimization = await self.api.async_get_battery_home_optimization(connection["home_battery_installation"][0]["uuid"])
                 if battery_home_optimization:
                     result[uuid]["battery_home_optimization"] = battery_home_optimization
+
+                electricity_home_consumption = await self.api.async_get(uuid, "/electricity-home-consumption")
+                if electricity_home_consumption:
+                    result[uuid]["electricity_home_consumption"] = electricity_home_consumption
+                    # result[uuid]["electricity_home_consumption"]["today"] = electricity_home_consumption["measurement_groups"][2]["measurements"][-1]
+                    
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
@@ -423,7 +429,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         return self.data
 
     def get_connection_value(self, connection_uuid: str, value_path: str):
-        if not connection_uuid in self.data:
+        if connection_uuid not in self.data:
             return None
 
         keys = value_path.split(".")
@@ -433,9 +439,9 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 _LOGGER.info("No value for %s part (%s)", value_path, key)
                 return None
 
-            if key.isdigit():
+            if key.lstrip('-').isdigit():
                 key = int(key)
-                if not type(rv) is list or len(rv) <= key:
+                if not type(rv) is list or (key >=0 and len(rv) <= key) or (key < 0 and -len(rv) > key):
                     _LOGGER.info(
                         "Could not find %d of %s",
                         key,
@@ -444,7 +450,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                     _LOGGER.debug(" in %s %s", rv, type(rv))
                     return None
 
-            elif not key in rv:
+            elif key not in rv:
                 _LOGGER.info("Could not find %s of %s", key, value_path)
                 _LOGGER.debug("in %s", rv)
                 return None
@@ -453,7 +459,7 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
         return rv
 
     def set_connection_value(self, connection_uuid: str, value_path: str, value: str | int):
-        if not connection_uuid in self.data:
+        if connection_uuid not in self.data:
             return
 
         keys = value_path.split(".")
@@ -462,13 +468,14 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
             if rv is None:
                 return
 
-            if key.isdigit():
+            if key.lstrip('-').isdigit():
                 key = int(key)
-                if not type(rv) is list or len(rv) <= key:
+                if not type(rv) is list or (key >= 0 and len(rv) <= key) or (key < 0 and -len(rv) > key):
                     return
 
-            elif not key in rv:
+            elif key not in rv:
                 return
+
             rv = rv[key]
 
         last_key = keys[-1]
