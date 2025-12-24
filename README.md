@@ -13,7 +13,7 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - Solar panels: _(available when you have 1 or more Zonneplan solar inverters)_
      - Yield today: `kWh` (combined yield of all Zonneplan solar inverters) _(can be used as entity on Energy Dashboard)_
    - General energy values: _(available when there is a Zonneplan Connect P1 reader)_
-     - Electricity consumed today: `kWh` _(can be used as entity on Energy Dashboard)_
+     - Electricity consumption today: `kWh` _(can be used as entity on Energy Dashboard)_
      - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
      - Gas consumption today: `m³`
 
@@ -30,6 +30,13 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - Electricity last measured production: `date`
    - Gas first measured: `date` _(default disabled)_
    - Gas last measured: `date`
+   - Electricity delivery costs today: `€` _(default disabled)_
+   - Electricity delivery costs this month: `€` _(default disabled)_
+   - Electricity delivery costs this year: `€` _(default disabled)_
+   - Electricity production costs today: `€` _(default disabled)_
+   - Electricity production costs this month: `€` _(default disabled)_
+   - Electricity production costs this year: `€` _(default disabled)_
+   - Gas delivery costs today: `€` _(default disabled)_
 </details>
 
 ### Zonneplan Energy contract related:
@@ -40,16 +47,14 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
        - The full Electricity forecast is available as a forecast attribute of this sensor
    - Current Zonneplan Gas tariff: `€/m³`
    - Next Zonneplan Gas tariff: `€/m³` 
-   - 8 hours forecast of Zonneplan Electricity tariff: `€/kWh` _(default disabled, available when you have a energy contract)_
-   - Current electricity usage
+   - Forecast electricity tariff hour 1-8: `€/kWh` _(default disabled)_
+   - Forecast tariff group hour 1-8 _(default disabled)_
+   - Current usage: `W`
+   - Current usage measured at: `date` _(default disabled)_
+   - Current tariff group _(default disabled)_
    - Sustainability score
-   - Electricity delivery costs today
-   - Electricity delivery costs this month
-   - Electricity delivery costs this year
-   - Electricity production costs today
-   - Electricity production costs this month
-   - Electricity production costs this year
-   - Gas delivery costs today
+   - Status message _(default disabled)_
+   - Status tip
 </details>
      
 ### Zonneplan Solar inverter:
@@ -112,16 +117,14 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Production today `kWh`
   - Today `€`
   - Total `€`
-  - This month `€`
-  - Last month `€`
-  - This year `€`
-  - Last year `€`
-  - Dynamic charging enabled `on/off`
+  - Result this month `€`
+  - Result last month `€`
+  - Result this year `€`
+  - Result last year `€`
   - Dynamic load balancing overload active `on/off`
-  - Dynamic load balancing overload enabled `on/off`
+  - Dynamic load balancing enabled `on/off`
   - Manual control enabled `on/off`
   - Inverter state _(default disabled)_
-  - Manual control state _(default disabled)_
   - First measured `datetime` _(default disabled)_
   - Last measured `datetime`
   - Grid congestion active `on/off`
