@@ -29,5 +29,340 @@
       "failed_to_request_login": "Failed to request login link *(check logs)*",
       "no_password": "No password received yet *(did you follow the link from the email?)*"
     }
+  },
+  "entity": {
+    "sensor": {
+      "usage": {
+        "name": "Current usage"
+      },
+      "usage_measured_at": {
+        "name": "Current usage measured at"
+      },
+      "sustainability_score": {
+        "name": "Sustainability score"
+      },
+      "current_tariff_group": {
+        "name": "Current tariff group"
+      },
+      "current_electricity_tariff": {
+        "name": "Current electricity tariff"
+      },
+      "current_gas_tariff": {
+        "name": "Current gas tariff"
+      },
+      "next_gas_tariff": {
+        "name": "Next gas tariff"
+      },
+      "status_message": {
+        "name": "Status message"
+      },
+      "status_tip": {
+        "name": "Status tip"
+      },
+      "forecast_tariff_hour_1": {
+        "name": "Forecast tariff hour 1"
+      },
+      "forecast_tariff_hour_2": {
+        "name": "Forecast tariff hour 2"
+      },
+      "forecast_tariff_hour_3": {
+        "name": "Forecast tariff hour 3"
+      },
+      "forecast_tariff_hour_4": {
+        "name": "Forecast tariff hour 4"
+      },
+      "forecast_tariff_hour_5": {
+        "name": "Forecast tariff hour 5"
+      },
+      "forecast_tariff_hour_6": {
+        "name": "Forecast tariff hour 6"
+      },
+      "forecast_tariff_hour_7": {
+        "name": "Forecast tariff hour 7"
+      },
+      "forecast_tariff_hour_8": {
+        "name": "Forecast tariff hour 8"
+      },
+      "forecast_tariff_group_hour_1": {
+        "name": "Forecast tariff group hour 1"
+      },
+      "forecast_tariff_group_hour_2": {
+        "name": "Forecast tariff group hour 2"
+      },
+      "forecast_tariff_group_hour_3": {
+        "name": "Forecast tariff group hour 3"
+      },
+      "forecast_tariff_group_hour_4": {
+        "name": "Forecast tariff group hour 4"
+      },
+      "forecast_tariff_group_hour_5": {
+        "name": "Forecast tariff group hour 5"
+      },
+      "forecast_tariff_group_hour_6": {
+        "name": "Forecast tariff group hour 6"
+      },
+      "forecast_tariff_group_hour_7": {
+        "name": "Forecast tariff group hour 7"
+      },
+      "forecast_tariff_group_hour_8": {
+        "name": "Forecast tariff group hour 8"
+      },
+      "yield_total": {
+        "name": "Yield total"
+      },
+      "last_measured_value": {
+        "name": "Last measured value"
+      },
+      "first_measured": {
+        "name": "First measured"
+      },
+      "last_measured": {
+        "name": "Last measured"
+      },
+      "powerplay_total": {
+        "name": "Powerplay total"
+      },
+      "powerplay_today": {
+        "name": "Powerplay today"
+      },
+      "yield_today": {
+        "name": "Yield today"
+      },
+      "electricity_consumption_today": {
+        "name": "Electricity consumption today"
+      },
+      "electricity_returned_today": {
+        "name": "Electricity returned today"
+      },
+      "electricity_delivery_costs_today": {
+        "name": "Electricity delivery costs today"
+      },
+      "electricity_delivery_costs_this_month": {
+        "name": "Electricity delivery costs this month"
+      },
+      "electricity_delivery_costs_this_year": {
+        "name": "Electricity delivery costs this year"
+      },
+      "electricity_production_costs_today": {
+        "name": "Electricity production costs today"
+      },
+      "electricity_production_costs_this_month": {
+        "name": "Electricity production costs this month"
+      },
+      "electricity_production_costs_this_year": {
+        "name": "Electricity production costs this year"
+      },
+      "gas_consumption_today": {
+        "name": "Gas consumption today"
+      },
+      "gas_delivery_costs_today": {
+        "name": "Gas delivery costs today"
+      },
+      "electricity_consumption": {
+        "name": "Electricity consumption"
+      },
+      "electricity_production": {
+        "name": "Electricity production"
+      },
+      "electricity_average": {
+        "name": "Electricity average"
+      },
+      "electricity_first_measured": {
+        "name": "Electricity first measured"
+      },
+      "electricity_last_measured": {
+        "name": "Electricity last measured"
+      },
+      "electricity_last_measured_production": {
+        "name": "Electricity last measured production"
+      },
+      "gas_first_measured": {
+        "name": "Gas first measured"
+      },
+      "gas_last_measured": {
+        "name": "Gas last measured"
+      },
+      "dsmr_version": {
+        "name": "Dsmr version"
+      },
+      "battery_state": {
+        "name": "Battery state"
+      },
+      "battery_control_mode": {
+        "name": "Battery control mode"
+      },
+      "state_of_charge": {
+        "name": "Percentage"
+      },
+      "power": {
+        "name": "Power"
+      },
+      "inverter_state": {
+        "name": "Inverter state"
+      },
+      "total_earned": {
+        "name": "Total"
+      },
+      "result_this_year": {
+        "name": "Result this year"
+      },
+      "result_last_year": {
+        "name": "Result last year"
+      },
+      "total_day": {
+        "name": "Today"
+      },
+      "average_day": {
+        "name": "Average day"
+      },
+      "result_this_month": {
+        "name": "Result this month"
+      },
+      "result_last_month": {
+        "name": "Result last month"
+      },
+      "delivery_today": {
+        "name": "Delivery today"
+      },
+      "production_today": {
+        "name": "Production today"
+      },
+      "battery_cycles": {
+        "name": "Battery cycles"
+      },
+      "charge_point_state": {
+        "name": "Charge point state"
+      },
+      "charge_point_power": {
+        "name": "Charge point power"
+      },
+      "charge_point_energy_delivered_session": {
+        "name": "Charge point energy delivered session"
+      },
+      "charge_point_session_cost": {
+        "name": "Charge point session cost"
+      },
+      "charge_point_cost_total": {
+        "name": "Charge point cost total"
+      },
+      "charge_point_session_flex_result": {
+        "name": "Charge point session flex result"
+      },
+      "charge_point_session_average_costs": {
+        "name": "Charge point session average costs"
+      },
+      "charge_point_next_schedule_start": {
+        "name": "Charge point next schedule start"
+      },
+      "charge_point_next_schedule_end": {
+        "name": "Charge point next schedule end"
+      },
+      "charge_point_dynamic_load_balancing_health": {
+        "name": "Charge point dynamic load balancing health"
+      },
+      "charge_point_start_mode": {
+        "name": "Charge point start mode"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Charge point dynamic load desired distance"
+      },
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Charge point dynamic load desired end time"
+      },
+      "charge_point_session_start_time": {
+        "name": "Charge point session start time"
+      },
+      "charge_point_session_charged_distance": {
+        "name": "Charge point session charged distance"
+      }
+    },
+    "binary_sensor": {
+      "dynamic_charging_enabled": {
+        "name": "Powerplay"
+      },
+      "dynamic_load_balancing_enabled": {
+        "name": "Dynamic load balancing enabled"
+      },
+      "dynamic_load_balancing_overload_active": {
+        "name": "Dynamic load balancing overload active"
+      },
+      "manual_control_enabled": {
+        "name": "Manual control enabled"
+      },
+      "self_consumption_enabled": {
+        "name": "Self consumption enabled"
+      },
+      "home_optimization_enabled": {
+        "name": "Home optimization enabled"
+      },
+      "home_optimization_active": {
+        "name": "Home optimization active"
+      },
+      "grid_congestion_active": {
+        "name": "Grid congestion active"
+      },
+      "powerplay_enabled": {
+        "name": "Powerplay enabled"
+      },
+      "power_limit_active": {
+        "name": "Power limit active"
+      },
+      "charge_point_connectivity_state": {
+        "name": "Charge point connectivity state"
+      },
+      "charge_point_can_charge": {
+        "name": "Charge point can charge"
+      },
+      "charge_point_can_schedule": {
+        "name": "Charge point can schedule"
+      },
+      "charge_point_charging_manually": {
+        "name": "Charge point charging manually"
+      },
+      "charge_point_charging_automatically": {
+        "name": "Charge point charging automatically"
+      },
+      "charge_point_plug_and_charge": {
+        "name": "Charge point plug and charge"
+      },
+      "charge_point_overload_protection_active": {
+        "name": "Charge point overload protection active"
+      },
+      "charge_point_dynamic_charging_enabled": {
+        "name": "Charge point dynamic charging enabled"
+      },
+      "charge_point_dynamic_charging_flex_enabled": {
+        "name": "Charge point dynamic charging flex enabled"
+      },
+      "charge_point_dynamic_charging_flex_suppressed": {
+        "name": "Charge point dynamic charging flex suppressed"
+      }
+    },
+    "button": {
+      "start_charge": {
+        "name": "Start charge"
+      },
+      "stop_charge": {
+        "name": "Stop charge"
+      }
+    },
+    "number": {
+      "max_discharge_power": {
+        "name": "Max discharge power (Home optimization)"
+      },
+      "max_charge_power": {
+        "name": "Max charge power (Home optimization)"
+      }
+    },
+    "select": {
+      "battery_control_mode": {
+        "name": "Battery control mode",
+        "state": {
+          "dynamic_charging": "Dynamic charging",
+          "home_optimization": "Home optimization",
+          "self_consumption": "Self consumption"
+        }
+      }
+    }
   }
 }

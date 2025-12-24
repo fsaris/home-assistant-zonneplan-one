@@ -5,6 +5,7 @@ from aiohttp import ClientSession
 
 import logging
 
+from .zonneplan_api.types import ZonneplanAccountsData
 from homeassistant.helpers import config_entry_oauth2_flow
 from .zonneplan_api.api import ZonneplanApi
 
@@ -15,9 +16,9 @@ _LOGGER = logging.getLogger(__name__)
 
 class AsyncConfigEntryAuth(ZonneplanApi):
     def __init__(
-        self,
-        websession: ClientSession,
-        oauth_session: config_entry_oauth2_flow.OAuth2Session = None,
+            self,
+            websession: ClientSession,
+            oauth_session: config_entry_oauth2_flow.OAuth2Session = None,
     ):
         """Initialize Zonneplan auth."""
         super().__init__(websession)
@@ -32,19 +33,35 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return self._oauth_session.token["access_token"]
 
-    async def async_get_user_accounts(self) -> dict | None:
+    async def async_get_user_accounts(self) -> ZonneplanAccountsData | None:
         return await self._async_get("user-accounts/me")
 
     async def async_get(self, connection_uuid: str, path: str) -> dict | None:
         return await self._async_get("connections/" + connection_uuid + path)
 
     async def async_get_battery_chart(
-        self, contract_uuid: str, chart: str, chart_date: date
+            self, contract_uuid: str, chart: str, chart_date: date
     ) -> dict | None:
         """Get battery chart data for the given contract and date."""
         chart_date_str = chart_date.isoformat()
         return await self._async_get(
             f"contracts/{contract_uuid}/home_battery_installation/charts/{chart}?date={chart_date_str}"
+        )
+
+    async def async_get_battery_control_mode(
+            self, contract_uuid: str
+    ) -> dict | None:
+        """Get battery control mode"""
+        return await self._async_get(
+            f"api/contracts/{contract_uuid}/home-battery/control-mode"
+        )
+
+    async def async_get_battery_home_optimization(
+            self, contract_uuid: str
+    ) -> dict | None:
+        """Get battery control mode"""
+        return await self._async_get(
+            f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization"
         )
 
     async def _async_get(self, path: str) -> dict | None:
@@ -79,13 +96,15 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return response_json["data"]
 
-    async def async_post(self, connection_uuid: str, path: str) -> dict:
-        _LOGGER.info("POST: %s", path)
+    async def async_post(self, connection_uuid: str, path: str, params=None) -> dict:
+        if params is None:
+            params = {}
+        _LOGGER.info("POST: %s?%s", path, params)
 
         response = await self._oauth_session.async_request(
             "POST",
             "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
-            json={},
+            json=params,
             headers=self._request_headers,
         )
 
@@ -93,6 +112,10 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
 
         response.raise_for_status()
+
+        # 204 No Content successful response
+        if response.status == 204:
+            return {'ok': True}
 
         response_json = await response.json()
 
@@ -141,5 +164,5 @@ class ZonneplanOAuth2Implementation(
         return new_token
 
     async def async_generate_authorize_url(self, flow_id: str) -> str:
-        """Generate an url for the user to authorize."""
+        """Generate a url for the user to authorize."""
         return ""
