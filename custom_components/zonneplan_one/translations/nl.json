@@ -134,34 +134,34 @@
         "name": "Opbrengst vandaag"
       },
       "electricity_consumption_today": {
-        "name": "Elektriciteitsverbruik vandaag"
+        "name": "Verbruik vandaag"
       },
       "electricity_returned_today": {
-        "name": "Elektriciteit teruggeleverd vandaag"
+        "name": "Teruggeleverd vandaag"
       },
       "electricity_delivery_costs_today": {
-        "name": "Elektriciteitsleveringskosten vandaag"
+        "name": "Afname vandaag"
       },
       "electricity_delivery_costs_this_month": {
-        "name": "Elektriciteitsleveringskosten deze maand"
+        "name": "Afname deze maand"
       },
       "electricity_delivery_costs_this_year": {
-        "name": "Elektriciteitsleveringskosten dit jaar"
+        "name": "Afname dit jaar"
       },
       "electricity_production_costs_today": {
-        "name": "Elektriciteitsproductiekosten vandaag"
+        "name": "Teruglevering vandaag"
       },
       "electricity_production_costs_this_month": {
-        "name": "Elektriciteitsproductiekosten deze maand"
+        "name": "Teruglevering deze maand"
       },
       "electricity_production_costs_this_year": {
-        "name": "Elektriciteitsproductiekosten dit jaar"
+        "name": "Teruglevering dit jaar"
       },
       "gas_consumption_today": {
         "name": "Gasverbruik vandaag"
       },
       "gas_delivery_costs_today": {
-        "name": "Gasleveringskosten vandaag"
+        "name": "Gas afname vandaag"
       },
       "electricity_consumption": {
         "name": "Elektriciteitsverbruik"
