@@ -259,8 +259,6 @@ class ZonneplanUpdateCoordinator(DataUpdateCoordinator):
                 electricity_home_consumption = await self.api.async_get(uuid, "/electricity-home-consumption")
                 if electricity_home_consumption:
                     result[uuid]["electricity_home_consumption"] = electricity_home_consumption
-                    # result[uuid]["electricity_home_consumption"]["today"] = electricity_home_consumption["measurement_groups"][2]["measurements"][-1]
-                    
 
         _LOGGER.info("_async_update_data: done")
         _LOGGER.debug("Result %s", result)
