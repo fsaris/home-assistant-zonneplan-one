@@ -121,6 +121,16 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Result last month `€`
   - Result this year `€`
   - Result last year `€`
+  - Net delivery costs this month `€` _(default disabled)_
+  - Net delivery costs this year `€` _(default disabled)_
+  - Net production costs this month `€` _(default disabled)_
+  - Net production costs this year `€` _(default disabled)_
+  - Net delivery today `kWh` 
+  - Net delivery this month `kWh`
+  - Net delivery this year `kWh`
+  - Net production today `kWh`
+  - Net production this month `kWh`
+  - Net production this year `kWh` 
   - Dynamic load balancing overload active `on/off`
   - Dynamic load balancing enabled `on/off`
   - Manual control enabled `on/off`

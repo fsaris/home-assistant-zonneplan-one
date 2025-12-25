@@ -299,34 +299,34 @@
         "name": "Laadpaal sessie geladen afstand"
       },
       "electricity_home_consumption_delivery_costs_this_month": {
-        "name": "Afname deze maand"
+        "name": "Netto afname deze maand"
       },
       "electricity_home_consumption_delivery_costs_this_year": {
-        "name": "Afname dit jaar"
+        "name": "Netto afname dit jaar"
       },
       "electricity_home_consumption_production_costs_this_month": {
-        "name": "Teruggeleverd deze maand"
+        "name": "Netto teruggeleverd deze maand"
       },
       "electricity_home_consumption_production_costs_this_year": {
-        "name": "Teruggeleverd dit jaar"
+        "name": "Netto teruggeleverd dit jaar"
       },
       "electricity_home_consumption_energy_delivered_sum_today": {
-        "name": "Afname vandaag"
+        "name": "Netto afname vandaag"
       },
       "electricity_home_consumption_energy_delivered_sum_this_month": {
-        "name": "Afname deze maand"
+        "name": "Netto afname deze maand"
       },
       "electricity_home_consumption_energy_delivered_sum_this_year": {
-        "name": "Afname dit jaar"
+        "name": "Netto afname dit jaar"
       },
       "electricity_home_consumption_energy_produced_sum_today": {
-        "name": "Teruggeleverd vandaag"
+        "name": "Netto teruggeleverd vandaag"
       },
       "electricity_home_consumption_energy_produced_sum_this_month": {
-        "name": "Teruggeleverd deze maand"
+        "name": "Netto teruggeleverd deze maand"
       },
       "electricity_home_consumption_energy_produced_sum_this_year": {
-        "name": "Teruggeleverd dit jaar"
+        "name": "Netto teruggeleverd dit jaar"
       }
     },
     "binary_sensor": {
