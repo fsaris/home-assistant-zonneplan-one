@@ -222,10 +222,10 @@
         "name": "Totaal verdiend"
       },
       "result_this_year": {
-        "name": "Resultaat dit jaar"
+        "name": "Opbrengst dit jaar"
       },
       "result_last_year": {
-        "name": "Resultaat vorig jaar"
+        "name": "Opbrengst vorig jaar"
       },
       "total_day": {
         "name": "Vandaag"
@@ -234,10 +234,10 @@
         "name": "Gemiddelde dag"
       },
       "result_this_month": {
-        "name": "Resultaat deze maand"
+        "name": "Opbrengst deze maand"
       },
       "result_last_month": {
-        "name": "Resultaat vorige maand"
+        "name": "Opbrengst vorige maand"
       },
       "delivery_today": {
         "name": "Levering vandaag"
