@@ -24,6 +24,7 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
+    address_uuid: str
     connection_uuid: str
     contracts: list[ZonneplanContract]
 
@@ -31,6 +32,7 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             self,
             hass: HomeAssistant,
             api: AsyncConfigEntryAuth,
+            address_uuid: str,
             connection_uuid: str,
             contracts: list[ZonneplanContract],
     ) -> None:
@@ -49,6 +51,7 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         )
 
         self.api: AsyncConfigEntryAuth = api
+        self.address_uuid = address_uuid
         self.connection_uuid = connection_uuid
         self.contracts = contracts
 

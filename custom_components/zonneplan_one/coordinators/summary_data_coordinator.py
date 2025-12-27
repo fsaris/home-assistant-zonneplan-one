@@ -50,11 +50,13 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
     contract: ZonneplanContract
+    address_uuid: str
 
     def __init__(
             self,
             hass: HomeAssistant,
             api: AsyncConfigEntryAuth,
+            address_uuid: str,
             connection_uuid: str,
             contract: ZonneplanContract,
     ) -> None:
@@ -63,7 +65,7 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=300),
+            update_interval=timedelta(minutes=15),
             request_refresh_debouncer=Debouncer(
                 hass,
                 _LOGGER,
@@ -73,6 +75,7 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         )
 
         self.api: AsyncConfigEntryAuth = api
+        self.address_uuid = address_uuid
         self.connection_uuid = connection_uuid
         self.contract = contract
 

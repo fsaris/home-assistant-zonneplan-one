@@ -25,12 +25,14 @@ class PvDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
     connection_uuid: str
+    address_uuid: str
     contracts: list[ZonneplanContract]
 
     def __init__(
             self,
             hass: HomeAssistant,
             api: AsyncConfigEntryAuth,
+            address_uuid: str,
             connection_uuid: str,
             contracts: list[ZonneplanContract],
     ) -> None:
@@ -49,6 +51,7 @@ class PvDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         )
 
         self.api: AsyncConfigEntryAuth = api
+        self.address_uuid = address_uuid
         self.connection_uuid = connection_uuid
         self.contracts = contracts
 

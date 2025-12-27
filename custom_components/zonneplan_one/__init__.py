@@ -77,32 +77,48 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         "connections": {},
     }
 
-    for uuid, connection in accountCoordinator.data.items():
-        coordinators = {}
-        if ELECTRICITY in connection:
-            coordinators[ELECTRICITY] = SummaryDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[ELECTRICITY][0])
+    for address_group in accountCoordinator.address_groups:
+        for connection in address_group.get("connections") or []:
+            if len(connection["contracts"]) == 0:
+                continue
 
-        if GAS in connection:
-            coordinators[GAS] = SummaryDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[GAS][0])
+            contracts = {}
+            for contract in connection["contracts"]:
+                if contract["type"] not in contracts:
+                    contracts[contract["type"]] = []
+                contracts[contract["type"]].append(contract)
 
-        if PV_INSTALL in connection:
-            coordinators[PV_INSTALL] = PvDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[PV_INSTALL])
+            coordinators = {}
+            if ELECTRICITY in contracts:
+                coordinators[ELECTRICITY] = SummaryDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"],
+                                                                         contracts[ELECTRICITY][0])
 
-        if P1_INSTALL in connection:
-            coordinators[P1_ELECTRICITY] = ElectricityDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[P1_INSTALL])
-            coordinators[P1_GAS] = GasDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[P1_INSTALL])
+            if GAS in contracts:
+                coordinators[GAS] = SummaryDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"], contracts[GAS][0])
 
-        if CHARGE_POINT in connection:
-            coordinators[CHARGE_POINT] = ChargePointDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[CHARGE_POINT][0])
+            if PV_INSTALL in contracts:
+                coordinators[PV_INSTALL] = PvDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"], contracts[PV_INSTALL])
 
-        if BATTERY in connection:
-            coordinators[BATTERY] = BatteryDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
-            coordinators[BATTERY_CHARTS] = BatteryChartsDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
-            coordinators[BATTERY_CONTROL] = BatteryControlDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
-            coordinators[ELECTRICITY_HOME_CONSUMPTION] = ElectricityHomeConsumptionDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
+            if P1_INSTALL in contracts:
+                coordinators[P1_ELECTRICITY] = ElectricityDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"],
+                                                                                contracts[P1_INSTALL])
+                coordinators[P1_GAS] = GasDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"], contracts[P1_INSTALL])
 
-        if coordinators:
-            hass.data[DOMAIN][entry.entry_id]["connections"][uuid] = coordinators
+            if CHARGE_POINT in contracts:
+                coordinators[CHARGE_POINT] = ChargePointDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"],
+                                                                              contracts[CHARGE_POINT][0])
+
+            if BATTERY in contracts:
+                coordinators[BATTERY] = BatteryDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"], contracts[BATTERY][0])
+                coordinators[BATTERY_CHARTS] = BatteryChartsDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"],
+                                                                                  contracts[BATTERY][0])
+                coordinators[BATTERY_CONTROL] = BatteryControlDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"], connection["uuid"],
+                                                                                    contracts[BATTERY][0])
+                coordinators[ELECTRICITY_HOME_CONSUMPTION] = ElectricityHomeConsumptionDataUpdateCoordinator(hass, zonneplanApi, address_group["uuid"],
+                                                                                                             connection["uuid"], contracts[BATTERY][0])
+
+            if coordinators:
+                hass.data[DOMAIN][entry.entry_id]["connections"][connection["uuid"]] = coordinators
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 

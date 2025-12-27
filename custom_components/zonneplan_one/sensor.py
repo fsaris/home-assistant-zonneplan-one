@@ -390,7 +390,7 @@ class ZonneplanElectricitySensor(ZonneplanSensor):
         """Return the device information."""
         return {
             "identifiers": {(DOMAIN, self.coordinator.contract["uuid"])},
-            "via_device": (DOMAIN, self._connection_uuid),
+            "via_device": (DOMAIN, self.coordinator.address_uuid),
             "manufacturer": "Zonneplan",
             "name": self.coordinator.contract["label"],
         }
@@ -409,7 +409,7 @@ class ZonneplanGasSensor(ZonneplanSensor):
         """Return the device information."""
         return {
             "identifiers": {(DOMAIN, self.coordinator.contract["uuid"])},
-            "via_device": (DOMAIN, self._connection_uuid),
+            "via_device": (DOMAIN, self.coordinator.address_uuid),
             "manufacturer": "Zonneplan",
             "name": self.coordinator.contract["label"],
         }

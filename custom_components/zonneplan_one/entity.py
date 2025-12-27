@@ -64,7 +64,7 @@ class BatteryEntity:
         """Return the device information."""
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
-            "via_device": (DOMAIN, self._connection_uuid),
+            "via_device": (DOMAIN, self.coordinator.address_uuid),
             "name": self.coordinator.contract["label"],
             "model": self.coordinator.contract["label"],
             "serial_number": self.coordinator.contract.get("meta", {}).get("identifier"),
@@ -85,7 +85,7 @@ class ChargePointEntity:
 
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
-            "via_device": (DOMAIN, self._connection_uuid),
+            "via_device": (DOMAIN, self.coordinator.address_uuid),
             "manufacturer": "Zonneplan",
             "name": self.coordinator.contract["label"],
             "model": self.coordinator.contract["label"],
@@ -108,14 +108,14 @@ class PvEntity:
     def device_info(self: HasPvDataUpdateCoordinator) -> DeviceInfo:
         """Return the device information."""
         device_info: DeviceInfo = {
-            "identifiers": {(DOMAIN, self._connection_uuid)},
+            "identifiers": {(DOMAIN, self.coordinator.address_uuid)},
             "manufacturer": "Zonneplan",
             "name": "Zonneplan",
         }
 
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
-            device_info["via_device"] = (DOMAIN, self._connection_uuid)
+            device_info["via_device"] = (DOMAIN, self.coordinator.address_uuid)
             device_info["name"] = self.coordinator.contracts[self._install_index]["meta"].get("name", "") + (
                 f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
             device_info["model"] = self.coordinator.contracts[self._install_index]["label"] + " " + str(
@@ -143,14 +143,14 @@ class P1Entity:
         """Return the device information."""
 
         device_info: DeviceInfo = {
-            "identifiers": {(DOMAIN, self._connection_uuid)},
+            "identifiers": {(DOMAIN, self.coordinator.address_uuid)},
             "manufacturer": "Zonneplan",
             "name": "Zonneplan",
         }
 
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
-            device_info["via_device"] = (DOMAIN, self._connection_uuid)
+            device_info["via_device"] = (DOMAIN, self.coordinator.address_uuid)
             device_info["name"] = self.coordinator.contracts[self._install_index]["label"] + (
                 f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
             device_info["model"] = self.coordinator.contracts[self._install_index]["label"]

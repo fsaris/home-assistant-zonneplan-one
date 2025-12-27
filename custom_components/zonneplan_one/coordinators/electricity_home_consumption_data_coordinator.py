@@ -24,6 +24,7 @@ class ElectricityHomeConsumptionDataUpdateCoordinator(ZonneplanDataUpdateCoordin
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
+    address_uuid: str
     connection_uuid: str
     contract: ZonneplanContract
 
@@ -31,6 +32,7 @@ class ElectricityHomeConsumptionDataUpdateCoordinator(ZonneplanDataUpdateCoordin
             self,
             hass: HomeAssistant,
             api: AsyncConfigEntryAuth,
+            address_uuid: str,
             connection_uuid: str,
             contract: ZonneplanContract,
     ) -> None:
@@ -49,6 +51,7 @@ class ElectricityHomeConsumptionDataUpdateCoordinator(ZonneplanDataUpdateCoordin
         )
 
         self.api: AsyncConfigEntryAuth = api
+        self.address_uuid = address_uuid
         self.connection_uuid = connection_uuid
         self.contract = contract
 

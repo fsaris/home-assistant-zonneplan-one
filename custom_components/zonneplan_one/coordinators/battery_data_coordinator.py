@@ -25,6 +25,7 @@ class BatteryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
+    address_uuid: str
     connection_uuid: str
     contract: ZonneplanContract
 
@@ -32,6 +33,7 @@ class BatteryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             self,
             hass: HomeAssistant,
             api: AsyncConfigEntryAuth,
+            address_uuid: str,
             connection_uuid: str,
             contract: ZonneplanContract,
     ) -> None:
@@ -50,6 +52,7 @@ class BatteryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         )
 
         self.api: AsyncConfigEntryAuth = api
+        self.address_uuid = address_uuid
         self.connection_uuid = connection_uuid
         self.contract = contract
 
