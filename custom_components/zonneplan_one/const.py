@@ -26,8 +26,8 @@ from homeassistant.const import (
 
 DOMAIN = "zonneplan_one"
 
-SUMMARY = "summary_data"
 GAS = "gas"
+ELECTRICITY = "electricity"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
 P1_ELECTRICITY = "p1_electricity"
@@ -98,7 +98,7 @@ class ZonneplanSelectEntityDescription(SelectEntityDescription):
 
 """Available sensors"""
 SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, dict[str, ZonneplanSensorEntityDescription]]] = {
-    SUMMARY: {
+    ELECTRICITY: {
         "usage": ZonneplanSensorEntityDescription(
             key="usage.value",
             name="Current usage",
@@ -145,30 +145,6 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
                     label="forecast",
                 )
             ],
-        ),
-        "current_tariff_gas": ZonneplanSensorEntityDescription(
-            key="gas_price",
-            name="Current gas tariff",
-            translation_key="current_gas_tariff",
-            icon="mdi:cash",
-            value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
-            state_class=SensorStateClass.MEASUREMENT,
-            entity_registry_enabled_default=True,
-            none_value_behaviour=NONE_USE_PREVIOUS,
-            daily_update_hour=6,
-        ),
-        "next_tariff_gas": ZonneplanSensorEntityDescription(
-            key="gas_price_next",
-            name="Next gas tariff",
-            translation_key="next_gas_tariff",
-            icon="mdi:cash",
-            value_factor=0.0000001,
-            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
-            state_class=SensorStateClass.MEASUREMENT,
-            entity_registry_enabled_default=True,
-            none_value_behaviour=NONE_USE_PREVIOUS,
-            daily_update_hour=6,
         ),
         "status_message": ZonneplanSensorEntityDescription(
             key="usage.status_message",
@@ -287,6 +263,32 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             key="price_per_hour.32.tariff_group",
             name="Forecast tariff group hour 8",
             translation_key="forecast_tariff_group_hour_8",
+        ),
+    },
+    GAS: {
+        "current_tariff_gas": ZonneplanSensorEntityDescription(
+            key="gas_price",
+            name="Current gas tariff",
+            translation_key="current_gas_tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            none_value_behaviour=NONE_USE_PREVIOUS,
+            daily_update_hour=6,
+        ),
+        "next_tariff_gas": ZonneplanSensorEntityDescription(
+            key="gas_price_next",
+            name="Next gas tariff",
+            translation_key="next_gas_tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            none_value_behaviour=NONE_USE_PREVIOUS,
+            daily_update_hour=6,
         ),
     },
     PV_INSTALL: {

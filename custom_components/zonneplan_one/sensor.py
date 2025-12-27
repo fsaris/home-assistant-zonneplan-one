@@ -31,6 +31,7 @@ from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoo
 from .coordinators.electricity_data_coordinator import ElectricityDataUpdateCoordinator
 from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
+from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
 from .coordinators.zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
 from .const import (
@@ -41,7 +42,8 @@ from .const import (
     NONE_IS_ZERO,
     NONE_USE_PREVIOUS,
     SENSOR_TYPES,
-    SUMMARY,
+    ELECTRICITY,
+    GAS,
     CHARGE_POINT,
     BATTERY,
     BATTERY_CHARTS,
@@ -61,15 +63,27 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
         _LOGGER.debug("Setup sensors for connnection %s", uuid)
 
-        if SUMMARY in connection:
-            for sensor_key in SENSOR_TYPES[SUMMARY]:
+        if ELECTRICITY in connection:
+            for sensor_key in SENSOR_TYPES[ELECTRICITY]:
                 entities.append(
-                    ZonneplanSummarySensor(
+                    ZonneplanElectricitySensor(
                         uuid,
                         sensor_key,
-                        connection[SUMMARY],
+                        connection[ELECTRICITY],
                         -1,
-                        SENSOR_TYPES[SUMMARY][sensor_key],
+                        SENSOR_TYPES[ELECTRICITY][sensor_key],
+                    )
+                )
+
+        if GAS in connection:
+            for sensor_key in SENSOR_TYPES[GAS]:
+                entities.append(
+                    ZonneplanGasSensor(
+                        uuid,
+                        sensor_key,
+                        connection[GAS],
+                        -1,
+                        SENSOR_TYPES[GAS][sensor_key],
                     )
                 )
 
@@ -365,7 +379,9 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
         return value
 
 
-class ZonneplanSummarySensor(ZonneplanSensor):
+class ZonneplanElectricitySensor(ZonneplanSensor):
+    coordinator: SummaryDataUpdateCoordinator
+
     @property
     def install_uuid(self) -> str:
         """Return install ID."""
@@ -375,9 +391,29 @@ class ZonneplanSummarySensor(ZonneplanSensor):
     def device_info(self) -> DeviceInfo:
         """Return the device information."""
         return {
-            "identifiers": {(DOMAIN, self._connection_uuid)},
+            "identifiers": {(DOMAIN, self.coordinator.contract["uuid"])},
+            "via_device": (DOMAIN, self._connection_uuid),
             "manufacturer": "Zonneplan",
-            "name": "Zonneplan",
+            "name": self.coordinator.contract["label"],
+        }
+
+
+class ZonneplanGasSensor(ZonneplanSensor):
+    coordinator: SummaryDataUpdateCoordinator
+
+    @property
+    def install_uuid(self) -> str:
+        """Return install ID."""
+        return self._connection_uuid
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device information."""
+        return {
+            "identifiers": {(DOMAIN, self.coordinator.contract["uuid"])},
+            "via_device": (DOMAIN, self._connection_uuid),
+            "manufacturer": "Zonneplan",
+            "name": self.coordinator.contract["label"],
         }
 
 

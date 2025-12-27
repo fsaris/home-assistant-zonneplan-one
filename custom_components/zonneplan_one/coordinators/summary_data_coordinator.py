@@ -14,6 +14,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 from ..api import AsyncConfigEntryAuth
 from ..const import DOMAIN
+from ..zonneplan_api.types import ZonneplanContract
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,12 +49,14 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
+    contract: ZonneplanContract
 
     def __init__(
             self,
             hass: HomeAssistant,
             api: AsyncConfigEntryAuth,
             connection_uuid: str,
+            contract: ZonneplanContract,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -71,6 +74,7 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         self.api: AsyncConfigEntryAuth = api
         self.connection_uuid = connection_uuid
+        self.contract = contract
 
 
     async def _async_update_data(self) -> dict:
@@ -83,6 +87,8 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             summary["gas_price"] = get_gas_price_from_summary(summary)
             summary["gas_price_next"] = get_next_gas_price_from_summary(summary)
+
+            _LOGGER.debug("Summary data: %s", summary)
 
             return summary
 

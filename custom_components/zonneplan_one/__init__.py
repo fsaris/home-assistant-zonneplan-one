@@ -10,8 +10,20 @@ from homeassistant.helpers import (
 )
 
 from . import api, config_flow
-from .const import DOMAIN, SUMMARY, PV_INSTALL, P1_ELECTRICITY, P1_INSTALL, P1_GAS, CHARGE_POINT, BATTERY, BATTERY_CHARTS, BATTERY_CONTROL, \
+from .const import (
+    DOMAIN,
+    GAS,
+    ELECTRICITY,
+    PV_INSTALL,
+    P1_ELECTRICITY,
+    P1_INSTALL,
+    P1_GAS,
+    CHARGE_POINT,
+    BATTERY,
+    BATTERY_CHARTS,
+    BATTERY_CONTROL,
     ELECTRICITY_HOME_CONSUMPTION
+)
 from .coordinators.account_data_coordinator import AccountDataUpdateCoordinator
 from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
@@ -65,13 +77,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         "connections": {},
     }
 
-    # todo: split gas/electricity
-    summary_registered = False
     for uuid, connection in accountCoordinator.data.items():
         coordinators = {}
-        if not summary_registered and "electricity" in connection or "gas" in connection:
-            summary_registered = True
-            coordinators[SUMMARY] = SummaryDataUpdateCoordinator(hass, zonneplanApi, uuid)
+        if ELECTRICITY in connection:
+            coordinators[ELECTRICITY] = SummaryDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[ELECTRICITY][0])
+
+        if GAS in connection:
+            coordinators[GAS] = SummaryDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[GAS][0])
 
         if PV_INSTALL in connection:
             coordinators[PV_INSTALL] = PvDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[PV_INSTALL])
