@@ -11,7 +11,6 @@ from homeassistant.core import (
     HomeAssistant
 )
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -185,10 +184,8 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
 
             charts = await self._async_get_battery_charts()
-            if not charts:
-                raise UpdateFailed(retry_after=60)
 
-            return charts
+            return charts if charts else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:

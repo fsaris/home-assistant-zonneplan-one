@@ -81,7 +81,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         )
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.info("ZonneplanAPI response status: %s", response.status)
+        _LOGGER.info("ZonneplanAPI response status: %s for %s", response.status, path)
 
         if response.status == 304:
             return None

@@ -8,7 +8,6 @@ from homeassistant.core import (
     HomeAssistant
 )
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -60,10 +59,9 @@ class PvDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
             pv_data = await self.api.async_get(self.connection_uuid, "/pv-installation")
 
-            if not pv_data:
-                raise UpdateFailed(retry_after=60)
+            _LOGGER.debug("PV data: %s", pv_data)
 
-            return pv_data
+            return pv_data if pv_data else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:

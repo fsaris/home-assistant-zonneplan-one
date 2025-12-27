@@ -8,7 +8,6 @@ from homeassistant.core import (
     HomeAssistant
 )
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -55,15 +54,12 @@ class ElectricityHomeConsumptionDataUpdateCoordinator(ZonneplanDataUpdateCoordin
         self.connection_uuid = connection_uuid
         self.contract = contract
 
-
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
             electricity_home_consumption = await self.api.async_get(self.connection_uuid, "/electricity-home-consumption")
-            if not electricity_home_consumption:
-                raise UpdateFailed(retry_after=60)
 
-            return electricity_home_consumption
+            return electricity_home_consumption if electricity_home_consumption else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:

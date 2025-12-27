@@ -9,7 +9,6 @@ from homeassistant.core import (
     HomeAssistant
 )
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -62,10 +61,8 @@ class BatteryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
 
             battery_data = await self.api.async_get(self.connection_uuid, "/home-battery-installation/" + self.contract.get("uuid"))
-            if not battery_data:
-                raise UpdateFailed(retry_after=60)
 
-            return battery_data
+            return battery_data if battery_data else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:

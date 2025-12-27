@@ -8,7 +8,6 @@ from homeassistant.core import (
     HomeAssistant
 )
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -55,16 +54,13 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self.connection_uuid = connection_uuid
         self.contracts = contracts
 
-
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
 
             gas = await self.api.async_get(self.connection_uuid, "/gas")
-            if not gas:
-                raise UpdateFailed(retry_after=60)
 
-            return gas
+            return gas if gas else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:

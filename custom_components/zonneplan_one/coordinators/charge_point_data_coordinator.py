@@ -12,7 +12,6 @@ from homeassistant.core import (
 )
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_call_later
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -65,10 +64,8 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         """Fetch the latest status."""
         try:
             charge_point = await self._async_get_charge_point_data(self.connection_uuid, self.contract.get("uuid"))
-            if not charge_point:
-                raise UpdateFailed(retry_after=60)
 
-            return charge_point["contracts"][0]
+            return charge_point["contracts"][0] if charge_point else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:

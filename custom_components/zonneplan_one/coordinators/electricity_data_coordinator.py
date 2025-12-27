@@ -60,10 +60,8 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
 
             electricity = await self.api.async_get(self.connection_uuid, "/electricity-delivered")
-            if not electricity:
-                raise UpdateFailed(retry_after=60)
 
-            return electricity
+            return electricity if electricity else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:

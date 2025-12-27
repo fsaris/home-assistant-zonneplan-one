@@ -8,7 +8,6 @@ from homeassistant.core import (
     HomeAssistant
 )
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -85,15 +84,13 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
 
             summary = await self.api.async_get(self.connection_uuid, "/summary")
-            if not summary:
-                raise UpdateFailed(retry_after=60)
-
-            summary["gas_price"] = get_gas_price_from_summary(summary)
-            summary["gas_price_next"] = get_next_gas_price_from_summary(summary)
+            if summary:
+                summary["gas_price"] = get_gas_price_from_summary(summary)
+                summary["gas_price_next"] = get_next_gas_price_from_summary(summary)
 
             _LOGGER.debug("Summary data: %s", summary)
 
-            return summary
+            return summary if summary else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
