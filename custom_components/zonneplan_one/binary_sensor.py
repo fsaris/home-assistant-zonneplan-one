@@ -103,8 +103,6 @@ class ZonneplanBinarySensor(CoordinatorEntity, RestoreEntity, BinarySensorEntity
         self._install_index = install_index
         self.entity_description = description
 
-        self._attr_is_on = self._value_from_coordinator()
-
     @property
     def install_uuid(self) -> str:
         """Return install ID."""

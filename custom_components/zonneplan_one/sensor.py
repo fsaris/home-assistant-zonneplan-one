@@ -241,8 +241,6 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
         self._install_index = install_index
         self.entity_description = description
 
-        self._attr_native_value = self._value_from_coordinator()
-
     @property
     @abstractmethod
     def install_uuid(self) -> str:
@@ -308,7 +306,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
             return False
 
         # No last update value? then we update
-        if not state.last_updated:
+        if not state.last_updated or not self.native_value:
             return False
 
         update_today = dt_util.now().replace(
