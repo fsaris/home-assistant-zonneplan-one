@@ -1,5 +1,4 @@
 """The Zonneplan integration."""
-import asyncio
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -11,8 +10,18 @@ from homeassistant.helpers import (
 )
 
 from . import api, config_flow
-from .coordinator import ZonneplanUpdateCoordinator
-from .const import DOMAIN
+from .const import DOMAIN, SUMMARY, PV_INSTALL, P1_ELECTRICITY, P1_INSTALL, P1_GAS, CHARGE_POINT, BATTERY, BATTERY_CHARTS, BATTERY_CONTROL, \
+    ELECTRICITY_HOME_CONSUMPTION
+from .coordinators.account_data_coordinator import AccountDataUpdateCoordinator
+from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
+from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
+from .coordinators.electricity_data_coordinator import ElectricityDataUpdateCoordinator
+from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
+from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
+from .coordinators.battery_data_coordinator import BatteryDataUpdateCoordinator
+from .coordinators.battery_charts_data_coordinator import BatteryChartsDataUpdateCoordinator
+from .coordinators.battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
+from .coordinators.electricity_home_consumption_data_coordinator import ElectricityHomeConsumptionDataUpdateCoordinator
 
 PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON, Platform.NUMBER, Platform.SELECT]
 
@@ -47,17 +56,41 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         aiohttp_client.async_get_clientsession(hass), session
     )
 
-    hass.data[DOMAIN][entry.entry_id] = zonneplanApi
-
-    coordinator = ZonneplanUpdateCoordinator(hass, zonneplanApi)
-    await coordinator.async_config_entry_first_refresh()
-
-    # await coordinator.async_refresh()
+    accountCoordinator = AccountDataUpdateCoordinator(hass, zonneplanApi)
+    await accountCoordinator.async_config_entry_first_refresh()
 
     hass.data[DOMAIN][entry.entry_id] = {
         "api": zonneplanApi,
-        "coordinator": coordinator,
+        "accountCoordinator": accountCoordinator,
+        "connections": {},
     }
+
+    # todo: split gas/electricity
+    summary_registered = False
+    for uuid, connection in accountCoordinator.data.items():
+        coordinators = {}
+        if not summary_registered and "electricity" in connection or "gas" in connection:
+            summary_registered = True
+            coordinators[SUMMARY] = SummaryDataUpdateCoordinator(hass, zonneplanApi, uuid)
+
+        if PV_INSTALL in connection:
+            coordinators[PV_INSTALL] = PvDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[PV_INSTALL])
+
+        if P1_INSTALL in connection:
+            coordinators[P1_ELECTRICITY] = ElectricityDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[P1_INSTALL])
+            coordinators[P1_GAS] = GasDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[P1_INSTALL])
+
+        if CHARGE_POINT in connection:
+            coordinators[CHARGE_POINT] = ChargePointDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[CHARGE_POINT][0])
+
+        if BATTERY in connection:
+            coordinators[BATTERY] = BatteryDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
+            coordinators[BATTERY_CHARTS] = BatteryChartsDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
+            coordinators[BATTERY_CONTROL] = BatteryControlDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
+            coordinators[ELECTRICITY_HOME_CONSUMPTION] = ElectricityHomeConsumptionDataUpdateCoordinator(hass, zonneplanApi, uuid, connection[BATTERY][0])
+
+        if coordinators:
+            hass.data[DOMAIN][entry.entry_id]["connections"][uuid] = coordinators
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
