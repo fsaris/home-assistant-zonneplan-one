@@ -15,6 +15,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AsyncConfigEntryAuth(ZonneplanApi):
+
+    diagnostics: dict[str, Any] = {}
+
     def __init__(
             self,
             websession: ClientSession,
@@ -81,7 +84,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         )
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+        _LOGGER.info("ZonneplanAPI response status: %s for %s", response.status, path)
 
         if response.status == 304:
             return None
@@ -91,6 +94,8 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         response_json = await response.json()
 
         _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+
+        self.diagnostics[path] = response_json
 
         self._etags[url] = response.headers.get("ETag")
 
