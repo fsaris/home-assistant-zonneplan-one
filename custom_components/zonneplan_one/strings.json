@@ -275,34 +275,34 @@
       "charge_point_session_charged_distance": {
         "name": "Charge point session charged distance"
       },
-      "electricity_home_consumption_delivery_costs_this_month": {
+      "delivery_costs_this_month": {
         "name": "Net delivery costs this month"
       },
-      "electricity_home_consumption_delivery_costs_this_year": {
+      "delivery_costs_this_year": {
         "name": "Net delivery costs this year"
       },
-      "electricity_home_consumption_production_costs_this_month": {
+      "production_costs_this_month": {
         "name": "Net production costs this month"
       },
-      "electricity_home_consumption_production_costs_this_year": {
+      "production_costs_this_year": {
         "name": "Net production costs this year"
       },
-      "electricity_home_consumption_energy_delivered_sum_today": {
+      "energy_delivered_sum_today": {
         "name": "Net delivery today"
       },
-      "electricity_home_consumption_energy_delivered_sum_this_month": {
+      "energy_delivered_sum_this_month": {
         "name": "Net delivery this month"
       },
-      "electricity_home_consumption_energy_delivered_sum_this_year": {
+      "energy_delivered_sum_this_year": {
         "name": "Net delivery this year"
       },
-      "electricity_home_consumption_energy_produced_sum_today": {
+      "energy_produced_sum_today": {
         "name": "Net production today"
       },
-      "electricity_home_consumption_energy_produced_sum_this_month": {
+      "energy_produced_sum_this_month": {
         "name": "Net production this month"
       },
-      "electricity_home_consumption_energy_produced_sum_this_year": {
+      "energy_produced_sum_this_year": {
         "name": "Net production this year"
       }
     },

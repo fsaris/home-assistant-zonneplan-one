@@ -29,6 +29,7 @@ from .coordinators.battery_data_coordinator import BatteryDataUpdateCoordinator
 from .coordinators.battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
 from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
 from .coordinators.electricity_data_coordinator import ElectricityDataUpdateCoordinator
+from .coordinators.electricity_home_consumption_data_coordinator import ElectricityHomeConsumptionDataUpdateCoordinator
 from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
@@ -50,7 +51,7 @@ from .const import (
     ELECTRICITY_HOME_CONSUMPTION,
     ZonneplanSensorEntityDescription,
 )
-from .entity import BatteryEntity, ChargePointEntity, P1Entity, PvEntity
+from .entity import BatteryEntity, ChargePointEntity, P1Entity, PvEntity, base_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -205,7 +206,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, as
         if connection.electricity_home_consumption:
             for sensor_key in SENSOR_TYPES[ELECTRICITY_HOME_CONSUMPTION]:
                 entities.append(
-                    ZonneplanBatterySensor(
+                    ZonneplanElectricityHomeConsumptionSensor(
                         uuid,
                         sensor_key,
                         connection.electricity_home_consumption,
@@ -437,6 +438,33 @@ class ZonneplanGasSensor(ZonneplanSensor):
             "manufacturer": "Zonneplan",
             "name": self.coordinator.contract["label"],
         }
+
+
+class ZonneplanElectricityHomeConsumptionSensor(ZonneplanSensor):
+    coordinator: ElectricityHomeConsumptionDataUpdateCoordinator
+
+    def __init__(
+            self,
+            connection_uuid,
+            sensor_key: str,
+            coordinator: ElectricityHomeConsumptionDataUpdateCoordinator,
+            install_index: int,
+            description: ZonneplanSensorEntityDescription,
+    ):
+        """Initialize the sensor."""
+        super().__init__(connection_uuid, sensor_key, coordinator, install_index, description)
+
+        self.entity_id = f"sensor.zonneplan_{sensor_key}"
+
+    @property
+    def install_uuid(self) -> str:
+        """Return install ID."""
+        return self._connection_uuid
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device information."""
+        return base_device_info(self.coordinator.address_uuid)
 
 
 class ZonneplanPvSensor(PvEntity, ZonneplanSensor):

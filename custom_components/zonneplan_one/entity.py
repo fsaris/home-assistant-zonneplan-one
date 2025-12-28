@@ -13,6 +13,14 @@ from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 
 
+def base_device_info(identifier: str) -> DeviceInfo:
+    return {
+        "identifiers": {(DOMAIN, identifier)},
+        "manufacturer": "Zonneplan",
+        "name": "Zonneplan",
+    }
+
+
 class HasBatteryDataCoordinator(Protocol):
     coordinator: BatteryDataUpdateCoordinator | BatteryChartsDataUpdateCoordinator | BatteryControlDataUpdateCoordinator
     _connection_uuid: str
@@ -107,11 +115,7 @@ class PvEntity:
     @property
     def device_info(self: HasPvDataUpdateCoordinator) -> DeviceInfo:
         """Return the device information."""
-        device_info: DeviceInfo = {
-            "identifiers": {(DOMAIN, self.coordinator.address_uuid)},
-            "manufacturer": "Zonneplan",
-            "name": "Zonneplan",
-        }
+        device_info: DeviceInfo = base_device_info(self.coordinator.address_uuid)
 
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
@@ -142,11 +146,7 @@ class P1Entity:
     def device_info(self: HasP1DataUpdateCoordinator) -> DeviceInfo:
         """Return the device information."""
 
-        device_info: DeviceInfo = {
-            "identifiers": {(DOMAIN, self.coordinator.address_uuid)},
-            "manufacturer": "Zonneplan",
-            "name": "Zonneplan",
-        }
+        device_info: DeviceInfo = base_device_info(self.coordinator.address_uuid)
 
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
