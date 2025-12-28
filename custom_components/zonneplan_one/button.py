@@ -28,9 +28,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, as
     entities = []
     for uuid, connection in entry.runtime_data.coordinators.items():
 
-        _LOGGER.debug("Setup buttons for connnection %s", uuid)
-
         if connection.charge_point_installation:
+            _LOGGER.debug("Setup buttons for connnection %s", uuid)
+
             for sensor_key in BUTTON_TYPES[CHARGE_POINT]:
                 entities.append(
                     ZonneplanChargePointButton(
