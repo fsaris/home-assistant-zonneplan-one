@@ -380,6 +380,19 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
 class ZonneplanElectricitySensor(ZonneplanSensor):
     coordinator: SummaryDataUpdateCoordinator
 
+    def __init__(
+            self,
+            connection_uuid,
+            sensor_key: str,
+            coordinator: ZonneplanDataUpdateCoordinator,
+            install_index: int,
+            description: ZonneplanSensorEntityDescription,
+    ):
+        """Initialize the sensor."""
+        super().__init__(connection_uuid, sensor_key, coordinator, install_index, description)
+
+        self.entity_id = f"sensor.zonneplan_{sensor_key}"
+
     @property
     def install_uuid(self) -> str:
         """Return install ID."""
@@ -398,6 +411,19 @@ class ZonneplanElectricitySensor(ZonneplanSensor):
 
 class ZonneplanGasSensor(ZonneplanSensor):
     coordinator: SummaryDataUpdateCoordinator
+
+    def __init__(
+            self,
+            connection_uuid,
+            sensor_key: str,
+            coordinator: ZonneplanDataUpdateCoordinator,
+            install_index: int,
+            description: ZonneplanSensorEntityDescription,
+    ):
+        """Initialize the sensor."""
+        super().__init__(connection_uuid, sensor_key, coordinator, install_index, description)
+
+        self.entity_id = f"sensor.zonneplan_{sensor_key}"
 
     @property
     def install_uuid(self) -> str:
