@@ -39,14 +39,12 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - Gas delivery costs today: `€` _(default disabled)_
 </details>
 
-### Zonneplan Energy contract related:
+### Zonneplan Energy Electricity contract related:
 <details>
-<summary>Sensors available if you have a Zonneplan energy contract</summary>
+<summary>Sensors available if you have a Zonneplan Electricity contract</summary>
    
    - Current Zonneplan Electricity tariff: `€/kWh`
        - The full Electricity forecast is available as a forecast attribute of this sensor
-   - Current Zonneplan Gas tariff: `€/m³`
-   - Next Zonneplan Gas tariff: `€/m³` 
    - Forecast electricity tariff hour 1-8: `€/kWh` _(default disabled)_
    - Forecast tariff group hour 1-8 _(default disabled)_
    - Current usage: `W`
@@ -55,6 +53,15 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - Sustainability score
    - Status message _(default disabled)_
    - Status tip
+</details>
+
+### Zonneplan Energy Gas contract related:
+<details>
+<summary>Sensors available if you have a Zonneplan Gas contract</summary>
+   
+   - Current Zonneplan Gas tariff: `€/m³`
+   - Next Zonneplan Gas tariff: `€/m³`
+   
 </details>
      
 ### Zonneplan Solar inverter:
