@@ -6,7 +6,7 @@ from homeassistant.components.diagnostics import async_redact_data
 
 from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 
-TO_REDACT = ["address", "organization", "chat"]
+TO_REDACT = ["address", "organization", "chat", "user_account"]
 
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ZonneplanConfigEntry) -> dict[str, dict[Any, Any]]:
     coordinator_data = {}
