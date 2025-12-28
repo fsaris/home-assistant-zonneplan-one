@@ -15,7 +15,18 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - General energy values: _(available when there is a Zonneplan Connect P1 reader)_
      - Electricity consumption today: `kWh` _(can be used as entity on Energy Dashboard)_
      - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
-     - Gas consumption today: `m³`
+     - Gas consumption today: `m³` _(when a gas meter is registered in the P1 reader)_
+   - Net values: _(available when there is a Zonneplan Battery)_
+     - Net delivery costs this month `€` _(default disabled)_
+     - Net delivery costs this year `€` _(default disabled)_
+     - Net production costs this month `€` _(default disabled)_
+     - Net production costs this year `€` _(default disabled)_
+     - Net delivery today `kWh` 
+     - Net delivery this month `kWh`
+     - Net delivery this year `kWh`
+     - Net production today `kWh`
+     - Net production this month `kWh`
+     - Net production this year `kWh` 
 
 ### Zonneplan Connect (P1 reader):
 <details>
@@ -28,15 +39,15 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
    - Electricity first measured: `date` _(default disabled)_
    - Electricity last measured: `date`
    - Electricity last measured production: `date`
-   - Gas first measured: `date` _(default disabled)_
-   - Gas last measured: `date`
+   - Gas first measured: `date` _(when a gas meter is registered in the P1 reader, default disabled)_
+   - Gas last measured: `date` _(when a gas meter is registered in the P1 reader)_
    - Electricity delivery costs today: `€` _(default disabled)_
    - Electricity delivery costs this month: `€` _(default disabled)_
    - Electricity delivery costs this year: `€` _(default disabled)_
    - Electricity production costs today: `€` _(default disabled)_
    - Electricity production costs this month: `€` _(default disabled)_
    - Electricity production costs this year: `€` _(default disabled)_
-   - Gas delivery costs today: `€` _(default disabled)_
+   - Gas delivery costs today: `€` _(when a gas meter is registered in the P1 reader, default disabled)_
 </details>
 
 ### Zonneplan Energy Electricity contract related:
@@ -128,16 +139,6 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
   - Result last month `€`
   - Result this year `€`
   - Result last year `€`
-  - Net delivery costs this month `€` _(default disabled)_
-  - Net delivery costs this year `€` _(default disabled)_
-  - Net production costs this month `€` _(default disabled)_
-  - Net production costs this year `€` _(default disabled)_
-  - Net delivery today `kWh` 
-  - Net delivery this month `kWh`
-  - Net delivery this year `kWh`
-  - Net production today `kWh`
-  - Net production this month `kWh`
-  - Net production this year `kWh` 
   - Dynamic load balancing overload active `on/off`
   - Dynamic load balancing enabled `on/off`
   - Manual control enabled `on/off`
