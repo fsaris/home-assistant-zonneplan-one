@@ -109,10 +109,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry):
                     P1_ELECTRICITY,
                     ElectricityDataUpdateCoordinator(hass, zonneplan_api, address_group["uuid"], connection["uuid"], contracts[P1_INSTALL])
                 )
-                account_coordinator.add_coordinator(
-                    connection["uuid"],
-                    P1_GAS, GasDataUpdateCoordinator(hass, zonneplan_api, address_group["uuid"], connection["uuid"], contracts[P1_INSTALL])
-                )
+
+                gas_meter_registered = False
+                for contract in contracts[P1_INSTALL]:
+                    if contract.get("meta", {}).get("gas_meter_identifier"):
+                        gas_meter_registered = True
+                        break
+
+                if gas_meter_registered:
+                    account_coordinator.add_coordinator(
+                        connection["uuid"],
+                        P1_GAS, GasDataUpdateCoordinator(hass, zonneplan_api, address_group["uuid"], connection["uuid"], contracts[P1_INSTALL])
+                    )
 
             if CHARGE_POINT in contracts:
                 account_coordinator.add_coordinator(
