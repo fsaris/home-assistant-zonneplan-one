@@ -7,12 +7,13 @@ from homeassistant.core import (
     HomeAssistant
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 from .coordinators.battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
 from .entity import BatteryEntity
 
 from .const import (
     BATTERY_CONTROL,
-    DOMAIN,
     SELECT_TYPES,
     ZonneplanNumberEntityDescription,
 )
@@ -20,13 +21,11 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
-    connections: dict = hass.data[DOMAIN][config_entry.entry_id]["connections"]
-
+async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, async_add_entities):
     entities = []
-    for uuid, connection in connections.items():
+    for uuid, connection in entry.runtime_data.coordinators.items():
 
-        if BATTERY_CONTROL in connection:
+        if connection.battery_control:
             _LOGGER.debug("Setup battery control select entities for connection %s", uuid)
 
             for _key in SELECT_TYPES[BATTERY_CONTROL]:
@@ -34,7 +33,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
                     ZonneplanBatteryControlModeSelect(
                         uuid,
                         _key,
-                        connection[BATTERY_CONTROL],
+                        connection.battery_control,
                         0,
                         SELECT_TYPES[BATTERY_CONTROL][_key],
                     )

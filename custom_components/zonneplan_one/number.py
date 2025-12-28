@@ -8,25 +8,23 @@ from homeassistant.core import (
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .entity import BatteryEntity
+from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 from .coordinators.battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
 from .const import (
     BATTERY_CONTROL,
-    DOMAIN,
     NUMBER_TYPES,
     ZonneplanNumberEntityDescription,
 )
+from .entity import BatteryEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
-    connections: dict = hass.data[DOMAIN][config_entry.entry_id]["connections"]
-
+async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, async_add_entities):
     entities = []
-    for uuid, connection in connections.items():
+    for uuid, connection in entry.runtime_data.coordinators.items():
 
-        if BATTERY_CONTROL in connection:
+        if connection.battery_control:
             _LOGGER.debug("Setup battery control number entities for connection %s", uuid)
 
             for sensor_key in NUMBER_TYPES[BATTERY_CONTROL]:
@@ -34,7 +32,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
                     ZonneplanBatteryNumber(
                         uuid,
                         sensor_key,
-                        connection[BATTERY_CONTROL],
+                        connection.battery_control,
                         0,
                         NUMBER_TYPES[BATTERY_CONTROL][sensor_key],
                     )

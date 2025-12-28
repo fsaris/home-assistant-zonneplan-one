@@ -15,6 +15,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
 )
 
+from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
 from .coordinators.zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -22,7 +23,6 @@ from .coordinators.battery_data_coordinator import BatteryDataUpdateCoordinator
 from .entity import BatteryEntity, ChargePointEntity, PvEntity
 
 from .const import (
-    DOMAIN,
     PV_INSTALL,
     BINARY_SENSORS_TYPES,
     CHARGE_POINT,
@@ -33,46 +33,44 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
-    connections: dict = hass.data[DOMAIN][config_entry.entry_id]["connections"]
-
+async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, async_add_entities):
     entities = []
-    for uuid, connection in connections.items():
+    for uuid, connection in entry.runtime_data.coordinators.items():
 
         _LOGGER.debug("Setup binary sensors for connection %s", uuid)
 
-        if PV_INSTALL in connection:
-            for install_index in range(len(connection[PV_INSTALL].contracts)):
+        if connection.pv_installation:
+            for install_index in range(len(connection.pv_installation.contracts)):
                 for sensor_key in BINARY_SENSORS_TYPES[PV_INSTALL]:
                     entities.append(
                         ZonneplanPvBinarySensor(
                             uuid,
                             sensor_key,
-                            connection[PV_INSTALL],
+                            connection.pv_installation,
                             install_index,
                             BINARY_SENSORS_TYPES[PV_INSTALL][sensor_key],
                         )
                     )
 
-        if CHARGE_POINT in connection:
+        if connection.charge_point_installation:
             for sensor_key in BINARY_SENSORS_TYPES[CHARGE_POINT]:
                 entities.append(
                     ZonneplanChargePointBinarySensor(
                         uuid,
                         sensor_key,
-                        connection[CHARGE_POINT],
+                        connection.charge_point_installation,
                         0,
                         BINARY_SENSORS_TYPES[CHARGE_POINT][sensor_key],
                     )
                 )
 
-        if BATTERY in connection:
+        if connection.home_battery_installation:
             for sensor_key in BINARY_SENSORS_TYPES[BATTERY]:
                 entities.append(
                     ZonneplanBatteryBinarySensor(
                         uuid,
                         sensor_key,
-                        connection[BATTERY],
+                        connection.home_battery_installation,
                         0,
                         BINARY_SENSORS_TYPES[BATTERY][sensor_key],
                     )

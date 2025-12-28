@@ -12,9 +12,9 @@ from homeassistant.components.button import (
     ButtonEntity,
 )
 
+from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
 from .const import (
-    DOMAIN,
     CHARGE_POINT,
     BUTTON_TYPES,
     ZonneplanButtonEntityDescription,
@@ -24,21 +24,19 @@ from .entity import ChargePointEntity
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
-    connections: dict = hass.data[DOMAIN][config_entry.entry_id]["connections"]
-
+async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, async_add_entities):
     entities = []
-    for uuid, connection in connections.items():
+    for uuid, connection in entry.runtime_data.coordinators.items():
 
         _LOGGER.debug("Setup buttons for connnection %s", uuid)
 
-        if CHARGE_POINT in connection:
+        if connection.charge_point_installation:
             for sensor_key in BUTTON_TYPES[CHARGE_POINT]:
                 entities.append(
                     ZonneplanChargePointButton(
                         uuid,
                         sensor_key,
-                        connection[CHARGE_POINT],
+                        connection.charge_point_installation,
                         0,
                         BUTTON_TYPES[CHARGE_POINT][sensor_key],
                     )

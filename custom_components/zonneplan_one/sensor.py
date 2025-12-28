@@ -22,8 +22,8 @@ from homeassistant.components.sensor import (
 )
 
 import homeassistant.util.dt as dt_util
-from .entity import BatteryEntity, ChargePointEntity, P1Entity, PvEntity
 
+from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 from .coordinators.battery_charts_data_coordinator import BatteryChartsDataUpdateCoordinator
 from .coordinators.battery_data_coordinator import BatteryDataUpdateCoordinator
 from .coordinators.battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
@@ -33,7 +33,6 @@ from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
 from .coordinators.zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
-
 from .const import (
     DOMAIN,
     P1_ELECTRICITY,
@@ -51,166 +50,165 @@ from .const import (
     ELECTRICITY_HOME_CONSUMPTION,
     ZonneplanSensorEntityDescription,
 )
+from .entity import BatteryEntity, ChargePointEntity, P1Entity, PvEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
-    connections: dict = hass.data[DOMAIN][config_entry.entry_id]["connections"]
-
+async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, async_add_entities):
     entities = []
-    for uuid, connection in connections.items():
+    for uuid, connection in entry.runtime_data.coordinators.items():
 
-        _LOGGER.debug("Setup sensors for connnection %s", uuid)
+        _LOGGER.debug("Setup sensors for connection %s", uuid)
 
-        if ELECTRICITY in connection:
+        if connection.electricity:
             for sensor_key in SENSOR_TYPES[ELECTRICITY]:
                 entities.append(
                     ZonneplanElectricitySensor(
                         uuid,
                         sensor_key,
-                        connection[ELECTRICITY],
+                        connection.electricity,
                         -1,
                         SENSOR_TYPES[ELECTRICITY][sensor_key],
                     )
                 )
 
-        if GAS in connection:
+        if connection.gas:
             for sensor_key in SENSOR_TYPES[GAS]:
                 entities.append(
                     ZonneplanGasSensor(
                         uuid,
                         sensor_key,
-                        connection[GAS],
+                        connection.gas,
                         -1,
                         SENSOR_TYPES[GAS][sensor_key],
                     )
                 )
 
-        if PV_INSTALL in connection:
+        if connection.pv_installation:
             for sensor_key in SENSOR_TYPES[PV_INSTALL]["totals"]:
                 entities.append(
                     ZonneplanPvSensor(
                         uuid,
                         sensor_key,
-                        connection[PV_INSTALL],
+                        connection.pv_installation,
                         -1,
                         SENSOR_TYPES[PV_INSTALL]["totals"][sensor_key],
                     )
                 )
-            for install_index in range(len(connection[PV_INSTALL].contracts)):
+            for install_index in range(len(connection.pv_installation.contracts)):
                 for sensor_key in SENSOR_TYPES[PV_INSTALL]["install"]:
                     entities.append(
                         ZonneplanPvSensor(
                             uuid,
                             sensor_key,
-                            connection[PV_INSTALL],
+                            connection.pv_installation,
                             install_index,
                             SENSOR_TYPES[PV_INSTALL]["install"][sensor_key],
                         )
                     )
 
-        if P1_ELECTRICITY in connection:
+        if connection.p1_electricity:
             for sensor_key in SENSOR_TYPES[P1_ELECTRICITY]["totals"]:
                 entities.append(
                     ZonneplanP1Sensor(
                         uuid,
                         sensor_key,
-                        connection[P1_ELECTRICITY],
+                        connection.p1_electricity,
                         -1,
                         SENSOR_TYPES[P1_ELECTRICITY]["totals"][sensor_key],
                     )
                 )
-            for install_index in range(len(connection[P1_ELECTRICITY].contracts)):
+            for install_index in range(len(connection.p1_electricity.contracts)):
                 for sensor_key in SENSOR_TYPES[P1_ELECTRICITY]["install"]:
                     entities.append(
                         ZonneplanP1Sensor(
                             uuid,
                             sensor_key,
-                            connection[P1_ELECTRICITY],
+                            connection.p1_electricity,
                             install_index,
                             SENSOR_TYPES[P1_ELECTRICITY]["install"][sensor_key],
                         )
                     )
 
-        if P1_GAS in connection:
+        if connection.p1_gas:
             for sensor_key in SENSOR_TYPES[P1_GAS]["totals"]:
                 entities.append(
                     ZonneplanP1Sensor(
                         uuid,
                         sensor_key,
-                        connection[P1_GAS],
+                        connection.p1_gas,
                         -1,
                         SENSOR_TYPES[P1_GAS]["totals"][sensor_key],
                     )
                 )
-            for install_index in range(len(connection[P1_GAS].contracts)):
+            for install_index in range(len(connection.p1_gas.contracts)):
                 for sensor_key in SENSOR_TYPES[P1_GAS]["install"]:
                     entities.append(
                         ZonneplanP1Sensor(
                             uuid,
                             sensor_key,
-                            connection[P1_GAS],
+                            connection.p1_gas,
                             install_index,
                             SENSOR_TYPES[P1_GAS]["install"][sensor_key],
                         )
                     )
 
-        if CHARGE_POINT in connection:
+        if connection.charge_point_installation:
             for sensor_key in SENSOR_TYPES[CHARGE_POINT]:
                 entities.append(
                     ZonneplanChargePointSensor(
                         uuid,
                         sensor_key,
-                        connection[CHARGE_POINT],
+                        connection.charge_point_installation,
                         0,
                         SENSOR_TYPES[CHARGE_POINT][sensor_key],
                     )
                 )
 
-        if BATTERY in connection:
+        if connection.home_battery_installation:
             for sensor_key in SENSOR_TYPES[BATTERY]:
                 entities.append(
                     ZonneplanBatterySensor(
                         uuid,
                         sensor_key,
-                        connection[BATTERY],
+                        connection.home_battery_installation,
                         0,
                         SENSOR_TYPES[BATTERY][sensor_key],
                     )
                 )
 
-        if BATTERY_CONTROL in connection:
+        if connection.battery_control:
             for sensor_key in SENSOR_TYPES[BATTERY_CONTROL]:
                 entities.append(
                     ZonneplanBatterySensor(
                         uuid,
                         sensor_key,
-                        connection[BATTERY_CONTROL],
+                        connection.battery_control,
                         -1,
                         SENSOR_TYPES[BATTERY_CONTROL][sensor_key],
                     )
                 )
 
-        if BATTERY_CHARTS in connection:
+        if connection.battery_charts:
             for sensor_key in SENSOR_TYPES[BATTERY_CHARTS]:
                 entities.append(
                     ZonneplanBatterySensor(
                         uuid,
                         sensor_key,
-                        connection[BATTERY_CHARTS],
+                        connection.battery_charts,
                         -1,
                         SENSOR_TYPES[BATTERY_CHARTS][sensor_key],
                     )
                 )
 
-        if ELECTRICITY_HOME_CONSUMPTION in connection:
+        if connection.electricity_home_consumption:
             for sensor_key in SENSOR_TYPES[ELECTRICITY_HOME_CONSUMPTION]:
                 entities.append(
                     ZonneplanBatterySensor(
                         uuid,
                         sensor_key,
-                        connection[ELECTRICITY_HOME_CONSUMPTION],
+                        connection.electricity_home_consumption,
                         -1,
                         SENSOR_TYPES[ELECTRICITY_HOME_CONSUMPTION][sensor_key],
                     )
