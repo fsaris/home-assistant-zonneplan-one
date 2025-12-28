@@ -60,6 +60,8 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             gas = await self.api.async_get(self.connection_uuid, "/gas")
 
+            _LOGGER.debug("Update gas data: %s", gas)
+
             return gas if gas else self.data
 
         except ClientResponseError as e:

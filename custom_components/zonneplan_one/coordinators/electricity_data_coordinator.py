@@ -61,6 +61,8 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             electricity = await self.api.async_get(self.connection_uuid, "/electricity-delivered")
 
+            _LOGGER.debug("Update electricity data: %s", electricity)
+
             return electricity if electricity else self.data
 
         except ClientResponseError as e:

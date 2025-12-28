@@ -185,6 +185,8 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             charts = await self._async_get_battery_charts()
 
+            _LOGGER.debug("Update battery charts data: %s", charts)
+
             return charts if charts else self.data
 
         except ClientResponseError as e:

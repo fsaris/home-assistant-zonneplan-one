@@ -59,6 +59,8 @@ class ElectricityHomeConsumptionDataUpdateCoordinator(ZonneplanDataUpdateCoordin
         try:
             electricity_home_consumption = await self.api.async_get(self.connection_uuid, "/electricity-home-consumption")
 
+            _LOGGER.debug("Update electricity home consumption data: %s", electricity_home_consumption)
+
             return electricity_home_consumption if electricity_home_consumption else self.data
 
         except ClientResponseError as e:

@@ -41,7 +41,7 @@ class BatteryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=300),
+            update_interval=timedelta(seconds=60),
             request_refresh_debouncer=Debouncer(
                 hass,
                 _LOGGER,

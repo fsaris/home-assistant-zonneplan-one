@@ -68,6 +68,8 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             if battery_home_optimization:
                 data["battery_home_optimization"] = battery_home_optimization
 
+            _LOGGER.debug("Update battery control data: %s", data)
+
             return data
 
         except ClientResponseError as e:
