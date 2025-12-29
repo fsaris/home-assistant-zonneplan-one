@@ -21,60 +21,10 @@ from ..zonneplan_api.types import ZonneplanContract
 _LOGGER = logging.getLogger(__name__)
 
 
-def _merge_battery_charts(
-        existing_battery_data: dict | None, new_battery_data: dict | None
-) -> None:
-    """Carry over previously fetched charts when the API returns 304."""
-    if not existing_battery_data or not new_battery_data:
-        return
-
-    existing_contracts = {
-        contract.get("uuid"): contract
-        for contract in existing_battery_data.get("contracts", [])
-        if contract.get("uuid")
-    }
-
-    for contract in new_battery_data.get("contracts", []):
-        contract_uuid = contract.get("uuid")
-        if not contract_uuid or contract.get("charts"):
-            continue
-
-        previous_contract = existing_contracts.get(contract_uuid)
-        if previous_contract and previous_contract.get("charts"):
-            contract["charts"] = previous_contract["charts"]
-
-
-def _get_battery_contract(
-        battery_data: dict | None, contract_uuid: str
-) -> dict | None:
-    if not battery_data:
-        return None
-
-    for contract in battery_data.get("contracts", []):
-        if contract.get("uuid") == contract_uuid:
-            return contract
-    return None
-
-
-def _get_chart_group(chart_data: Any) -> dict | None:
-    if not chart_data:
-        return None
-
-    if isinstance(chart_data, dict):
-        data = chart_data.get("data")
-        if isinstance(data, list) and data:
-            return data[0]
-        return None
-
-    if isinstance(chart_data, list) and chart_data:
-        return chart_data[0]
-
-    return None
-
-
 def _parse_day_chart(chart_data: Any, month_date: date) -> dict | None:
-    group = _get_chart_group(chart_data)
+    group = chart_data[0]
     if not group:
+        _LOGGER.warning("No day data in %s", chart_data)
         return None
 
     measurements = group.get("measurements") or []
@@ -107,8 +57,9 @@ def _parse_day_chart(chart_data: Any, month_date: date) -> dict | None:
 
 
 def _parse_month_chart(chart_data: Any, year: int) -> dict | None:
-    group = _get_chart_group(chart_data)
+    group = chart_data[0]
     if not group:
+        _LOGGER.warning("No month data in %s", chart_data)
         return None
 
     measurements = group.get("measurements") or []
@@ -183,7 +134,7 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         """Fetch the latest status."""
         try:
 
-            charts = await self._async_get_battery_charts()
+            charts = await self._async_get_battery_charts(self.data or {})
 
             _LOGGER.debug("Update battery charts data: %s", charts)
 
@@ -194,7 +145,7 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
                 raise ConfigEntryAuthFailed from e
             raise e
 
-    async def _async_get_battery_charts(self) -> dict:
+    async def _async_get_battery_charts(self, charts: dict) -> dict:
 
         today = dt_util.now().date()
         current_year_date = date(today.year, 1, 1)
@@ -202,7 +153,6 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         current_month_date = today.replace(day=1)
         last_month_date = (current_month_date - timedelta(days=1)).replace(day=1)
 
-        charts = {}
         contract_uuid = self.contract.get("uuid")
 
         months_this_year = await self.api.async_get_battery_chart(
