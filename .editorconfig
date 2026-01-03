@@ -1,0 +1,20 @@
+root = true
+
+[*]
+# Use Unix-style newlines (matches "files.eol": "\n")
+end_of_line = lf
+# Ensure files end with a newline
+insert_final_newline = true
+# Remove trailing whitespace (matches "files.trimTrailingWhitespace": true)
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.{py,pyi}]
+# Python specific settings (matches "editor.tabSize": 4)
+indent_style = space
+indent_size = 4
+
+[*.{js,json,yml}]
+indent_style = space
+indent_size = 2
+

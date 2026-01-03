@@ -1,0 +1,16 @@
+# https://www.home-assistant.io/integrations/default_config/
+default_config:
+
+# https://www.home-assistant.io/integrations/homeassistant/
+homeassistant:
+  debug: true
+
+# https://www.home-assistant.io/integrations/logger/
+logger:
+  default: info
+  logs:
+     custom_components.zonneplan_one.api: info
+     custom_components.zonneplan_one.binary_sensor: info
+     custom_components.zonneplan_one.sensor: info
+     custom_components.zonneplan_one.coordinators: info
+     custom_components.zonneplan_one: debug
