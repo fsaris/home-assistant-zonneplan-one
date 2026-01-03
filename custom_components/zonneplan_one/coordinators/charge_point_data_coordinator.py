@@ -1,29 +1,28 @@
-from collections.abc import Callable
+import logging
 from datetime import timedelta
 from http import HTTPStatus
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import logging
 from aiohttp.client_exceptions import ClientResponseError
-
-from homeassistant.core import (
-    HassJob,
-    HomeAssistant
-)
+from homeassistant.core import HassJob, HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_call_later
-from homeassistant.exceptions import ConfigEntryAuthFailed
+
+from zonneplan_one.api import AsyncConfigEntryAuth
+from zonneplan_one.const import DOMAIN
+from zonneplan_one.zonneplan_api.types import ZonneplanContract
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
-from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
-from ..zonneplan_api.types import ZonneplanContract
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
-    """Zonneplan charge point data update coordinator"""
+    """Zonneplan charge point data update coordinator."""
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
@@ -32,12 +31,12 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     contract: ZonneplanContract
 
     def __init__(
-            self,
-            hass: HomeAssistant,
-            api: AsyncConfigEntryAuth,
-            address_uuid: str,
-            connection_uuid: str,
-            contract: ZonneplanContract,
+        self,
+        hass: HomeAssistant,
+        api: AsyncConfigEntryAuth,
+        address_uuid: str,
+        connection_uuid: str,
+        contract: ZonneplanContract,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -45,12 +44,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             _LOGGER,
             name=DOMAIN,
             update_interval=timedelta(seconds=60),
-            request_refresh_debouncer=Debouncer(
-                hass,
-                _LOGGER,
-                cooldown=60,
-                immediate=False
-            )
+            request_refresh_debouncer=Debouncer(hass, _LOGGER, cooldown=60, immediate=False),
         )
 
         self.api: AsyncConfigEntryAuth = api
@@ -70,7 +64,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
                 raise ConfigEntryAuthFailed from e
-            raise e
+            raise
 
     async def _async_get_charge_point_data(self, connection_uuid: str, charge_point_uuid: str) -> dict:
         return await self.api.async_get(connection_uuid, "/charge-points/" + charge_point_uuid)
@@ -105,19 +99,16 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         await self.async_fetch_charge_point_data()
 
     def _processing_charge_point_update(self) -> bool:
-
         processing = self.data.get("state", {}).get("processing")
 
-        return True if processing else False
+        return bool(processing)
 
-    async def async_fetch_charge_point_data(self, _now: Any = None):
-
+    async def async_fetch_charge_point_data(self, _now: Any = None) -> None:
         if self._delayed_fetch_charge_point:
             self._delayed_fetch_charge_point()
         self._delayed_fetch_charge_point = None
 
         if self._processing_charge_point_update():
-            # @todo: change to force refetch of this dataCoordinator
             await self.async_update_charge_point_data()
 
         if self._processing_charge_point_update():

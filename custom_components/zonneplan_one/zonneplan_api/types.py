@@ -1,5 +1,6 @@
 from typing import Any, TypedDict
 
+
 class ZonneplanContract(TypedDict):
     uuid: str
     label: str
@@ -49,4 +50,3 @@ class ZonneplanUserAccount(TypedDict):
 class ZonneplanAccountsData(TypedDict):
     user_account: ZonneplanUserAccount
     address_groups: list[ZonneplanAddressGroup]
-

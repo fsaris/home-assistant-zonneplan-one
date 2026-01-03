@@ -1,28 +1,24 @@
+import logging
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
-import logging
+import homeassistant.util.dt as dt_util
 from aiohttp.client_exceptions import ClientResponseError
-
-from homeassistant.core import (
-    HomeAssistant,
-    callback
-)
-from homeassistant.helpers.debounce import Debouncer
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_track_point_in_utc_time
 
-import homeassistant.util.dt as dt_util
+from zonneplan_one.api import AsyncConfigEntryAuth
+from zonneplan_one.const import DOMAIN
+from zonneplan_one.zonneplan_api.types import ZonneplanContract
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
-from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
-from ..zonneplan_api.types import ZonneplanContract
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_price_per_hour_by_date(summary) -> dict:
+def get_price_per_hour_by_date(summary: dict) -> dict:
     prices = {}
     if "price_per_hour" not in summary:
         return prices
@@ -35,7 +31,7 @@ def get_price_per_hour_by_date(summary) -> dict:
     return prices
 
 
-def get_gas_price_from_summary(summary):
+def get_gas_price_from_summary(summary: dict) -> str | None:
     if "price_per_hour" not in summary:
         return None
 
@@ -46,7 +42,7 @@ def get_gas_price_from_summary(summary):
     return None
 
 
-def get_next_gas_price_from_summary(summary):
+def get_next_gas_price_from_summary(summary: dict) -> str | None:
     if "price_per_hour" not in summary:
         return None
 
@@ -55,14 +51,13 @@ def get_next_gas_price_from_summary(summary):
         if "gas_price" in hour:
             if first_price_found:
                 return hour["gas_price"]
-            else:
-                first_price_found = True
+            first_price_found = True
 
     return None
 
 
 class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
-    """Zonneplan summary data update coordinator"""
+    """Zonneplan summary data update coordinator."""
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
@@ -70,12 +65,12 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     address_uuid: str
 
     def __init__(
-            self,
-            hass: HomeAssistant,
-            api: AsyncConfigEntryAuth,
-            address_uuid: str,
-            connection_uuid: str,
-            contract: ZonneplanContract,
+        self,
+        hass: HomeAssistant,
+        api: AsyncConfigEntryAuth,
+        address_uuid: str,
+        connection_uuid: str,
+        contract: ZonneplanContract,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -83,12 +78,7 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             _LOGGER,
             name=DOMAIN,
             update_interval=timedelta(minutes=15),
-            request_refresh_debouncer=Debouncer(
-                hass,
-                _LOGGER,
-                cooldown=60,
-                immediate=False
-            )
+            request_refresh_debouncer=Debouncer(hass, _LOGGER, cooldown=60, immediate=False),
         )
 
         self.api: AsyncConfigEntryAuth = api
@@ -101,7 +91,6 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
-
             summary = await self.api.async_get(self.connection_uuid, "/summary")
             if summary:
                 summary["gas_price"] = get_gas_price_from_summary(summary)
@@ -111,14 +100,14 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
                 if not self._unsub_hour_update:
                     self._schedule_hourly_listener_update()
 
-            _LOGGER.debug("Summary data: %s", summary)
-
-            return summary if summary else self.data
-
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
                 raise ConfigEntryAuthFailed from e
-            raise e
+            raise
+        else:
+            _LOGGER.debug("Summary data: %s", summary)
+
+            return summary if summary else self.data
 
     async def async_shutdown(self) -> None:
         """Cancel any scheduled call, and ignore new runs."""
@@ -127,7 +116,7 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             self._unsub_hour_update()
             self._unsub_hour_update = None
 
-    def _schedule_hourly_listener_update(self):
+    def _schedule_hourly_listener_update(self) -> None:
         """Schedule hourly sensor (listeners) update."""
         if self._unsub_hour_update:
             self._unsub_hour_update()
@@ -142,8 +131,4 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             self.async_update_listeners()
             self._schedule_hourly_listener_update()
 
-        self._unsub_hour_update = async_track_point_in_utc_time(
-            self.hass,
-            _handle,
-            next_hour
-        )
+        self._unsub_hour_update = async_track_point_in_utc_time(self.hass, _handle, next_hour)

@@ -1,34 +1,33 @@
-"""Zonneplan account DataUpdateCoordinator"""
-
-from datetime import timedelta
-from http import HTTPStatus
-from dataclasses import dataclass
+"""Zonneplan account DataUpdateCoordinator."""
 
 import logging
-from aiohttp.client_exceptions import ClientResponseError
+from dataclasses import dataclass
+from datetime import timedelta
+from http import HTTPStatus
 
+from aiohttp.client_exceptions import ClientResponseError
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import (
-    HomeAssistant
-)
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import UpdateFailed
-from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
-from .summary_data_coordinator import SummaryDataUpdateCoordinator
-from .pv_data_coordinator import PvDataUpdateCoordinator
-from .electricity_data_coordinator import ElectricityDataUpdateCoordinator
-from .gas_data_coordinator import GasDataUpdateCoordinator
-from .charge_point_data_coordinator import ChargePointDataUpdateCoordinator
-from .battery_data_coordinator import BatteryDataUpdateCoordinator
+from zonneplan_one.api import AsyncConfigEntryAuth
+from zonneplan_one.const import DOMAIN
+from zonneplan_one.zonneplan_api.types import ZonneplanAddressGroup
+
 from .battery_charts_data_coordinator import BatteryChartsDataUpdateCoordinator
 from .battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
-from .electricity_home_consumption_data_coordinator import ElectricityHomeConsumptionDataUpdateCoordinator
-
-from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
-from ..zonneplan_api.types import ZonneplanAddressGroup
+from .battery_data_coordinator import BatteryDataUpdateCoordinator
+from .charge_point_data_coordinator import ChargePointDataUpdateCoordinator
+from .electricity_data_coordinator import ElectricityDataUpdateCoordinator
+from .electricity_home_consumption_data_coordinator import (
+    ElectricityHomeConsumptionDataUpdateCoordinator,
+)
+from .gas_data_coordinator import GasDataUpdateCoordinator
+from .pv_data_coordinator import PvDataUpdateCoordinator
+from .summary_data_coordinator import SummaryDataUpdateCoordinator
+from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,27 +50,23 @@ class ConnectionCoordinators:
 
 class AccountDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     data: list[ZonneplanAddressGroup] | None
-    coordinators: dict[str, ConnectionCoordinators] = {}
+    coordinators: dict[str, ConnectionCoordinators]
 
     def __init__(
-            self,
-            hass: HomeAssistant,
-            api: AsyncConfigEntryAuth,
+        self,
+        hass: HomeAssistant,
+        api: AsyncConfigEntryAuth,
     ) -> None:
         """Initialize."""
         super().__init__(
             hass,
             _LOGGER,
             name=DOMAIN,
-            request_refresh_debouncer=Debouncer(
-                hass,
-                _LOGGER,
-                cooldown=60,
-                immediate=False
-            )
+            request_refresh_debouncer=Debouncer(hass, _LOGGER, cooldown=60, immediate=False),
         )
         self.update_interval = timedelta(minutes=60)
         self.api: AsyncConfigEntryAuth = api
+        self.coordinators = {}
 
     async def _async_update_data(self) -> list[ZonneplanAddressGroup]:
         """Fetch the latest account status."""
@@ -82,20 +77,24 @@ class AccountDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             _LOGGER.debug("Accounts: %s", accounts)
 
-            # todo: trigger integration reload on account changes
+            # TODO: trigger integration reload on account changes # noqa: TD002 TD003 FIX002
             return accounts.get("address_groups")
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
                 raise ConfigEntryAuthFailed from e
-            raise e
+            raise
 
     @property
     def address_groups(self) -> list[ZonneplanAddressGroup]:
-
         return self.data
 
-    def add_coordinator(self, uuid: str, coordinator_type: str, coordinator: ZonneplanDataUpdateCoordinator):
+    def add_coordinator(
+        self,
+        uuid: str,
+        coordinator_type: str,
+        coordinator: ZonneplanDataUpdateCoordinator,
+    ) -> None:
         if uuid not in self.coordinators:
             self.coordinators[uuid] = ConnectionCoordinators()
 

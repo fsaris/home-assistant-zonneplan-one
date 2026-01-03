@@ -1,52 +1,54 @@
-"""Zonneplan button"""
-from typing import Optional
+"""Zonneplan button."""
 
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-)
 import logging
-from homeassistant.core import (
-    HomeAssistant
-)
+
 from homeassistant.components.button import (
     ButtonEntity,
 )
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+)
 
-from .coordinators.account_data_coordinator import ZonneplanConfigEntry
-from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
 from .const import (
-    CHARGE_POINT,
     BUTTON_TYPES,
+    CHARGE_POINT,
     ZonneplanButtonEntityDescription,
 )
+from .coordinators.account_data_coordinator import ZonneplanConfigEntry
+from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
 from .entity import ChargePointEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
+    entry: ZonneplanConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
     entities = []
     for uuid, connection in entry.runtime_data.coordinators.items():
-
         if connection.charge_point_installation:
             _LOGGER.debug("Setup buttons for connnection %s", uuid)
 
-            for sensor_key in BUTTON_TYPES[CHARGE_POINT]:
-                entities.append(
-                    ZonneplanChargePointButton(
-                        uuid,
-                        sensor_key,
-                        connection.charge_point_installation,
-                        0,
-                        BUTTON_TYPES[CHARGE_POINT][sensor_key],
-                    )
+            entities.extend(
+                ZonneplanChargePointButton(
+                    uuid,
+                    sensor_key,
+                    connection.charge_point_installation,
+                    0,
+                    BUTTON_TYPES[CHARGE_POINT][sensor_key],
                 )
+                for sensor_key in BUTTON_TYPES[CHARGE_POINT]
+            )
 
     async_add_entities(entities)
 
 
 class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEntity):
-    """Zonneplan Charge Point Button"""
+    """Zonneplan Charge Point Button."""
 
     coordinator: ChargePointDataUpdateCoordinator
     entity_description: ZonneplanButtonEntityDescription
@@ -55,12 +57,12 @@ class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEnt
     _install_index: int
 
     def __init__(
-            self,
-            connection_uuid,
-            button_key: str,
-            coordinator: ChargePointDataUpdateCoordinator,
-            install_index: int,
-            description: ZonneplanButtonEntityDescription,
+        self,
+        connection_uuid: str,
+        button_key: str,
+        coordinator: ChargePointDataUpdateCoordinator,
+        install_index: int,
+        description: ZonneplanButtonEntityDescription,
     ) -> None:
         """Initialize the button."""
         super().__init__(coordinator)
@@ -70,7 +72,7 @@ class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEnt
         self.entity_description = description
 
     @property
-    def unique_id(self) -> Optional[str]:
+    def unique_id(self) -> str | None:
         """Return a unique ID."""
         return self.install_uuid + "_" + self._button_key
 
@@ -91,14 +93,10 @@ class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEnt
         if self._button_key == "stop" and state["state"] == "Charging":
             return True
 
-        if self._button_key == "start" and state["state"] == "VehicleDetected":
-            return True
-
-        return False
+        return bool(self._button_key == "start" and state["state"] == "VehicleDetected")
 
     async def async_press(self) -> None:
         """Handle the button press."""
-
         if self._button_key == "start":
             await self.coordinator.async_start_charge()
         elif self._button_key == "stop":
