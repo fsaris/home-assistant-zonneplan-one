@@ -20,6 +20,7 @@ ignore = [
     "D103", # Missing docstring in public function
     "D101", # Missing docstring in public class
     "D107", # Missing docstring in `__init__`
+    "TID252", # Prefer absolute imports over relative imports from parent modules
 ]
 
 [lint.flake8-pytest-style]
