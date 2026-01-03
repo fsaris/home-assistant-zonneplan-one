@@ -8,153 +8,158 @@
 
 Unofficial integration for Zonneplan. This integration uses the official Zonneplan API to pull the same data available in the Zonneplan app into your Home Assistant instance.
 
-## Available sensors
-### Zonneplan:
-   - Solar panels: _(available when you have 1 or more Zonneplan solar inverters)_
-     - Yield today: `kWh` (combined yield of all Zonneplan solar inverters) _(can be used as entity on Energy Dashboard)_
-   - General energy values: _(available when there is a Zonneplan Connect P1 reader)_
-     - Electricity consumption today: `kWh` _(can be used as entity on Energy Dashboard)_
-     - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
-     - Gas consumption today: `m³` _(when a gas meter is registered in the P1 reader)_
-   - Net values: _(available when there is a Zonneplan Battery)_
-     - Net delivery costs this month `€` _(default disabled)_
-     - Net delivery costs this year `€` _(default disabled)_
-     - Net production costs this month `€` _(default disabled)_
-     - Net production costs this year `€` _(default disabled)_
-     - Net delivery today `kWh` 
-     - Net delivery this month `kWh`
-     - Net delivery this year `kWh`
-     - Net production today `kWh`
-     - Net production this month `kWh`
-     - Net production this year `kWh` 
+- [Available devices/sensors](#available-devicessensors)
+- [Installation](#installation)
+- [Setup](#setup)
+- [Setup Energy Dashboard](#setup-energy-dashboard)
+- [Using full forecast in graphs, tables and/or automations](#using-full-forecast-in-graphs-tables-andor-automations)
+- [Troubleshooting](#troubleshooting)
 
-### Zonneplan Connect (P1 reader):
-<details>
-<summary>Sensors available if you have a Zonneplan Connect P1 reader</summary>
-   
-   - Dsmr version _(default disabled)_
-   - Electricity consumption: `W`
-   - Electricity production: `W`
-   - Electricity average: `W` (average use over the last 5min)
-   - Electricity first measured: `date` _(default disabled)_
-   - Electricity last measured: `date`
-   - Electricity last measured production: `date`
-   - Gas first measured: `date` _(when a gas meter is registered in the P1 reader, default disabled)_
-   - Gas last measured: `date` _(when a gas meter is registered in the P1 reader)_
-   - Electricity delivery costs today: `€` _(default disabled)_
-   - Electricity delivery costs this month: `€` _(default disabled)_
-   - Electricity delivery costs this year: `€` _(default disabled)_
-   - Electricity production costs today: `€` _(default disabled)_
-   - Electricity production costs this month: `€` _(default disabled)_
-   - Electricity production costs this year: `€` _(default disabled)_
-   - Gas delivery costs today: `€` _(when a gas meter is registered in the P1 reader, default disabled)_
-</details>
+## Available devices/sensors
+### Zonneplan
 
-### Zonneplan Energy Electricity contract related:
-<details>
-<summary>Sensors available if you have a Zonneplan Electricity contract</summary>
+_Some generic/summary sensors_
+
+- Solar panels _(available when you have 1 or more Zonneplan solar inverters)_
+   - Yield today: `kWh` (combined yield of all Zonneplan solar inverters) _(can be used as entity on Energy Dashboard)_
+
+
+- General energy values _(available when there is a Zonneplan Connect P1 reader)_
+
+   - Electricity consumption today: `kWh` _(can be used as entity on Energy Dashboard)_
+   - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
+   - Electricity delivery costs today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs this month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs this year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs this month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs this year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Gas consumption today: `m³` _(when a gas meter is registered in the P1 reader)_
+   - Gas delivery costs today: `€` _(when there is a Zonneplan gas contract and a gas meter registered in the P1 reader, default disabled)_
+
+
+- Net values _(available when there is a Zonneplan Battery)_
+
+   - Net delivery costs this month `€` _(default disabled)_
+   - Net delivery costs this year `€` _(default disabled)_
+   - Net production costs this month `€` _(default disabled)_
+   - Net production costs this year `€` _(default disabled)_
+   - Net delivery today `kWh` 
+   - Net delivery this month `kWh`
+   - Net delivery this year `kWh`
+   - Net production today `kWh`
+   - Net production this month `kWh`
+   - Net production this year `kWh` 
+
+
+### Zonneplan Connect (P1 reader)
+_Sensors available if you have a Zonneplan Connect P1 reader_
    
-   - Current Zonneplan Electricity tariff: `€/kWh`
-       - The full Electricity forecast is available as a forecast attribute of this sensor
-   - Forecast electricity tariff hour 1-8: `€/kWh` _(default disabled)_
-   - Forecast tariff group hour 1-8 _(default disabled)_
-   - Current usage: `W` _(default disabled)_
-   - Current usage measured at: `date` _(default disabled)_
-   - Current tariff group
-   - Sustainability score
-   - Status message _(default disabled)_
-   - Status tip
-</details>
+- DSMR version _(default disabled)_
+- Electricity consumption: `W`
+- Electricity production: `W`
+- Electricity average: `W` (average use over the last 5min)
+- Electricity first measured: `date` _(default disabled)_
+- Electricity last measured: `date`
+- Electricity last measured production: `date`
+- Gas first measured: `date` _(when a gas meter is registered in the P1 reader, default disabled)_
+- Gas last measured: `date` _(when a gas meter is registered in the P1 reader)_
+
+### Zonneplan Energy Electricity contract related
+_Sensors available if you have a Zonneplan Electricity contract._
+   
+- Current Zonneplan Electricity tariff: `€/kWh`
+    - The full Electricity forecast is available as a forecast attribute of this sensor
+- Forecast electricity tariff hour 1-8: `€/kWh` _(default disabled)_
+- Forecast tariff group hour 1-8 _(default disabled)_
+- Current usage: `W` _(default disabled)_
+- Current usage measured at: `date` _(default disabled)_
+- Current tariff group
+- Sustainability score
+- Status message _(default disabled)_
+- Status tip
+
 
 ### Zonneplan Energy Gas contract related:
-<details>
-<summary>Sensors available if you have a Zonneplan Gas contract</summary>
+_Sensors available if you have a Zonneplan Gas contract_
    
-   - Current Zonneplan Gas tariff: `€/m³`
-   - Next Zonneplan Gas tariff: `€/m³`
-   
-</details>
+- Current Zonneplan Gas tariff: `€/m³`
+- Next Zonneplan Gas tariff: `€/m³`
      
-### Zonneplan Solar inverter:
-<details>
-<summary>Sensors available if you have a Zonneplan solar inverter</summary>
+### Zonneplan Solar inverter
+_Sensors available if you have a Zonneplan solar inverter_
    
-   - Yield total: `kWh`
-   - First measured: `date` _(default disabled)_
-   - Last measured value: `W`
-   - Last measured: `date`
-   - Powerplay enabled: `on/off` _(default disabled)_
-   - Powerplay/power limit active: `on/off` _(default disabled)_
-   - Powerplay total: `€` _(default disabled)_
-   - Powerplay today: `€` _(default disabled)_
-</details>
+- Yield total: `kWh`
+- First measured: `date` _(default disabled)_
+- Last measured value: `W`
+- Last measured: `date`
+- Powerplay enabled: `on/off` _(default disabled)_
+- Powerplay/power limit active: `on/off` _(default disabled)_
+- Powerplay total: `€` _(default disabled)_
+- Powerplay today: `€` _(default disabled)_
 
-### Zonneplan Charge point/Laadpaal:
-<details>
-<summary>Sensors available if you have a Zonneplan charge point/laadpaal</summary>
-   
-  - Charge point state
-  - Charge point power `W`
-  - Charge point energy delivered session `kWh`
-  - Charge point next schedule start `date`
-  - Charge point next schedule end `date`
-  - Charge point dynamic load balancing health _(default disabled)_
-  - Charge point connectivity state `on/off`
-  - Charge point can charge `on/off`
-  - Charge point can schedule `on/off`
-  - Charge point charging manually `on/off`
-  - Charge point charging automatically `on/off`
-  - Charge point plug and charge `on/off`
-  - Charge point overload protection active `on/off` _(default disabled)_
-  - Charge point session cost `€`
-  - Charge point cost total `€`
-  - Charge point flex result `€`
-  - Charge point session average costs `€/kWh`
-  - Charge point start mode _(default disabled)_
-  - Charge point dynamic load desired distance `km`
-  - Charge point dynamic load desired end time `datetime`
-  - Charge point session start time `datetime`
-  - Charge point session charged distance `km`
-  - Charge point dynamic charging enabled `on/off`
-  - Charge point dynamic charging flex enabled `on/off`
-  - Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
-  - Buttons to start/stop charge
-</details>
+### Zonneplan Charge point/Laadpaal
+_Sensors available if you have a Zonneplan charge point/laadpaal_
 
-### Zonneplan Battery:
-<details>
-<summary>Sensors available if you have a Zonneplan Nexus battery</summary>
+- Charge point state
+- Charge point power `W`
+- Charge point energy delivered session `kWh`
+- Charge point next schedule start `date`
+- Charge point next schedule end `date`
+- Charge point dynamic load balancing health _(default disabled)_
+- Charge point connectivity state `on/off`
+- Charge point can charge `on/off`
+- Charge point can schedule `on/off`
+- Charge point charging manually `on/off`
+- Charge point charging automatically `on/off`
+- Charge point plug and charge `on/off`
+- Charge point overload protection active `on/off` _(default disabled)_
+- Charge point session cost `€`
+- Charge point cost total `€`
+- Charge point flex result `€`
+- Charge point session average costs `€/kWh`
+- Charge point start mode _(default disabled)_
+- Charge point dynamic load desired distance `km`
+- Charge point dynamic load desired end time `datetime`
+- Charge point session start time `datetime`
+- Charge point session charged distance `km`
+- Charge point dynamic charging enabled `on/off`
+- Charge point dynamic charging flex enabled `on/off`
+- Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
+- Buttons to start/stop charge
 
-  - Average day: `€`
-  - Battery cycles
-  - Dynamic charging enabled `on/off`
-  - Battery state
-  - Percentage `%`
-  - Power `W` _(default disabled)_
-  - Delivery today `kWh`
-  - Production today `kWh`
-  - Today `€`
-  - Total `€`
-  - Result this month `€`
-  - Result last month `€`
-  - Result this year `€`
-  - Result last year `€`
-  - Dynamic load balancing overload active `on/off`
-  - Dynamic load balancing enabled `on/off`
-  - Manual control enabled `on/off`
-  - Inverter state _(default disabled)_
-  - First measured `datetime` _(default disabled)_
-  - Last measured `datetime`
-  - Grid congestion active `on/off`
-  - Home optimization active `on/off`
-  - Home optimization enabled `on/off`
-  - Self consumption enabled `on/off`
-  - Control mode `home_optimization/dynamic_charging/self_consumption`
-  - Select to set control mode
-  - Max discharge power (Home optimization) `slider in: W`
-  - Max charge power (Home optimization) `slider in: W`
+### Zonneplan Battery
+_Sensors available if you have a Zonneplan Nexus battery_
 
-</details>
+- Average day: `€`
+- Battery cycles
+- Dynamic charging enabled `on/off`
+- Battery state
+- Percentage `%`
+- Power `W` _(default disabled)_
+- Delivery today `kWh`
+- Production today `kWh`
+- Today `€`
+- Total `€`
+- Result this month `€`
+- Result last month `€`
+- Result this year `€`
+- Result last year `€`
+- Dynamic load balancing overload active `on/off`
+- Dynamic load balancing enabled `on/off`
+- Manual control enabled `on/off`
+- Inverter state _(default disabled)_
+- First measured `datetime` _(default disabled)_
+- Last measured `datetime`
+- Grid congestion active `on/off`
+- Home optimization active `on/off`
+- Home optimization enabled `on/off`
+- Self consumption enabled `on/off`
+- Control mode `home_optimization/dynamic_charging/self_consumption`
+- Select to set control mode
+- Max discharge power (Home optimization) `slider in: W`
+- Max charge power (Home optimization) `slider in: W`
+
 
 ## Installation
 
@@ -436,12 +441,17 @@ entities:
 
 ## Troubleshooting
 
-If you run into issues during setup or when entries do not update anymore please enable debug logging and provide them when creating an issue.
+If you run into issues during setup or when entries do not update anymore please provide the diagnostics and/or debug logging and provide them when creating an issue.
 
-1. Go to the integration
+### Diagnostics
+1. Go to the integration: [show Zonneplan in your Home Assistant instance](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one).
+2. Click on the `Zonneplan` device
+3. Click `Download diagnostics` in the `Device info` block
+4. _Sensitive data is already redacted in this file_ 
 
-   [![Open your Home Assistant instance and show an integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one)
-2. Enable debug log by clicking `Enable debug logging`
+### Debug logging
+1. Go to the integration: [show Zonneplan in your Home Assistant instance](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one).
+2. Enable debug log by clicking the 3 dots in the right top corner of the screen and than `Enable debug logging`
 3. Wait a few minutes for the integration to fetch new data
 4. Disable debug logging again (same button as step 2)
 5. Log will be presented for download
