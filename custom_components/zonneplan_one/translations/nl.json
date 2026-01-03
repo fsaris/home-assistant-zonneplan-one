@@ -89,28 +89,68 @@
         "name": "Verwacht tarief uur 8"
       },
       "forecast_tariff_group_hour_1": {
-        "name": "Verwachte tariefgroep uur 1"
+        "name": "Verwachte tariefgroep uur 1",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "forecast_tariff_group_hour_2": {
-        "name": "Verwachte tariefgroep uur 2"
+        "name": "Verwachte tariefgroep uur 2",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "forecast_tariff_group_hour_3": {
-        "name": "Verwachte tariefgroep uur 3"
+        "name": "Verwachte tariefgroep uur 3",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "forecast_tariff_group_hour_4": {
-        "name": "Verwachte tariefgroep uur 4"
+        "name": "Verwachte tariefgroep uur 4",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "forecast_tariff_group_hour_5": {
-        "name": "Verwachte tariefgroep uur 5"
+        "name": "Verwachte tariefgroep uur 5",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "forecast_tariff_group_hour_6": {
-        "name": "Verwachte tariefgroep uur 6"
+        "name": "Verwachte tariefgroep uur 6",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "forecast_tariff_group_hour_7": {
-        "name": "Verwachte tariefgroep uur 7"
+        "name": "Verwachte tariefgroep uur 7",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "forecast_tariff_group_hour_8": {
-        "name": "Verwachte tariefgroep uur 8"
+        "name": "Verwachte tariefgroep uur 8",
+        "state": {
+          "high": "hoog",
+          "low": "laag",
+          "normal": "normaal"
+        }
       },
       "yield_total": {
         "name": "Opbrengst totaal"

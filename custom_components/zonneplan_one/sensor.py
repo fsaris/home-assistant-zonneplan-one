@@ -348,9 +348,10 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
         return attrs
 
     def _value_from_coordinator(self):
-        raw_value = value = self.coordinator.get_data_value(
-            self.entity_description.key.format(install_index=self._install_index),
-        )
+        key = self.entity_description.key_lambda() if self.entity_description.key_lambda else self.entity_description.key.format(
+            install_index=self._install_index)
+        _LOGGER.debug(f"Key {self.unique_id}: {key}")
+        raw_value = value = self.coordinator.get_data_value(key)
 
         if (
                 value is None
