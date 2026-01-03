@@ -447,6 +447,7 @@ If you run into issues during setup or when entries do not update anymore please
 1. Go to the integration: [show Zonneplan in your Home Assistant instance](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one).
 2. Click on the `Zonneplan` device
 3. Click `Download diagnostics` in the `Device info` block
+4. _Sensitive data is already redacted in this file_ 
 
 ### Debug logging
 1. Go to the integration: [show Zonneplan in your Home Assistant instance](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one).
