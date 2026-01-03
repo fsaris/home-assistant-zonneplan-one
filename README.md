@@ -58,9 +58,9 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
        - The full Electricity forecast is available as a forecast attribute of this sensor
    - Forecast electricity tariff hour 1-8: `€/kWh` _(default disabled)_
    - Forecast tariff group hour 1-8 _(default disabled)_
-   - Current usage: `W`
+   - Current usage: `W` _(default disabled)_
    - Current usage measured at: `date` _(default disabled)_
-   - Current tariff group _(default disabled)_
+   - Current tariff group
    - Sustainability score
    - Status message _(default disabled)_
    - Status tip
