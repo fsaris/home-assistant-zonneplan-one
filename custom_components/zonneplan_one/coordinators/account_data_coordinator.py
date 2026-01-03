@@ -12,9 +12,9 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
-from zonneplan_one.api import AsyncConfigEntryAuth
-from zonneplan_one.const import DOMAIN
-from zonneplan_one.zonneplan_api.types import ZonneplanAddressGroup
+from ..api import AsyncConfigEntryAuth
+from ..const import DOMAIN
+from ..zonneplan_api.types import ZonneplanAddressGroup
 
 from .battery_charts_data_coordinator import BatteryChartsDataUpdateCoordinator
 from .battery_control_data_coordinator import BatteryControlDataUpdateCoordinator

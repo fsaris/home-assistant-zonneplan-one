@@ -4,7 +4,7 @@ import logging
 
 import aiohttp
 
-from zonneplan_one.const import VERSION
+from ..const import VERSION
 
 APP_VERSION = "5.10.1"
 LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"

@@ -9,9 +9,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 
-from zonneplan_one.api import AsyncConfigEntryAuth
-from zonneplan_one.const import DOMAIN
-from zonneplan_one.zonneplan_api.types import ZonneplanContract
+from ..api import AsyncConfigEntryAuth
+from ..const import DOMAIN
+from ..zonneplan_api.types import ZonneplanContract
 
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
