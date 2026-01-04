@@ -12,7 +12,6 @@ from homeassistant.helpers.event import async_call_later
 from ..api import AsyncConfigEntryAuth
 from ..const import DOMAIN
 from ..zonneplan_api.types import ZonneplanContract
-
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
 if TYPE_CHECKING:

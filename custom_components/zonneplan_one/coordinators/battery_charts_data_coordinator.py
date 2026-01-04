@@ -12,7 +12,6 @@ from homeassistant.helpers.debounce import Debouncer
 from ..api import AsyncConfigEntryAuth
 from ..const import DOMAIN
 from ..zonneplan_api.types import ZonneplanContract
-
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)

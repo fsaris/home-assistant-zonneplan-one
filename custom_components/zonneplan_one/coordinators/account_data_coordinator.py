@@ -15,7 +15,6 @@ from homeassistant.helpers.update_coordinator import UpdateFailed
 from ..api import AsyncConfigEntryAuth
 from ..const import DOMAIN
 from ..zonneplan_api.types import ZonneplanAddressGroup
-
 from .battery_charts_data_coordinator import BatteryChartsDataUpdateCoordinator
 from .battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
 from .battery_data_coordinator import BatteryDataUpdateCoordinator
