@@ -1,25 +1,22 @@
+import logging
 from datetime import timedelta
 from http import HTTPStatus
 
-import logging
 from aiohttp.client_exceptions import ClientResponseError
-
-from homeassistant.core import (
-    HomeAssistant
-)
-from homeassistant.helpers.debounce import Debouncer
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.debounce import Debouncer
 
 from ..api import AsyncConfigEntryAuth
 from ..const import DOMAIN
-from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 from ..zonneplan_api.types import ZonneplanContract
+from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
-    """Zonneplan battery control data update coordinator"""
+    """Zonneplan battery control data update coordinator."""
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
@@ -28,12 +25,12 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     contract: ZonneplanContract
 
     def __init__(
-            self,
-            hass: HomeAssistant,
-            api: AsyncConfigEntryAuth,
-            address_uuid: str,
-            connection_uuid: str,
-            contract: ZonneplanContract,
+        self,
+        hass: HomeAssistant,
+        api: AsyncConfigEntryAuth,
+        address_uuid: str,
+        connection_uuid: str,
+        contract: ZonneplanContract,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -41,12 +38,7 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             _LOGGER,
             name=DOMAIN,
             update_interval=timedelta(seconds=60),
-            request_refresh_debouncer=Debouncer(
-                hass,
-                _LOGGER,
-                cooldown=60,
-                immediate=False
-            )
+            request_refresh_debouncer=Debouncer(hass, _LOGGER, cooldown=60, immediate=False),
         )
 
         self.api: AsyncConfigEntryAuth = api
@@ -57,7 +49,6 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
-
             data = self.data or {}
 
             battery_control_mode = await self.api.async_get_battery_control_mode(self.contract["uuid"])
@@ -68,14 +59,14 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             if battery_home_optimization:
                 data["battery_home_optimization"] = battery_home_optimization
 
-            _LOGGER.debug("Update battery control data: %s", data)
-
-            return data
-
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
                 raise ConfigEntryAuthFailed from e
-            raise e
+            raise
+        else:
+            _LOGGER.debug("Update battery control data: %s", data)
+
+            return data
 
     async def async_enable_self_consumption(self) -> None:
         await self.api.async_post(
@@ -96,7 +87,6 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         await self.async_fetch_battery_control_mode()
 
     async def async_enable_dynamic_charging(self) -> None:
-
         if self.is_mode_enabled("home_optimization"):
             await self.api.async_post(
                 self.connection_uuid,
@@ -137,8 +127,8 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         _LOGGER.info("async_enable_home_optimization: params %s", params)
         response = await self.api.async_post(
             self.connection_uuid,
-            f"/home-battery-installation/{self.contract["uuid"]}/actions/enable_home_optimization",
-            params
+            f"/home-battery-installation/{self.contract['uuid']}/actions/enable_home_optimization",
+            params,
         )
 
         _LOGGER.debug("enable_home_optimization response: %s", response)
@@ -151,15 +141,14 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         if self.is_mode_enabled("self_consumption"):
             await self.api.async_post(
                 self.connection_uuid,
-                f"/home-battery-installation/{self.contract["uuid"]}/actions/disable_self_consumption",
+                f"/home-battery-installation/{self.contract['uuid']}/actions/disable_self_consumption",
             )
 
         self.data["battery_control_mode"]["processing"] = True
 
         await self.async_fetch_battery_control_mode()
 
-    async def async_fetch_battery_control_mode(self):
-
+    async def async_fetch_battery_control_mode(self) -> None:
         battery_control_mode = await self.api.async_get_battery_control_mode(self.contract["uuid"])
         if battery_control_mode:
             self.data["battery_control_mode"] = battery_control_mode
@@ -174,4 +163,4 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self.async_update_listeners()
 
     def is_mode_enabled(self, mode: str) -> bool:
-        return True if self.data.get("battery_control_mode", {}).get("modes", {}).get(mode, {}).get("enabled", False) else False
+        return bool(self.data.get("battery_control_mode", {}).get("modes", {}).get(mode, {}).get("enabled", False))

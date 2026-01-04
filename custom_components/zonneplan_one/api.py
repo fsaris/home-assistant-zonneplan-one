@@ -1,32 +1,37 @@
 """API for Zonneplan bound to Home Assistant OAuth."""
-from typing import Any
-from datetime import date
-from aiohttp import ClientSession
 
 import logging
+from datetime import date
+from http import HTTPStatus
+from typing import Any
 
-from .zonneplan_api.types import ZonneplanAccountsData
+from aiohttp import ClientSession
 from homeassistant.helpers import config_entry_oauth2_flow
-from .zonneplan_api.api import ZonneplanApi
 
 from .const import DOMAIN
+from .zonneplan_api.api import ZonneplanApi
+from .zonneplan_api.types import ZonneplanAccountsData
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncConfigEntryAuth(ZonneplanApi):
+class ZonneplanApiError(Exception):
+    """Exception to indicate a general API error."""
 
-    diagnostics: dict[str, Any] = {}
+
+class AsyncConfigEntryAuth(ZonneplanApi):
+    diagnostics: dict[str, Any]
 
     def __init__(
-            self,
-            websession: ClientSession,
-            oauth_session: config_entry_oauth2_flow.OAuth2Session = None,
-    ):
+        self,
+        websession: ClientSession,
+        oauth_session: config_entry_oauth2_flow.OAuth2Session = None,
+    ) -> None:
         """Initialize Zonneplan auth."""
         super().__init__(websession)
         self._oauth_session = oauth_session
 
+        self.diagnostics = {}
         self._etags = {}
 
     async def async_get_access_token(self) -> str:
@@ -42,30 +47,18 @@ class AsyncConfigEntryAuth(ZonneplanApi):
     async def async_get(self, connection_uuid: str, path: str) -> dict | None:
         return await self._async_get("connections/" + connection_uuid + path)
 
-    async def async_get_battery_chart(
-            self, contract_uuid: str, chart: str, chart_date: date
-    ) -> dict | None:
+    async def async_get_battery_chart(self, contract_uuid: str, chart: str, chart_date: date) -> dict | None:
         """Get battery chart data for the given contract and date."""
         chart_date_str = chart_date.isoformat()
-        return await self._async_get(
-            f"contracts/{contract_uuid}/home_battery_installation/charts/{chart}?date={chart_date_str}"
-        )
+        return await self._async_get(f"contracts/{contract_uuid}/home_battery_installation/charts/{chart}?date={chart_date_str}")
 
-    async def async_get_battery_control_mode(
-            self, contract_uuid: str
-    ) -> dict | None:
-        """Get battery control mode"""
-        return await self._async_get(
-            f"api/contracts/{contract_uuid}/home-battery/control-mode"
-        )
+    async def async_get_battery_control_mode(self, contract_uuid: str) -> dict | None:
+        """Get battery control mode."""
+        return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode")
 
-    async def async_get_battery_home_optimization(
-            self, contract_uuid: str
-    ) -> dict | None:
-        """Get battery control mode"""
-        return await self._async_get(
-            f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization"
-        )
+    async def async_get_battery_home_optimization(self, contract_uuid: str) -> dict | None:
+        """Get battery control mode."""
+        return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization")
 
     async def _async_get(self, path: str) -> dict | None:
         _LOGGER.info("fetch: %s", path)
@@ -73,7 +66,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         headers = self._request_headers
         url = "https://app-api.zonneplan.nl/" + path
 
-        if url in self._etags and self._etags[url]:
+        if self._etags.get(url):
             headers["If-None-Match"] = self._etags[url]
 
         _LOGGER.debug("ZonneplanAPI request header: %s", headers)
@@ -86,7 +79,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.info("ZonneplanAPI response status: %s for %s", response.status, path)
 
-        if response.status == 304:
+        if response.status == HTTPStatus.NOT_MODIFIED:
             return None
 
         response.raise_for_status()
@@ -101,7 +94,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return response_json["data"]
 
-    async def async_post(self, connection_uuid: str, path: str, params=None) -> dict:
+    async def async_post(self, connection_uuid: str, path: str, params: dict | None = None) -> dict:
         if params is None:
             params = {}
         _LOGGER.info("POST: %s?%s", path, params)
@@ -119,8 +112,8 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         response.raise_for_status()
 
         # 204 No Content successful response
-        if response.status == 204:
-            return {'ok': True}
+        if response.status == HTTPStatus.NO_CONTENT:
+            return {"ok": True}
 
         response_json = await response.json()
 
@@ -129,9 +122,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         return response_json
 
 
-class ZonneplanOAuth2Implementation(
-    config_entry_oauth2_flow.AbstractOAuth2Implementation
-):
+class ZonneplanOAuth2Implementation(config_entry_oauth2_flow.AbstractOAuth2Implementation):
     def __init__(self, api: ZonneplanApi) -> None:
         self._api = api
 
@@ -150,12 +141,11 @@ class ZonneplanOAuth2Implementation(
 
     async def async_resolve_external_data(self, external_data: Any) -> dict:
         """Resolve external data to tokens."""
-        token = await self._api.async_get_temp_pass(
-            external_data["email"], external_data["uuid"]
-        )
+        token = await self._api.async_get_temp_pass(external_data["email"], external_data["uuid"])
         if not token:
             _LOGGER.error("Could not get token")
-            raise Exception("Could not get token")
+            msg = "Could not get token"
+            raise ZonneplanApiError(msg)
 
         return token
 
@@ -164,10 +154,11 @@ class ZonneplanOAuth2Implementation(
         new_token = await self._api.async_refresh_token(token)
 
         if not new_token:
-            raise Exception("Could not get new token")
+            msg = "Could not get new token"
+            raise ZonneplanApiError(msg)
 
         return new_token
 
-    async def async_generate_authorize_url(self, flow_id: str) -> str:
+    async def async_generate_authorize_url(self, flow_id: str) -> str:  # noqa: ARG002
         """Generate a url for the user to authorize."""
         return ""

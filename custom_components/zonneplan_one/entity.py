@@ -1,12 +1,17 @@
 """Zonneplan Battery Entity."""
+
 from typing import Protocol
 
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from .const import DOMAIN
-from .coordinators.battery_charts_data_coordinator import BatteryChartsDataUpdateCoordinator
+from .coordinators.battery_charts_data_coordinator import (
+    BatteryChartsDataUpdateCoordinator,
+)
+from .coordinators.battery_control_data_coordinator import (
+    BatteryControlDataUpdateCoordinator,
+)
 from .coordinators.battery_data_coordinator import BatteryDataUpdateCoordinator
-from .coordinators.battery_control_data_coordinator import BatteryControlDataUpdateCoordinator
 from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
 from .coordinators.electricity_data_coordinator import ElectricityDataUpdateCoordinator
 from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
@@ -90,7 +95,6 @@ class ChargePointEntity:
     @property
     def device_info(self: HasChargePointDataUpdateCoordinator) -> DeviceInfo:
         """Return the device information."""
-
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
             "via_device": (DOMAIN, self.coordinator.address_uuid),
@@ -102,15 +106,14 @@ class ChargePointEntity:
 
 
 class PvEntity:
-    """Defines a base Zonneplan PV Entity"""
+    """Defines a base Zonneplan PV Entity."""
 
     @property
     def install_uuid(self: HasPvDataUpdateCoordinator) -> str:
         """Return install ID."""
         if self._install_index < 0:
             return self._connection_uuid
-        else:
-            return self.coordinator.contracts[self._install_index]["uuid"]
+        return self.coordinator.contracts[self._install_index]["uuid"]
 
     @property
     def device_info(self: HasPvDataUpdateCoordinator) -> DeviceInfo:
@@ -121,12 +124,21 @@ class PvEntity:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
             device_info["via_device"] = (DOMAIN, self.coordinator.address_uuid)
             device_info["name"] = self.coordinator.contracts[self._install_index]["meta"].get("name", "") + (
-                f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
-            device_info["model"] = self.coordinator.contracts[self._install_index]["label"] + " " + str(
-                self.coordinator.contracts[self._install_index]["meta"].get("panel_count", "")) + " panels"
+                f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""
+            )
+            device_info["model"] = (
+                self.coordinator.contracts[self._install_index]["label"]
+                + " "
+                + str(self.coordinator.contracts[self._install_index]["meta"].get("panel_count", ""))
+                + " panels"
+            )
             device_info["serial_number"] = self.coordinator.contracts[self._install_index]["meta"].get("sgn_serial_number", "")
-            device_info["sw_version"] = self.coordinator.contracts[self._install_index]["meta"].get("module_firmware_version", "") or "unknown"
-            device_info["hw_version"] = self.coordinator.contracts[self._install_index]["meta"].get("inverter_firmware_version", "") or "unknown"
+            device_info["sw_version"] = (
+                self.coordinator.contracts[self._install_index]["meta"].get("module_firmware_version", "") or "unknown"
+            )
+            device_info["hw_version"] = (
+                self.coordinator.contracts[self._install_index]["meta"].get("inverter_firmware_version", "") or "unknown"
+            )
 
         return device_info
 
@@ -139,20 +151,19 @@ class P1Entity:
         """Return install ID."""
         if self._install_index < 0:
             return self._connection_uuid
-        else:
-            return self.coordinator.contracts[self._install_index]["uuid"]
+        return self.coordinator.contracts[self._install_index]["uuid"]
 
     @property
     def device_info(self: HasP1DataUpdateCoordinator) -> DeviceInfo:
         """Return the device information."""
-
         device_info: DeviceInfo = base_device_info(self.coordinator.address_uuid)
 
         if self._install_index >= 0:
             device_info["identifiers"] = {(DOMAIN, self.install_uuid)}
             device_info["via_device"] = (DOMAIN, self.coordinator.address_uuid)
             device_info["name"] = self.coordinator.contracts[self._install_index]["label"] + (
-                f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else "")
+                f" ({self._install_index + 1})" if self._install_index and self._install_index > 0 else ""
+            )
             device_info["model"] = self.coordinator.contracts[self._install_index]["label"]
             device_info["serial_number"] = self.coordinator.contracts[self._install_index]["meta"].get("sgn_serial_number", "")
             device_info["sw_version"] = self.coordinator.contracts[self._install_index]["meta"].get("sgn_firmware", "") or "unknown"

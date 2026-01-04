@@ -1,34 +1,31 @@
-"""Config flow for Zonneplan"""
-import logging
+"""Config flow for Zonneplan."""
 
-from typing import Any, Dict, Mapping, Optional
+import logging
+from collections.abc import Mapping
+from typing import Any
 
 import voluptuous as vol
-
 from homeassistant import config_entries
+from homeassistant.const import CONF_EMAIL
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 
-from homeassistant.const import CONF_EMAIL
-
+from .api import AsyncConfigEntryAuth, ZonneplanOAuth2Implementation
 from .const import DOMAIN
-from .api import AsyncConfigEntryAuth, ZonneplanApi, ZonneplanOAuth2Implementation
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ZonneplanLoginFlowHandler(
-    config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN
-):
+class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN):
     """Config flow to handle Zonneplan authentication."""
 
     DOMAIN = DOMAIN
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._email = ""
         self._token = ""
         super().__init__()
-        self.flow_impl: ZonneplanOAuth2Implementation = None  # type: ignore
+        self.flow_impl: ZonneplanOAuth2Implementation = None
 
         _LOGGER.info("__init__")
 
@@ -37,12 +34,12 @@ class ZonneplanLoginFlowHandler(
         """Return logger."""
         return logging.getLogger(__name__)
 
-    async def async_step_reauth(self, user_input=None):
+    async def async_step_reauth(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
         """Perform reauth upon an API authentication error."""
         _LOGGER.debug("reauth %s", user_input)
         return await self.async_step_reauth_confirm()
 
-    async def async_step_reauth_confirm(self, user_input=None):
+    async def async_step_reauth_confirm(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
         """Dialog that informs the user that reauth is required."""
         if user_input is None:
             return self.async_show_form(
@@ -52,24 +49,19 @@ class ZonneplanLoginFlowHandler(
             )
         return await self.async_step_user()
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
         """Handle a flow start."""
         await self.async_set_unique_id(DOMAIN)
 
         self.async_register_implementation(
             self.hass,
-            ZonneplanOAuth2Implementation(
-                AsyncConfigEntryAuth(aiohttp_client.async_get_clientsession(self.hass))
-            ),
+            ZonneplanOAuth2Implementation(AsyncConfigEntryAuth(aiohttp_client.async_get_clientsession(self.hass))),
         )
 
         return await super().async_step_user(user_input)
 
-    async def async_step_auth(
-        self, user_input: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+    async def async_step_auth(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
         """Create an entry for auth."""
-
         errors = {}
 
         self.logger.info("step_auth %s", user_input)
@@ -85,8 +77,8 @@ class ZonneplanLoginFlowHandler(
                 self._token = ""
                 self.logger.info("request login link %s", self._email)
                 self._token = await self.flow_impl.async_request_temp_pass(self._email)
-            except Exception as e:
-                self.logger.exception("Failed %s", e)
+            except Exception:
+                self.logger.exception("Failed to request login link")
 
             if not self._token:
                 errors[CONF_EMAIL] = "failed_to_request_login"
@@ -108,7 +100,7 @@ class ZonneplanLoginFlowHandler(
 
         return self.async_abort(reason="failed_to_authenticate")
 
-    async def async_step_fetch_password(self, user_input: Optional[Mapping] = None):
+    async def async_step_fetch_password(self, user_input: Mapping | None = None) -> config_entries.ConfigFlowResult:
         self.logger.info("fetch_password %s", user_input)
         if user_input is not None:
             self.external_data = {"email": self._email, "uuid": self._token}
@@ -123,14 +115,11 @@ class ZonneplanLoginFlowHandler(
 
     async def async_oauth_create_entry(self, data: dict) -> dict:
         """Create an oauth config entry or update existing entry for reauth."""
-
         data["email"] = self._email
 
         existing_entry = await self.async_set_unique_id(DOMAIN)
         if existing_entry:
-            self.logger.info(
-                "Update entry [%s]: %s", existing_entry.entry_id, data["email"]
-            )
+            self.logger.info("Update entry [%s]: %s", existing_entry.entry_id, data["email"])
             self.hass.config_entries.async_update_entry(existing_entry, data=data)
             await self.hass.config_entries.async_reload(existing_entry.entry_id)
             return self.async_abort(reason="reauth_successful")

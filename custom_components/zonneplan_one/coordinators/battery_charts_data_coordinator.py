@@ -1,22 +1,18 @@
-from datetime import date, datetime, timedelta
-from typing import Any
-from http import HTTPStatus
-
 import logging
+from datetime import date, datetime, timedelta
+from http import HTTPStatus
+from typing import Any
+
 import homeassistant.util.dt as dt_util
-
 from aiohttp.client_exceptions import ClientResponseError
-
-from homeassistant.core import (
-    HomeAssistant
-)
-from homeassistant.helpers.debounce import Debouncer
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.debounce import Debouncer
 
-from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 from ..api import AsyncConfigEntryAuth
 from ..const import DOMAIN
 from ..zonneplan_api.types import ZonneplanContract
+from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -92,7 +88,7 @@ def _parse_month_chart(chart_data: Any, year: int) -> dict | None:
 
 
 class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
-    """Zonneplan battery history data update coordinator"""
+    """Zonneplan battery history data update coordinator."""
 
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
@@ -101,12 +97,12 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     contract: ZonneplanContract
 
     def __init__(
-            self,
-            hass: HomeAssistant,
-            api: AsyncConfigEntryAuth,
-            address_uuid: str,
-            connection_uuid: str,
-            contract: ZonneplanContract,
+        self,
+        hass: HomeAssistant,
+        api: AsyncConfigEntryAuth,
+        address_uuid: str,
+        connection_uuid: str,
+        contract: ZonneplanContract,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -114,12 +110,7 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             _LOGGER,
             name=DOMAIN,
             update_interval=timedelta(hours=12),
-            request_refresh_debouncer=Debouncer(
-                hass,
-                _LOGGER,
-                cooldown=60,
-                immediate=False
-            )
+            request_refresh_debouncer=Debouncer(hass, _LOGGER, cooldown=60, immediate=False),
         )
 
         self.data: dict = {}
@@ -133,20 +124,18 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
-
             charts = await self._async_get_battery_charts(self.data or {})
-
-            _LOGGER.debug("Update battery charts data: %s", charts)
-
-            return charts if charts else self.data
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
                 raise ConfigEntryAuthFailed from e
-            raise e
+            raise
+        else:
+            _LOGGER.debug("Update battery charts data: %s", charts)
+
+            return charts if charts else self.data
 
     async def _async_get_battery_charts(self, charts: dict) -> dict:
-
         today = dt_util.now().date()
         current_year_date = date(today.year, 1, 1)
         last_year_date = date(today.year - 1, 1, 1)
@@ -155,36 +144,20 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         contract_uuid = self.contract.get("uuid")
 
-        months_this_year = await self.api.async_get_battery_chart(
-            contract_uuid, "months", current_year_date
-        )
-        if months_this_year and (
-                parsed := _parse_month_chart(months_this_year, current_year_date.year)
-        ):
+        months_this_year = await self.api.async_get_battery_chart(contract_uuid, "months", current_year_date)
+        if months_this_year and (parsed := _parse_month_chart(months_this_year, current_year_date.year)):
             charts["this_year"] = parsed
 
-        months_last_year = await self.api.async_get_battery_chart(
-            contract_uuid, "months", last_year_date
-        )
-        if months_last_year and (
-                parsed := _parse_month_chart(months_last_year, last_year_date.year)
-        ):
+        months_last_year = await self.api.async_get_battery_chart(contract_uuid, "months", last_year_date)
+        if months_last_year and (parsed := _parse_month_chart(months_last_year, last_year_date.year)):
             charts["last_year"] = parsed
 
-        days_this_month = await self.api.async_get_battery_chart(
-            contract_uuid, "days", current_month_date
-        )
-        if days_this_month and (
-                parsed := _parse_day_chart(days_this_month, current_month_date)
-        ):
+        days_this_month = await self.api.async_get_battery_chart(contract_uuid, "days", current_month_date)
+        if days_this_month and (parsed := _parse_day_chart(days_this_month, current_month_date)):
             charts["this_month"] = parsed
 
-        days_last_month = await self.api.async_get_battery_chart(
-            contract_uuid, "days", last_month_date
-        )
-        if days_last_month and (
-                parsed := _parse_day_chart(days_last_month, last_month_date)
-        ):
+        days_last_month = await self.api.async_get_battery_chart(contract_uuid, "days", last_month_date)
+        if days_last_month and (parsed := _parse_day_chart(days_last_month, last_month_date)):
             charts["last_month"] = parsed
 
         return charts

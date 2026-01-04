@@ -1,9 +1,17 @@
 """Constants for the Zonneplan integration."""
-from __future__ import annotations
-from dataclasses import dataclass
-from datetime import datetime, timedelta, UTC
-from typing import Callable
 
+from __future__ import annotations
+
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING
+
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntityDescription,
+)
+from homeassistant.components.button import (
+    ButtonEntityDescription,
+)
 from homeassistant.components.number import NumberEntityDescription, NumberMode
 from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import (
@@ -11,20 +19,17 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.components.binary_sensor import (
-    BinarySensorEntityDescription,
-)
-from homeassistant.components.button import (
-    ButtonEntityDescription,
-)
 from homeassistant.const import (
     CURRENCY_EURO,
+    PERCENTAGE,
     UnitOfEnergy,
+    UnitOfLength,
     UnitOfPower,
     UnitOfVolume,
-    UnitOfLength,
-    PERCENTAGE,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 DOMAIN = "zonneplan_one"
 
@@ -63,7 +68,7 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     attributes: None | list[Attribute] = None
     last_reset_key: None | str = None
     has_entity_name: bool = True
-    key_lambda: Callable[[], str]|None = None
+    key_lambda: Callable[[], str] | None = None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -100,7 +105,10 @@ class ZonneplanSelectEntityDescription(SelectEntityDescription):
 
 
 """Available sensors"""
-SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, dict[str, ZonneplanSensorEntityDescription]]] = {
+SENSOR_TYPES: dict[
+    str,
+    dict[str, ZonneplanSensorEntityDescription] | dict[str, dict[str, ZonneplanSensorEntityDescription]],
+] = {
     ELECTRICITY: {
         "usage": ZonneplanSensorEntityDescription(
             key="usage.value",
@@ -129,14 +137,14 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "current_tariff_group": ZonneplanSensorEntityDescription(
             key="current_tariff_group",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Current tariff group",
             translation_key="current_tariff_group",
             entity_registry_enabled_default=True,
         ),
         "current_tariff": ZonneplanSensorEntityDescription(
             key="current_tariff",
-            key_lambda= lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Current electricity tariff",
             translation_key="current_electricity_tariff",
             icon="mdi:cash",
@@ -167,7 +175,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_1": ZonneplanSensorEntityDescription(
             key="forcast_tariff_1",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 1",
             translation_key="forecast_tariff_hour_1",
             icon="mdi:cash",
@@ -177,7 +186,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_2": ZonneplanSensorEntityDescription(
             key="forcast_tariff_2",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 2",
             translation_key="forecast_tariff_hour_2",
             icon="mdi:cash",
@@ -187,7 +197,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_3": ZonneplanSensorEntityDescription(
             key="forcast_tariff_3",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 3",
             translation_key="forecast_tariff_hour_3",
             icon="mdi:cash",
@@ -197,7 +208,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_4": ZonneplanSensorEntityDescription(
             key="forcast_tariff_4",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 4",
             translation_key="forecast_tariff_hour_4",
             icon="mdi:cash",
@@ -207,7 +219,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_5": ZonneplanSensorEntityDescription(
             key="forcast_tariff_5",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 5",
             translation_key="forecast_tariff_hour_5",
             icon="mdi:cash",
@@ -217,7 +230,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_6": ZonneplanSensorEntityDescription(
             key="forcast_tariff_6",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 6",
             translation_key="forecast_tariff_hour_6",
             icon="mdi:cash",
@@ -227,7 +241,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_7": ZonneplanSensorEntityDescription(
             key="forcast_tariff_7",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 7",
             translation_key="forecast_tariff_hour_7",
             icon="mdi:cash",
@@ -237,7 +252,8 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_8": ZonneplanSensorEntityDescription(
             key="forcast_tariff_8",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour"
+            f".{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Forecast tariff hour 8",
             translation_key="forecast_tariff_hour_8",
             icon="mdi:cash",
@@ -247,50 +263,50 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
         ),
         "forcast_tariff_group_1": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_1",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 1",
             translation_key="forecast_tariff_group_hour_1",
             icon="mdi:cash",
         ),
         "forcast_tariff_group_2": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_2",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 2",
             translation_key="forecast_tariff_group_hour_2",
         ),
         "forcast_tariff_group_3": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_3",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 3",
             translation_key="forecast_tariff_group_hour_3",
         ),
         "forcast_tariff_group_4": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_4",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 4",
             translation_key="forecast_tariff_group_hour_4",
         ),
         "forcast_tariff_group_5": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_5",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 5",
             translation_key="forecast_tariff_group_hour_5",
         ),
         "forcast_tariff_group_6": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_6",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 6",
             translation_key="forecast_tariff_group_hour_6",
         ),
         "forcast_tariff_group_7": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_7",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 7",
             translation_key="forecast_tariff_group_hour_7",
         ),
         "forcast_tariff_group_8": ZonneplanSensorEntityDescription(
             key="forcast_tariff_group_8",
-            key_lambda= lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 8",
             translation_key="forecast_tariff_group_hour_8",
         ),
@@ -367,7 +383,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
                 translation_key="powerplay_total",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement='EUR',
+                native_unit_of_measurement="EUR",
                 state_class=SensorStateClass.TOTAL,
                 entity_registry_enabled_default=False,
             ),
@@ -377,7 +393,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
                 translation_key="powerplay_today",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement='EUR',
+                native_unit_of_measurement="EUR",
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="measurement_groups.0.date",
                 entity_registry_enabled_default=False,
@@ -425,7 +441,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
                 translation_key="electricity_delivery_costs_today",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement='EUR',
+                native_unit_of_measurement="EUR",
                 entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="measurement_groups.0.date",
@@ -437,10 +453,10 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
                 native_unit_of_measurement=CURRENCY_EURO,
                 device_class=SensorDeviceClass.MONETARY,
                 state_class=SensorStateClass.TOTAL,
-                value_factor=0.0000001, 
+                value_factor=0.0000001,
                 none_value_behaviour=NONE_IS_ZERO,
                 last_reset_key="measurement_groups.2.date",
-            ),        
+            ),
             "electricity_delivery_costs_this_year": ZonneplanSensorEntityDescription(
                 key="measurement_groups.3.meta.delivery_costs_incl_tax",
                 name="Electricity delivery costs this year",
@@ -451,14 +467,14 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
                 value_factor=0.0000001,
                 none_value_behaviour=NONE_IS_ZERO,
                 last_reset_key="measurement_groups.3.date",
-            ),            
+            ),
             "electricity_production_costs_incl_tax": ZonneplanSensorEntityDescription(
                 key="measurement_groups.0.meta.production_costs_incl_tax",
                 name="Electricity production costs today",
                 translation_key="electricity_production_costs_today",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement='EUR',
+                native_unit_of_measurement="EUR",
                 entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="measurement_groups.0.date",
@@ -567,7 +583,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
                 translation_key="gas_delivery_costs_today",
                 value_factor=0.0000001,
                 device_class=SensorDeviceClass.MONETARY,
-                native_unit_of_measurement='EUR',
+                native_unit_of_measurement="EUR",
                 entity_registry_enabled_default=False,
                 state_class=SensorStateClass.TOTAL,
                 last_reset_key="measurement_groups.0.date",
@@ -635,7 +651,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             translation_key="total_earned",
             value_factor=0.0000001,
             device_class=SensorDeviceClass.MONETARY,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
         ),
@@ -645,7 +661,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             translation_key="total_day",
             value_factor=0.0000001,
             device_class=SensorDeviceClass.MONETARY,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL,
             last_reset_key="measurement_groups.0.date",
             entity_registry_enabled_default=True,
@@ -656,7 +672,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             translation_key="average_day",
             value_factor=0.0000001,
             device_class=SensorDeviceClass.MONETARY,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL,
             last_reset_key="measurement_groups.0.date",
             entity_registry_enabled_default=True,
@@ -711,7 +727,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             name="Result this year",
             translation_key="result_this_year",
             device_class=SensorDeviceClass.MONETARY,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
@@ -738,7 +754,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             name="Result last year",
             translation_key="result_last_year",
             device_class=SensorDeviceClass.MONETARY,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
@@ -765,7 +781,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             name="Result this month",
             translation_key="result_this_month",
             device_class=SensorDeviceClass.MONETARY,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
@@ -792,7 +808,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             name="Result last month",
             translation_key="result_last_month",
             device_class=SensorDeviceClass.MONETARY,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
             attributes=[
@@ -962,7 +978,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             translation_key="charge_point_session_cost",
             value_factor=0.0000001,
             icon="mdi:cash",
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             entity_registry_enabled_default=True,
             state_class=SensorStateClass.MEASUREMENT,
         ),
@@ -972,7 +988,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             translation_key="charge_point_cost_total",
             value_factor=0.0000001,
             icon="mdi:cash",
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             entity_registry_enabled_default=True,
             state_class=SensorStateClass.MEASUREMENT,
         ),
@@ -982,7 +998,7 @@ SENSOR_TYPES: dict[str, dict[str, ZonneplanSensorEntityDescription] | dict[str, 
             translation_key="charge_point_session_flex_result",
             icon="mdi:cash",
             value_factor=0.0000001,
-            native_unit_of_measurement='EUR',
+            native_unit_of_measurement="EUR",
             state_class=SensorStateClass.TOTAL_INCREASING,
             entity_registry_enabled_default=True,
             none_value_behaviour=NONE_IS_ZERO,
@@ -1180,7 +1196,7 @@ BINARY_SENSORS_TYPES: dict[str, dict[str, ZonneplanBinarySensorEntityDescription
             name="Charge point dynamic charging flex suppressed",
             translation_key="charge_point_dynamic_charging_flex_suppressed",
         ),
-    }
+    },
 }
 
 BUTTON_TYPES: dict[str, dict[str, ZonneplanButtonEntityDescription]] = {

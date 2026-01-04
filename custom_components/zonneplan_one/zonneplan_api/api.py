@@ -1,20 +1,20 @@
-"""ZonneplanAPI"""
-import asyncio
-import aiohttp
-import async_timeout
+"""ZonneplanAPI."""
+
 import logging
+
+import aiohttp
 
 from ..const import VERSION
 
 APP_VERSION = "5.10.1"
 LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"
-OAUTH2_TOKEN_URI = "https://app-api.zonneplan.nl/oauth/token"
+OAUTH2_TOKEN_URI = "https://app-api.zonneplan.nl/oauth/token"  # noqa: S105
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class ZonneplanApi:
-    def __init__(self, session: aiohttp.ClientSession):
+    def __init__(self, session: aiohttp.ClientSession) -> None:
         self._session = session
         self._request_headers = {
             "content-type": "application/json;charset=utf-8",
@@ -26,21 +26,27 @@ class ZonneplanApi:
     async def async_request_temp_pass(self, email: str) -> str | None:
         try:
             timeout = aiohttp.ClientTimeout(total=10)
-            async with aiohttp.ClientSession(timeout=timeout) as session:
-                async with await session.post(
-                        LOGIN_REQUEST_URI,
-                        json={"email": email},
-                        headers=self._request_headers,
-                ) as response:
-                    response.raise_for_status()
-                    _LOGGER.debug("ZonneplanAPI validated status: %s (%s)", response.status, response)
+            async with (
+                aiohttp.ClientSession(timeout=timeout) as session,
+                session.post(
+                    LOGIN_REQUEST_URI,
+                    json={"email": email},
+                    headers=self._request_headers,
+                ) as response,
+            ):
+                response.raise_for_status()
+                _LOGGER.debug(
+                    "ZonneplanAPI validated status: %s (%s)",
+                    response.status,
+                    response,
+                )
 
-                    # Get Json
-                    response_json = await response.json()
-                    _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+                # Get Json
+                response_json = await response.json()
+                _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
 
-        except (asyncio.TimeoutError, aiohttp.ClientError):
-            _LOGGER.error("Timeout calling ZonneplanAPI to request login email")
+        except (TimeoutError, aiohttp.ClientError):
+            _LOGGER.exception("Timeout calling ZonneplanAPI to request login email")
             return None
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
@@ -48,31 +54,35 @@ class ZonneplanApi:
 
         return response_json["data"]["uuid"]
 
-    async def async_get_temp_pass(self, email: str, uuid: str):
+    async def async_get_temp_pass(self, email: str, uuid: str) -> dict | None:
         try:
             timeout = aiohttp.ClientTimeout(total=10)
-            async with aiohttp.ClientSession(timeout=timeout) as session:
-                async with session.get(
-                        LOGIN_REQUEST_URI + "/" + uuid, headers=self._request_headers
-                ) as response:
-                    response.raise_for_status()
-                    _LOGGER.debug("Temporary password validated status: %s (%s)", response.status, response)
+            async with (
+                aiohttp.ClientSession(timeout=timeout) as session,
+                session.get(LOGIN_REQUEST_URI + "/" + uuid, headers=self._request_headers) as response,
+            ):
+                response.raise_for_status()
+                _LOGGER.debug(
+                    "Temporary password validated status: %s (%s)",
+                    response.status,
+                    response,
+                )
 
-                    response_json = await response.json()
-                    _LOGGER.debug("Temporary password response body json: %s", response_json)
+                response_json = await response.json()
+                _LOGGER.debug("Temporary password response body json: %s", response_json)
 
-        except (asyncio.TimeoutError, aiohttp.ClientError):
-            _LOGGER.error("Timeout calling ZonneplanAPI to request temporary password")
+        except (TimeoutError, aiohttp.ClientError):
+            _LOGGER.exception("Timeout calling ZonneplanAPI to request temporary password")
             return None
 
         _LOGGER.debug("Temporary password response header: %s", response.headers)
         _LOGGER.debug("Temporary password response status: %s", response.status)
 
         if (
-                "data" in response_json
-                and "is_activated" in response_json["data"]
-                and response_json["data"]["is_activated"]
-                and "password" in response_json["data"]
+            "data" in response_json
+            and "is_activated" in response_json["data"]
+            and response_json["data"]["is_activated"]
+            and "password" in response_json["data"]
         ):
             grant_params = {
                 "grant_type": "one_time_password",
@@ -90,23 +100,25 @@ class ZonneplanApi:
         }
         return await self._async_request_new_token(grant_params)
 
-    async def _async_request_new_token(self, grant_params):
+    async def _async_request_new_token(self, grant_params: dict[str, str]) -> dict:
         _LOGGER.info("_async_request_new_token: %s", grant_params)
 
         timeout = aiohttp.ClientTimeout(total=30)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.post(
-                    OAUTH2_TOKEN_URI,
-                    headers=self._request_headers,
-                    json=grant_params,
-                    allow_redirects=True,
-            ) as response:
-                _LOGGER.debug("ZonneplanAPI oAuth Token response header: %s", response.headers)
-                _LOGGER.debug("ZonneplanAPI oAuth Token response status: %s", response.status)
+        async with (
+            aiohttp.ClientSession(timeout=timeout) as session,
+            session.post(
+                OAUTH2_TOKEN_URI,
+                headers=self._request_headers,
+                json=grant_params,
+                allow_redirects=True,
+            ) as response,
+        ):
+            _LOGGER.debug("ZonneplanAPI oAuth Token response header: %s", response.headers)
+            _LOGGER.debug("ZonneplanAPI oAuth Token response status: %s", response.status)
 
-                response.raise_for_status()
-                _LOGGER.info("ZonneplanAPI oAuth Token get json from response")
-                response_json = await response.json()
-                _LOGGER.debug("ZonneplanAPI oAuth Token response body: %s", response_json)
+            response.raise_for_status()
+            _LOGGER.info("ZonneplanAPI oAuth Token get json from response")
+            response_json = await response.json()
+            _LOGGER.debug("ZonneplanAPI oAuth Token response body: %s", response_json)
 
         return response_json
