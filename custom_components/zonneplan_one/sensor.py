@@ -12,11 +12,10 @@ from homeassistant.components.sensor import (
     SensorEntity,
 )
 from homeassistant.const import Platform
-
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from homeassistant.helpers import entity_registry
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -74,7 +73,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
+    hass: HomeAssistant,
     entry: ZonneplanConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
@@ -162,7 +161,9 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-async def add_electricity_sensors(entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]):
+async def add_electricity_sensors(
+    entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]
+) -> None:
     if not connection.electricity:
         return
 
@@ -183,7 +184,9 @@ async def add_electricity_sensors(entities: list[Any], connection: ConnectionCoo
             _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{other_connection_uud}_{sensor_key}")
 
 
-async def add_gas_sensors(entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]):
+async def add_gas_sensors(
+    entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]
+) -> None:
     if not connection.gas:
         return
 
@@ -313,6 +316,7 @@ def _migrate_to_new_unique_id(hass: HomeAssistant, new_unique_id: str, old_uniqu
             )
     else:
         _LOGGER.debug("No old entity found to migrate")
+
 
 class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
     """Abstract class for a zonneplan sensor."""
