@@ -11,7 +11,9 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
 )
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
@@ -71,37 +73,24 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
+    hass: HomeAssistant,
     entry: ZonneplanConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     entities = []
+
+    connection_uuids: list[str] = list(entry.runtime_data.coordinators.keys())
+
     for uuid, connection in entry.runtime_data.coordinators.items():
         _LOGGER.debug("Setup sensors for connection %s", uuid)
 
-        if connection.electricity:
-            entities.extend(
-                ZonneplanElectricitySensor(
-                    uuid,
-                    sensor_key,
-                    connection.electricity,
-                    -1,
-                    SENSOR_TYPES[ELECTRICITY][sensor_key],
-                )
-                for sensor_key in SENSOR_TYPES[ELECTRICITY]
-            )
+        """Other connection uuids for possible migration of unique_ids"""
+        other_connection_uuids = [u for u in connection_uuids if u != uuid]
+        _LOGGER.debug("Other connections: %s", other_connection_uuids)
 
-        if connection.gas:
-            entities.extend(
-                ZonneplanGasSensor(
-                    uuid,
-                    sensor_key,
-                    connection.gas,
-                    -1,
-                    SENSOR_TYPES[GAS][sensor_key],
-                )
-                for sensor_key in SENSOR_TYPES[GAS]
-            )
+        await add_electricity_sensors(entities, connection, uuid, hass, other_connection_uuids)
+
+        await add_gas_sensors(entities, connection, uuid, hass, other_connection_uuids)
 
         await add_pv_installation_sensors(entities, connection, uuid)
 
@@ -170,6 +159,52 @@ async def async_setup_entry(
             )
 
     async_add_entities(entities)
+
+
+async def add_electricity_sensors(
+    entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]
+) -> None:
+    if not connection.electricity:
+        return
+
+    entities.extend(
+        ZonneplanElectricitySensor(
+            uuid,
+            sensor_key,
+            connection.electricity,
+            -1,
+            SENSOR_TYPES[ELECTRICITY][sensor_key],
+        )
+        for sensor_key in SENSOR_TYPES[ELECTRICITY]
+    )
+
+    """Migrate old unique ids to new unique ids."""
+    for other_connection_uud in other_connection_uuids:
+        for sensor_key in SENSOR_TYPES[ELECTRICITY]:
+            _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{other_connection_uud}_{sensor_key}")
+
+
+async def add_gas_sensors(
+    entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]
+) -> None:
+    if not connection.gas:
+        return
+
+    entities.extend(
+        ZonneplanGasSensor(
+            uuid,
+            sensor_key,
+            connection.gas,
+            -1,
+            SENSOR_TYPES[GAS][sensor_key],
+        )
+        for sensor_key in SENSOR_TYPES[GAS]
+    )
+
+    """Migrate old unique ids to new unique ids."""
+    for other_connection_uud in other_connection_uuids:
+        for sensor_key in SENSOR_TYPES[GAS]:
+            _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{other_connection_uud}_{sensor_key}")
 
 
 async def add_p1_gas_sensors(entities: list[Any], connection: ConnectionCoordinators, uuid: str) -> None:
@@ -251,6 +286,36 @@ async def add_pv_installation_sensors(entities: list[Any], connection: Connectio
             )
             for sensor_key in SENSOR_TYPES[PV_INSTALL]["install"]
         )
+
+
+def _migrate_to_new_unique_id(hass: HomeAssistant, new_unique_id: str, old_unique_id: str) -> None:
+    """Migrate old unique ids to new unique ids."""
+    ent_reg = entity_registry.async_get(hass)
+    entity_id = ent_reg.async_get_entity_id(Platform.SENSOR, DOMAIN, new_unique_id)
+    _LOGGER.debug("Migrate old unique_id [%s] to [%s]", old_unique_id, new_unique_id)
+    if entity_id is not None:
+        _LOGGER.debug("New entity already exists")
+        return
+
+    old_entity_id = ent_reg.async_get_entity_id(Platform.SENSOR, DOMAIN, old_unique_id)
+
+    if old_entity_id is not None:
+        try:
+            ent_reg.async_update_entity(old_entity_id, new_unique_id=new_unique_id)
+        except ValueError:
+            _LOGGER.warning(
+                "Skip migration of id [%s] to [%s] because it already exists",
+                old_unique_id,
+                new_unique_id,
+            )
+        else:
+            _LOGGER.info(
+                "Migrated unique_id from [%s] to [%s]",
+                old_unique_id,
+                new_unique_id,
+            )
+    else:
+        _LOGGER.debug("No old entity found to migrate")
 
 
 class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
