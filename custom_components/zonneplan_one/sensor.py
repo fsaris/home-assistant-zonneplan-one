@@ -288,13 +288,13 @@ async def add_pv_installation_sensors(entities: list[Any], connection: Connectio
 def _migrate_to_new_unique_id(hass: HomeAssistant, new_unique_id: str, old_unique_id: str) -> None:
     """Migrate old unique ids to new unique ids."""
     ent_reg = entity_registry.async_get(hass)
-    entity_id = ent_reg.async_get_entity_id(Platform.SWITCH, DOMAIN, new_unique_id)
-    _LOGGER.debug("Check if the old unique_id [%s] needs to be migrated to the new one [%s]", old_unique_id, new_unique_id)
+    entity_id = ent_reg.async_get_entity_id(Platform.SENSOR, DOMAIN, new_unique_id)
+    _LOGGER.debug("Migrate old unique_id [%s] to [%s]", old_unique_id, new_unique_id)
     if entity_id is not None:
         _LOGGER.debug("New entity already exists")
         return
 
-    old_entity_id = ent_reg.async_get_entity_id(Platform.SWITCH, DOMAIN, old_unique_id)
+    old_entity_id = ent_reg.async_get_entity_id(Platform.SENSOR, DOMAIN, old_unique_id)
 
     if old_entity_id is not None:
         try:
