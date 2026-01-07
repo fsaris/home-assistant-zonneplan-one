@@ -382,7 +382,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
             )
             return
 
-        # _LOGGER.debug("Update %s: %s", self.unique_id, value)
+        _LOGGER.debug("Update %s: %s", self.unique_id, value)
 
         self._attr_native_value = value
         self.async_write_ha_state()
@@ -438,7 +438,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
             value = self.coordinator.get_data_value(
                 attribute.key.format(install_index=self._install_index),
             )
-            # _LOGGER.debug("Update %s.attribute[%s]: %s", self.unique_id, attribute.label, value)
+            _LOGGER.debug("Update %s.attribute[%s]: %s", self.unique_id, attribute.label, value)
             attrs[attribute.label] = value
 
         return attrs
@@ -449,7 +449,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
             if self.entity_description.key_lambda
             else self.entity_description.key.format(install_index=self._install_index)
         )
-        # _LOGGER.debug("Key %s: %s", self.unique_id, key)
+        _LOGGER.debug("Key %s: %s", self.unique_id, key)
         raw_value = value = self.coordinator.get_data_value(key)
 
         if value is None and self.entity_description.none_value_behaviour == NONE_IS_ZERO:
@@ -468,7 +468,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor
 
-        # _LOGGER.debug("Value %s: %s [%s]", self.unique_id, value, raw_value)
+        _LOGGER.debug("Value %s: %s [%s]", self.unique_id, value, raw_value)
 
         return value
 
