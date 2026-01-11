@@ -42,7 +42,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=60),
+            update_interval=timedelta(seconds=300),
             request_refresh_debouncer=Debouncer(hass, _LOGGER, cooldown=60, immediate=False),
         )
 
