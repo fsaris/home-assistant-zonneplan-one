@@ -147,7 +147,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
 
                 gas_meter_registered = False
                 for contract in contracts[P1_INSTALL]:
-                    if contract.get("meta", {}).get("gas_meter_identifier"):
+                    if contract.get("meta", {}).get("gas_last_measured_at"):
                         gas_meter_registered = True
                         break
 
