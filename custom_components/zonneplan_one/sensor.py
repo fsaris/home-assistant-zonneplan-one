@@ -183,6 +183,9 @@ async def add_electricity_sensors(
         for sensor_key in SENSOR_TYPES[ELECTRICITY]:
             _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{other_connection_uud}_{sensor_key}")
 
+    """Migrate current_tariff to current_electricity_tariff"""
+    _migrate_to_new_unique_id(hass, f"{uuid}_current_electricity_tariff", f"{uuid}_current_tariff")
+
 
 async def add_gas_sensors(
     entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]

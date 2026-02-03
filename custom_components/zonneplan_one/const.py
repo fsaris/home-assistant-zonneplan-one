@@ -142,7 +142,7 @@ SENSOR_TYPES: dict[
             translation_key="current_tariff_group",
             entity_registry_enabled_default=True,
         ),
-        "current_tariff": ZonneplanSensorEntityDescription(
+        "current_electricity_tariff": ZonneplanSensorEntityDescription(
             key="current_tariff",
             key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Current electricity tariff",
