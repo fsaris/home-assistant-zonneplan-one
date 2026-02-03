@@ -48,7 +48,7 @@ BATTERY_CHARTS = "battery_charts"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 
-VERSION = "2026.1.1"
+VERSION = "2026.2.0"
 
 
 @dataclass
@@ -142,7 +142,7 @@ SENSOR_TYPES: dict[
             translation_key="current_tariff_group",
             entity_registry_enabled_default=True,
         ),
-        "current_tariff": ZonneplanSensorEntityDescription(
+        "current_electricity_tariff": ZonneplanSensorEntityDescription(
             key="current_tariff",
             key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Current electricity tariff",
