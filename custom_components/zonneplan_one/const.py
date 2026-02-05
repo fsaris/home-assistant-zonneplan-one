@@ -175,8 +175,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_1": ZonneplanSensorEntityDescription(
             key="forcast_tariff_1",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 1",
             translation_key="forecast_tariff_hour_1",
             icon="mdi:cash",
@@ -186,8 +187,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_2": ZonneplanSensorEntityDescription(
             key="forcast_tariff_2",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 2",
             translation_key="forecast_tariff_hour_2",
             icon="mdi:cash",
@@ -197,8 +199,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_3": ZonneplanSensorEntityDescription(
             key="forcast_tariff_3",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 3",
             translation_key="forecast_tariff_hour_3",
             icon="mdi:cash",
@@ -208,8 +211,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_4": ZonneplanSensorEntityDescription(
             key="forcast_tariff_4",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 4",
             translation_key="forecast_tariff_hour_4",
             icon="mdi:cash",
@@ -219,8 +223,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_5": ZonneplanSensorEntityDescription(
             key="forcast_tariff_5",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 5",
             translation_key="forecast_tariff_hour_5",
             icon="mdi:cash",
@@ -230,8 +235,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_6": ZonneplanSensorEntityDescription(
             key="forcast_tariff_6",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 6",
             translation_key="forecast_tariff_hour_6",
             icon="mdi:cash",
@@ -241,8 +247,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_7": ZonneplanSensorEntityDescription(
             key="forcast_tariff_7",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 7",
             translation_key="forecast_tariff_hour_7",
             icon="mdi:cash",
@@ -252,8 +259,9 @@ SENSOR_TYPES: dict[
         ),
         "forcast_tariff_8": ZonneplanSensorEntityDescription(
             key="forcast_tariff_8",
-            key_lambda=lambda: f"price_per_date_and_hour"
-            f".{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.electricity_price"
+            ),
             name="Forecast tariff hour 8",
             translation_key="forecast_tariff_hour_8",
             icon="mdi:cash",
