@@ -133,7 +133,7 @@ class BatteryChartsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("Update battery charts data: %s", charts)
 
-            return charts if charts else self.data
+            return charts or self.data
 
     async def _async_get_battery_charts(self, charts: dict) -> dict:
         today = dt_util.now().date()

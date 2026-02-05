@@ -58,4 +58,4 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("Update electricity data: %s", electricity)
 
-            return electricity if electricity else self.data
+            return electricity or self.data

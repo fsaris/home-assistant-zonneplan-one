@@ -61,4 +61,4 @@ class ElectricityHomeConsumptionDataUpdateCoordinator(ZonneplanDataUpdateCoordin
                 electricity_home_consumption,
             )
 
-            return electricity_home_consumption if electricity_home_consumption else self.data
+            return electricity_home_consumption or self.data

@@ -59,4 +59,4 @@ class PvDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("PV data: %s", pv_data)
 
-            return pv_data if pv_data else self.data
+            return pv_data or self.data

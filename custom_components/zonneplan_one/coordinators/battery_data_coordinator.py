@@ -61,4 +61,4 @@ class BatteryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("Update battery data: %s", battery_data)
 
-            return battery_data if battery_data else self.data
+            return battery_data or self.data

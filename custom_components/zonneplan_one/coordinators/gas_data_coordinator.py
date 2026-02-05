@@ -58,4 +58,4 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("Update gas data: %s", gas)
 
-            return gas if gas else self.data
+            return gas or self.data

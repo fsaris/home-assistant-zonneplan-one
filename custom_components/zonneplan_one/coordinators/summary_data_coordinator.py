@@ -106,7 +106,7 @@ class SummaryDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("Summary data: %s", summary)
 
-            return summary if summary else self.data
+            return summary or self.data
 
     async def async_shutdown(self) -> None:
         """Cancel any scheduled call, and ignore new runs."""
