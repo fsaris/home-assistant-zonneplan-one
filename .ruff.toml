@@ -23,6 +23,9 @@ ignore = [
     "TID252", # Prefer absolute imports over relative imports from parent modules
 ]
 
+[lint.pylint]
+max-args = 8
+
 [lint.flake8-pytest-style]
 fixture-parentheses = false
 

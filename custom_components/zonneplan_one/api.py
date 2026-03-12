@@ -79,6 +79,13 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.info("ZonneplanAPI response status: %s for %s", response.status, path)
 
+        ratelimit_remaining = response.headers.get('x-ratelimit-remaining')
+        if ratelimit_remaining is not None:
+            if int(ratelimit_remaining) == 0:
+                _LOGGER.warning("ZonneplanAPI ratelimit, retry in: %s seconds", response.headers.get('Retry-After'))
+            else:
+                _LOGGER.info("ZonneplanAPI ratelimit remaining: %s ", ratelimit_remaining)
+
         if response.status == HTTPStatus.NOT_MODIFIED:
             return None
 
