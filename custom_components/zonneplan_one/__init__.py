@@ -2,6 +2,7 @@
 
 import logging
 
+import homeassistant.helpers.config_validation as cv
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
@@ -51,6 +52,8 @@ PLATFORMS = [
     Platform.NUMBER,
     Platform.SELECT,
 ]
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 _LOGGER = logging.getLogger(__name__)
 
