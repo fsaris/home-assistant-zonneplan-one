@@ -55,7 +55,6 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             api=self.api,
             connection_uuid=self.connection_uuid,
             gas_id=self.statistics_id,
-            first_measured_at=self.first_measured_at,
         )
 
     async def _async_update_data(self) -> dict:
@@ -78,10 +77,6 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     def statistics_id(self) -> str:
         return f"{DOMAIN}:gas_{self.connection_uuid.replace('-', '_')}"
 
-    @property
-    def first_measured_at(self) -> datetime | None:
-        first_contract = self.contracts[0] if self.contracts else {}
-        first_measured_at = (first_contract.get("meta") or {}).get("gas_first_measured_at")
-        parsed = dt_util.parse_datetime(first_measured_at) if first_measured_at else None
-
-        return parsed or None
+    async def async_backfill_statistics(self, start_date: datetime) -> None:
+        """Backfill statistics from start_date until now."""
+        await self._statistics_service.async_backfill_from(start_date)

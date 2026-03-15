@@ -1,0 +1,28 @@
+fetch_statistics:
+  name: Fetch history from Zonneplan API
+  description: Refetch statistics from a given date until now, repairing any gaps or incorrect historical values.
+  fields:
+    endpoint:
+      name: Endpoint
+      description: The data endpoint to refetch statistics for.
+      required: true
+      selector:
+        select:
+          options:
+            - electricity
+            - gas
+      example: "electricity"
+    start_date:
+      name: Start date
+      description: "The date to start refetching from. Accepted formats: YYYYMMDD or YYYY-MM-DD."
+      required: true
+      example: "2025-01-01"
+      selector:
+        text:
+    connection_uuid:
+      name: Connection UUID
+      description: "Optionally limit the refetch to a specific connection UUID. If omitted, all matching connections are updated (see last part of statistics_id: `zonneplan_one:electricity_delivered_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)."
+      required: false
+      selector:
+        text:
+

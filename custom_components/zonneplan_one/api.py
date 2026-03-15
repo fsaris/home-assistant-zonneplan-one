@@ -5,7 +5,7 @@ from datetime import date
 from http import HTTPStatus
 from typing import Any
 
-from aiohttp import ClientSession
+from aiohttp import ClientResponseError, ClientSession
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import DOMAIN
@@ -17,6 +17,25 @@ _LOGGER = logging.getLogger(__name__)
 
 class ZonneplanApiError(Exception):
     """Exception to indicate a general API error."""
+
+
+class ZonneplanRateLimitError(ClientResponseError):
+    """Exception raised when the API responds with HTTP 429."""
+
+    def __init__(self, *args: Any, retry_after: int | None = None, **kwargs: Any) -> None:
+        """Initialize the rate-limit exception."""
+        super().__init__(*args, **kwargs)
+        self.retry_after = retry_after
+
+
+def _parse_retry_after(value: str | None) -> int | None:
+    """Parse Retry-After header value as seconds."""
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except ValueError:
+        return None
 
 
 class AsyncConfigEntryAuth(ZonneplanApi):
@@ -77,17 +96,32 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         )
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.info("ZonneplanAPI response status: %s for %s", response.status, path)
 
         ratelimit_remaining = response.headers.get("x-ratelimit-remaining")
         if ratelimit_remaining is not None:
+            _LOGGER.info("ZonneplanAPI response status: %s (ratelimit-remaining=%s) for %s", response.status, ratelimit_remaining, path)
+
             if int(ratelimit_remaining) == 0:
-                _LOGGER.warning("ZonneplanAPI ratelimit, retry in: %s seconds", response.headers.get("Retry-After"))
-            else:
-                _LOGGER.info("ZonneplanAPI ratelimit remaining: %s ", ratelimit_remaining)
+                _LOGGER.warning(
+                    "ZonneplanAPI ratelimit, retry in: %s seconds",
+                    _parse_retry_after(response.headers.get("Retry-After")),
+                )
+
+        else:
+            _LOGGER.info("ZonneplanAPI response status: %s for %s", response.status, path)
 
         if response.status == HTTPStatus.NOT_MODIFIED:
             return None
+
+        if response.status == HTTPStatus.TOO_MANY_REQUESTS:
+            raise ZonneplanRateLimitError(
+                request_info=response.request_info,
+                history=response.history,
+                status=response.status,
+                message="Rate limit exceeded",
+                headers=response.headers,
+                retry_after=_parse_retry_after(response.headers.get("Retry-After")),
+            )
 
         response.raise_for_status()
 
@@ -115,6 +149,16 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
+
+        if response.status == HTTPStatus.TOO_MANY_REQUESTS:
+            raise ZonneplanRateLimitError(
+                request_info=response.request_info,
+                history=response.history,
+                status=response.status,
+                message="Rate limit exceeded",
+                headers=response.headers,
+                retry_after=_parse_retry_after(response.headers.get("Retry-After")),
+            )
 
         response.raise_for_status()
 

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -22,10 +23,12 @@ from homeassistant.const import UnitOfEnergy, UnitOfVolume
 from homeassistant.core import HomeAssistant
 from homeassistant.util.unit_conversion import EnergyConverter
 
-from ..api import AsyncConfigEntryAuth
+from ..api import AsyncConfigEntryAuth, ZonneplanRateLimitError
 from ..const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
+
+_BACKFILL_MAX_RETRIES = 3
 
 
 @dataclass(frozen=True)
@@ -54,16 +57,13 @@ class BaseZonneplanStatisticsService(ABC):
 
     hass: HomeAssistant
     zonneplan_api_time_zone: tzinfo
-    first_measured_at: datetime | None
     channel_configs: tuple[StatisticChannelConfig, ...]
 
     def __init__(
         self,
         hass: HomeAssistant,
-        first_measured_at: datetime | None,
     ) -> None:
         self.hass = hass
-        self.first_measured_at = first_measured_at
         self.zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
         self._refetched_statistics_yesterday: datetime | None = None
 
@@ -85,7 +85,7 @@ class BaseZonneplanStatisticsService(ABC):
         backfill_failed = False
         if any(state.last_time < start_of_today for state in states.values()):
             try:
-                await self._backfill_history(states, start_of_today)
+                await self._backfill_history(states, start_of_today, retry_on_max_connections=False)
             except ClientResponseError as err:
                 backfill_failed = True
                 _LOGGER.warning(
@@ -173,7 +173,6 @@ class BaseZonneplanStatisticsService(ABC):
         return True
 
     async def _load_current_states(self) -> dict[str, StatisticChannelState]:
-        first_measured_at = self._get_first_measured_at()
         states: dict[str, StatisticChannelState] = {}
 
         for config in self.channel_configs:
@@ -184,7 +183,7 @@ class BaseZonneplanStatisticsService(ABC):
                 last_state_value = float(last_stat.get("state", 0.0))
                 _LOGGER.debug("Last stat for %s (%s): %s", config.statistic_id, last_time, last_stat)
             else:
-                last_time = first_measured_at
+                last_time = self._fallback_last_stats_datetime()
                 total_sum = 0.0
                 last_state_value = None
 
@@ -197,10 +196,14 @@ class BaseZonneplanStatisticsService(ABC):
 
         return states
 
-    def _get_first_measured_at(self) -> datetime:
-        return self.first_measured_at or datetime(dt_util.now(self.zonneplan_api_time_zone).year, 1, 1, tzinfo=self.zonneplan_api_time_zone)
+    def _fallback_last_stats_datetime(self) -> datetime:
+        """Fallback datetime for last statistic to 1ste of the month."""
+        now = dt_util.now(self.zonneplan_api_time_zone)
+        return datetime(now.year, now.month, 1, tzinfo=self.zonneplan_api_time_zone)
 
-    async def _backfill_history(self, states: dict[str, StatisticChannelState], start_of_today: datetime) -> None:
+    async def _backfill_history(
+        self, states: dict[str, StatisticChannelState], start_of_today: datetime, *, retry_on_max_connections: bool
+    ) -> None:
         current_day = min(state.last_time for state in states.values())
         _LOGGER.info(
             "Last stat for %s is outdated, fetching historical data since %s",
@@ -208,8 +211,34 @@ class BaseZonneplanStatisticsService(ABC):
             current_day,
         )
 
+        consecutive_failures = 0
         while current_day < start_of_today:
-            day_payload = await self._fetch_day_payload(current_day)
+            try:
+                day_payload = await self._fetch_day_payload(current_day)
+            except ZonneplanRateLimitError as err:
+                consecutive_failures += 1
+                if not retry_on_max_connections:
+                    raise
+                if consecutive_failures >= _BACKFILL_MAX_RETRIES:
+                    _LOGGER.warning(
+                        "Rate limit hit %s consecutive times at %s, giving up backfill",
+                        consecutive_failures,
+                        current_day,
+                    )
+                    raise
+                wait_seconds = (err.retry_after + 20) if err.retry_after is not None else 60
+                wait_seconds *= consecutive_failures
+                _LOGGER.warning(
+                    "Rate limited during backfill at %s (attempt %s/%s), persisted current stats and waiting %s seconds before retry",
+                    current_day,
+                    consecutive_failures,
+                    _BACKFILL_MAX_RETRIES,
+                    wait_seconds,
+                )
+                await asyncio.sleep(wait_seconds)
+                continue
+
+            consecutive_failures = 0
             if day_payload:
                 measurements = self._extract_measurements(day_payload, "backfill")
                 self._ingest_measurements(measurements, states)
@@ -301,6 +330,75 @@ class BaseZonneplanStatisticsService(ABC):
             return last_stats[statistic_id][0]
         return None
 
+    async def async_backfill_from(self, start_date: datetime) -> None:
+        """
+        Backfill statistics from start_date up to and including today.
+
+        Queries the recorder for the cumulative sum baseline just before start_date,
+        then re-fetches and re-ingests all hourly data from start_date until now.
+        """
+        # Normalize to midnight of the requested date in the API timezone
+        start_of_day = start_date.astimezone(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
+        start_of_today = dt_util.now(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
+
+        _LOGGER.info(
+            "Starting manual backfill for %s from %s to %s",
+            [config.statistic_id for config in self.channel_configs],
+            start_of_day,
+            start_of_today,
+        )
+
+        baseline_window_start = start_of_day - timedelta(days=1)
+        recorder_stats = await get_instance(self.hass).async_add_executor_job(
+            statistics_during_period,
+            self.hass,
+            baseline_window_start,
+            start_of_day,
+            {config.statistic_id for config in self.channel_configs},
+            "hour",
+            None,
+            {"sum", "state"},
+        )
+
+        states: dict[str, StatisticChannelState] = {}
+        for config in self.channel_configs:
+            rows = recorder_stats.get(config.statistic_id)
+            if rows:
+                baseline = rows[-1]  # most recent row before start_of_day
+                total_sum = float(baseline.get("sum") or 0.0)
+                raw_state = baseline.get("state")
+                last_state_value: float | None = float(raw_state) if raw_state is not None else None
+            else:
+                _LOGGER.info(
+                    "No baseline stat found for %s before %s, starting from zero",
+                    config.statistic_id,
+                    start_of_day,
+                )
+                total_sum = 0.0
+                last_state_value = None
+
+            # Set last_time to one hour before start_of_day so that the 00:00 entry
+            # of start_of_day qualifies as entry_time > last_time in _ingest_measurements.
+            states[config.key] = StatisticChannelState(
+                config=config,
+                last_time=start_of_day - timedelta(hours=1),
+                total_sum=total_sum,
+                last_state_value=last_state_value,
+            )
+
+        await self._backfill_history(states, start_of_today, retry_on_max_connections=True)
+
+        today_payload = await self._fetch_day_payload(start_of_today)
+        if today_payload:
+            measurements = self._extract_measurements(today_payload, "backfill-today")
+            self._ingest_measurements(measurements, states)
+            self._flush_pending(states)
+
+        _LOGGER.info(
+            "Manual backfill completed for %s",
+            [config.statistic_id for config in self.channel_configs],
+        )
+
     def _zonneplan_api_date_param(self, day: datetime) -> str:
         return day.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d")
 
@@ -315,11 +413,9 @@ class ElectricityStatisticsService(BaseZonneplanStatisticsService):
         connection_uuid: str,
         delivered_id: str,
         produced_id: str,
-        first_measured_at: datetime | None,
     ) -> None:
         super().__init__(
             hass=hass,
-            first_measured_at=first_measured_at,
         )
 
         self.api = api
@@ -363,11 +459,9 @@ class GasStatisticsService(BaseZonneplanStatisticsService):
         api: AsyncConfigEntryAuth,
         connection_uuid: str,
         gas_id: str,
-        first_measured_at: datetime | None,
     ) -> None:
         super().__init__(
             hass=hass,
-            first_measured_at=first_measured_at,
         )
 
         self.api = api

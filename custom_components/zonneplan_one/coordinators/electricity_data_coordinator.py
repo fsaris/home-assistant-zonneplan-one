@@ -3,7 +3,6 @@ import zoneinfo
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
-import homeassistant.util.dt as dt_util
 from aiohttp.client_exceptions import ClientResponseError
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
@@ -56,7 +55,6 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             connection_uuid=self.connection_uuid,
             delivered_id=self.electricity_delivered_id,
             produced_id=self.electricity_produced_id,
-            first_measured_at=self.first_measured_at,
         )
 
     async def _async_update_data(self) -> dict:
@@ -84,10 +82,6 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     def electricity_produced_id(self) -> str:
         return f"{DOMAIN}:electricity_produced_{self.connection_uuid.replace('-', '_')}"
 
-    @property
-    def first_measured_at(self) -> datetime | None:
-        first_contract = self.contracts[0] if self.contracts else {}
-        first_measured_at = (first_contract.get("meta") or {}).get("electricity_first_measured_at")
-        parsed = dt_util.parse_datetime(first_measured_at) if first_measured_at else None
-
-        return parsed or None
+    async def async_backfill_statistics(self, start_date: datetime) -> None:
+        """Backfill statistics from start_date until now."""
+        await self._statistics_service.async_backfill_from(start_date)
