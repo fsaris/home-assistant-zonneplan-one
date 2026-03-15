@@ -1,7 +1,6 @@
 {
   "domain": "zonneplan_one",
   "name": "Zonneplan",
-  "dependencies": ["recorder"],
   "after_dependencies": [
     "http"
   ],
@@ -9,6 +8,7 @@
     "@fsaris"
   ],
   "config_flow": true,
+  "dependencies": ["recorder"],
   "documentation": "https://github.com/fsaris/home-assistant-zonneplan-one",
   "homekit": {},
   "iot_class": "cloud_polling",
