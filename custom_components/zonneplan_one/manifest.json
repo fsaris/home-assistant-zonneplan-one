@@ -1,6 +1,7 @@
 {
   "domain": "zonneplan_one",
   "name": "Zonneplan",
+  "dependencies": ["recorder"],
   "after_dependencies": [
     "http"
   ],
