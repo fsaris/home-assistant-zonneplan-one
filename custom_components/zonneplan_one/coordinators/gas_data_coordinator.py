@@ -1,5 +1,5 @@
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
 import homeassistant.util.dt as dt_util
@@ -54,9 +54,8 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             hass=hass,
             api=self.api,
             connection_uuid=self.connection_uuid,
-            zonneplan_api_time_zone=self._zonneplan_api_time_zone,
             gas_id=self.statistics_id,
-            first_measured_at=None,
+            first_measured_at=self.first_measured_at,
         )
 
     async def _async_update_data(self) -> dict:
@@ -78,3 +77,11 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     @property
     def statistics_id(self) -> str:
         return f"{DOMAIN}:gas_{self.connection_uuid.replace('-', '_')}"
+
+    @property
+    def first_measured_at(self) -> datetime | None:
+        first_contract = self.contracts[0] if self.contracts else {}
+        first_measured_at = (first_contract.get("meta") or {}).get("gas_first_measured_at")
+        parsed = dt_util.parse_datetime(first_measured_at) if first_measured_at else None
+
+        return parsed or None

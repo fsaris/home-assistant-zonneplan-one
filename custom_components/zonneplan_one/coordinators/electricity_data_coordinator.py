@@ -26,7 +26,6 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     address_uuid: str
     connection_uuid: str
     contracts: list[ZonneplanContract]
-    refetched_statistics_yesterday: datetime | None
     _zonneplan_api_time_zone: zoneinfo.ZoneInfo
     _statistics_service: ElectricityStatisticsService
 
@@ -51,13 +50,10 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self.address_uuid = address_uuid
         self.connection_uuid = connection_uuid
         self.contracts = contracts
-        self.refetched_statistics_yesterday = None
-        self._zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
         self._statistics_service = ElectricityStatisticsService(
             hass=self.hass,
             api=self.api,
             connection_uuid=self.connection_uuid,
-            zonneplan_api_time_zone=self._zonneplan_api_time_zone,
             delivered_id=self.electricity_delivered_id,
             produced_id=self.electricity_produced_id,
             first_measured_at=self.first_measured_at,
@@ -75,20 +71,8 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("Update electricity data: %s", electricity)
             if electricity:
-                zonneplan_now = dt_util.now(self._zonneplan_api_time_zone)
-                zonneplan_now_midnight = zonneplan_now.replace(hour=0, minute=0, second=0, microsecond=0)
-                processed_today = False
-                if zonneplan_now.time() >= zonneplan_now.replace(hour=0, minute=20, second=0, microsecond=0).time() and (
-                    not self.refetched_statistics_yesterday or self.refetched_statistics_yesterday < zonneplan_now_midnight
-                ):
-                    _LOGGER.info("Refetching yesterday's statistics to ensure data is up to date")
-                    if await self._statistics_service.refetch_yesterday(zonneplan_now_midnight - timedelta(days=1), electricity):
-                        processed_today = True
-                        self.refetched_statistics_yesterday = zonneplan_now_midnight
-
-                if not processed_today:
-                    _LOGGER.debug("Process stats for %s", [self.electricity_delivered_id, self.electricity_produced_id])
-                    await self._statistics_service.process_payload(electricity)
+                _LOGGER.debug("Process stats for %s", [self.electricity_delivered_id, self.electricity_produced_id])
+                await self._statistics_service.process_payload(electricity)
 
             return electricity or self.data
 
@@ -105,8 +89,5 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         first_contract = self.contracts[0] if self.contracts else {}
         first_measured_at = (first_contract.get("meta") or {}).get("electricity_first_measured_at")
         parsed = dt_util.parse_datetime(first_measured_at) if first_measured_at else None
-        if parsed:
-            parsed_with_tz = parsed if parsed.tzinfo else parsed.replace(tzinfo=self._zonneplan_api_time_zone)
-            return parsed_with_tz.astimezone(self._zonneplan_api_time_zone)
 
-        return None
+        return parsed or None

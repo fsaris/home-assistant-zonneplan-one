@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, tzinfo
+from datetime import datetime, time, timedelta, tzinfo
 from typing import Any
 
 import homeassistant.util.dt as dt_util
@@ -60,19 +60,26 @@ class BaseZonneplanStatisticsService(ABC):
     def __init__(
         self,
         hass: HomeAssistant,
-        zonneplan_api_time_zone: tzinfo,
         first_measured_at: datetime | None,
     ) -> None:
         self.hass = hass
-        self.zonneplan_api_time_zone = zonneplan_api_time_zone
         self.first_measured_at = first_measured_at
+        self.zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
+        self._refetched_statistics_yesterday: datetime | None = None
 
     @abstractmethod
     async def _fetch_day_payload(self, day: datetime) -> dict[str, Any] | None:
         """Fetch day statistics payload."""
 
+    def refetch_yesterday_cutoff_time(self) -> time:
+        """Return local-time cutoff after which yesterday may be refetched."""
+        return time(hour=0, minute=20)
+
     async def process_payload(self, data: dict[str, Any]) -> None:
         """Import historical gaps and process latest measurements."""
+        if await self._refetch_and_process_yesterday(data):
+            return
+
         states = await self._load_current_states()
         start_of_today = dt_util.now(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
         backfill_failed = False
@@ -93,7 +100,32 @@ class BaseZonneplanStatisticsService(ABC):
             self._ingest_measurements(measurements, states)
         self._flush_pending(states)
 
-    async def refetch_yesterday(self, start_of_day: datetime, data_today: dict[str, Any]) -> bool:
+    async def _refetch_and_process_yesterday(self, data_today: dict[str, Any]) -> bool:
+        """Refetch yesterday once per day when the configured cutoff has passed."""
+        zonneplan_now = dt_util.now(self.zonneplan_api_time_zone)
+        start_of_today = zonneplan_now.replace(hour=0, minute=0, second=0, microsecond=0)
+        cutoff_time = self.refetch_yesterday_cutoff_time()
+        if zonneplan_now.time() < cutoff_time:
+            return False
+
+        if self._refetched_statistics_yesterday and self._refetched_statistics_yesterday >= start_of_today:
+            return False
+
+        _LOGGER.info("Refetching yesterday's statistics to ensure data is up to date")
+        try:
+            if await self._refetch_yesterday(start_of_today - timedelta(days=1), data_today):
+                self._refetched_statistics_yesterday = start_of_today
+                return True
+        except ClientResponseError as err:
+            _LOGGER.warning(
+                "Refetch of yesterday failed for %s, continuing with regular processing. Error: %s",
+                [config.statistic_id for config in self.channel_configs],
+                err,
+            )
+
+        return False
+
+    async def _refetch_yesterday(self, start_of_day: datetime, data_today: dict[str, Any]) -> bool:
         """Refetch one day from API and re-apply values using recorder baseline stats."""
         stats = await get_instance(self.hass).async_add_executor_job(
             statistics_during_period,
@@ -281,65 +313,12 @@ class ElectricityStatisticsService(BaseZonneplanStatisticsService):
         hass: HomeAssistant,
         api: AsyncConfigEntryAuth,
         connection_uuid: str,
-        zonneplan_api_time_zone: tzinfo,
         delivered_id: str,
         produced_id: str,
         first_measured_at: datetime | None,
     ) -> None:
         super().__init__(
             hass=hass,
-            zonneplan_api_time_zone=zonneplan_api_time_zone,
-            first_measured_at=first_measured_at,
-        )
-
-        self.api = api
-        self.connection_uuid = connection_uuid
-        self.channel_configs: tuple[StatisticChannelConfig, ...] = (
-            StatisticChannelConfig(
-                key="delivered",
-                statistic_id=delivered_id,
-                name="Stroom opgenomen uit het net",
-                date_key="date",
-                value_key="d",
-                value_factor=0.001,
-                unit_class=EnergyConverter.UNIT_CLASS,
-                unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-            ),
-            StatisticChannelConfig(
-                key="produced",
-                statistic_id=produced_id,
-                name="Stroom teruggeleverd aan het net",
-                date_key="date",
-                value_key="p",
-                value_factor=-0.001,
-                unit_class=EnergyConverter.UNIT_CLASS,
-                unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-            ),
-        )
-
-    async def _fetch_day_payload(self, day: datetime) -> dict[str, Any] | None:
-        date_str = self._zonneplan_api_date_param(day)
-        day_payload = await self.api.async_get(self.connection_uuid, f"/electricity-delivered/charts/hours?date={date_str}")
-        _LOGGER.debug("Fetched Electricity day payload for %s: has_data=%s", date_str, bool(day_payload))
-        return day_payload
-
-
-class BatteryStatisticsService(BaseZonneplanStatisticsService):
-    """Handles external statistics ingestion for P1 electricity channels."""
-
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        api: AsyncConfigEntryAuth,
-        connection_uuid: str,
-        zonneplan_api_time_zone: tzinfo,
-        delivered_id: str,
-        produced_id: str,
-        first_measured_at: datetime | None,
-    ) -> None:
-        super().__init__(
-            hass=hass,
-            zonneplan_api_time_zone=zonneplan_api_time_zone,
             first_measured_at=first_measured_at,
         )
 
@@ -383,13 +362,11 @@ class GasStatisticsService(BaseZonneplanStatisticsService):
         hass: HomeAssistant,
         api: AsyncConfigEntryAuth,
         connection_uuid: str,
-        zonneplan_api_time_zone: tzinfo,
         gas_id: str,
         first_measured_at: datetime | None,
     ) -> None:
         super().__init__(
             hass=hass,
-            zonneplan_api_time_zone=zonneplan_api_time_zone,
             first_measured_at=first_measured_at,
         )
 
