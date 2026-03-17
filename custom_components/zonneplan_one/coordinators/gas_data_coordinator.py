@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
-import homeassistant.util.dt as dt_util
 from aiohttp.client_exceptions import ClientResponseError
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
@@ -48,7 +47,6 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self.address_uuid = address_uuid
         self.connection_uuid = connection_uuid
         self.contracts = contracts
-        self._zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
 
         self._statistics_service = GasStatisticsService(
             hass=hass,

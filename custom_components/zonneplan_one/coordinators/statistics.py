@@ -111,7 +111,9 @@ class BaseZonneplanStatisticsService(ABC):
         if self._refetched_statistics_yesterday and self._refetched_statistics_yesterday >= start_of_today:
             return False
 
-        _LOGGER.info("Refetching yesterday's statistics to ensure data is up to date")
+        _LOGGER.info(
+            "Refetching yesterday's for %s statistics to ensure data is up to date", [config.key for config in self.channel_configs]
+        )
         try:
             if await self._refetch_yesterday(start_of_today - timedelta(days=1), data_today):
                 self._refetched_statistics_yesterday = start_of_today
@@ -229,7 +231,7 @@ class BaseZonneplanStatisticsService(ABC):
                 wait_seconds = (err.retry_after + 20) if err.retry_after is not None else 60
                 wait_seconds *= consecutive_failures
                 _LOGGER.warning(
-                    "Rate limited during backfill at %s (attempt %s/%s), persisted current stats and waiting %s seconds before retry",
+                    "Rate limited during backfill at %s (attempt %s/%s), persisted current stats and waiting %s seconds before resume",
                     current_day,
                     consecutive_failures,
                     _BACKFILL_MAX_RETRIES,
@@ -256,6 +258,11 @@ class BaseZonneplanStatisticsService(ABC):
             if group.get("type", "") == "hours":
                 measurements = group.get("measurements")
 
+        if not measurements:
+            for group in groups:
+                if group.get("type", "") == "minutes":
+                    measurements = group.get("measurements")
+
         _LOGGER.debug("Measurements for %s: %s", context, measurements)
         if not isinstance(measurements, list):
             _LOGGER.warning("No hourly measurements found for %s", context)
@@ -268,21 +275,16 @@ class BaseZonneplanStatisticsService(ABC):
         measurements: list[dict[str, Any]],
         states: dict[str, StatisticChannelState],
     ) -> None:
-        for entry in measurements:
-            for config in self.channel_configs:
-                entry_time = dt_util.parse_datetime(entry.get(config.date_key))
-                if config.value_key:
-                    raw_value = entry.get("values").get(config.value_key)
-                    if not isinstance(raw_value, (float, int)):
-                        _LOGGER.warning("Skipping %s value for entry %s", config.value_key, entry)
-                        continue
-                else:
-                    raw_value = entry.get("value")
-                    if not isinstance(raw_value, (float, int)):
-                        _LOGGER.warning("Skipping value for entry %s", entry)
-                        continue
 
-                value = float(raw_value) * config.value_factor
+        measurements_per_hour = self.measurement_by_hour(measurements)
+
+        for entry_time, values in measurements_per_hour.items():
+            for config in self.channel_configs:
+                if config.key not in values:
+                    continue
+
+                value = values[config.key]
+
                 state = states[config.key]
 
                 if entry_time > state.last_time:
@@ -294,6 +296,40 @@ class BaseZonneplanStatisticsService(ABC):
                     state.total_sum += value - state.last_state_value
                     state.pending.append(StatisticData(start=entry_time, state=value, sum=state.total_sum))
                     state.last_state_value = value
+
+    def measurement_by_hour(self, measurements: list[dict[str, Any]]) -> dict[datetime, dict[str, float]]:
+        measurements_per_hour: dict[datetime, dict[str, float]] = {}
+        last_entry_time = None
+        for entry in measurements:
+            for config in self.channel_configs:
+                entry_time = dt_util.parse_datetime(entry.get(config.date_key)).replace(minute=0, second=0, microsecond=0)
+                if (last_entry_time and entry_time < last_entry_time) or entry_time > datetime.now(tz=self.zonneplan_api_time_zone):
+                    _LOGGER.debug(
+                        "Skipping %s entry for %s",
+                        config.key,
+                        entry_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M"),
+                    )
+                    continue
+                last_entry_time = entry_time
+
+                if config.value_key:
+                    raw_value = entry.get("values").get(config.value_key)
+                    if not isinstance(raw_value, (float, int)):
+                        _LOGGER.warning("Skipping %s value for entry %s", config.value_key, entry)
+                        continue
+                else:
+                    raw_value = entry.get("value")
+                    if not isinstance(raw_value, (float, int)):
+                        _LOGGER.warning("Skipping value for entry %s", entry)
+                        continue
+
+                if entry_time not in measurements_per_hour:
+                    measurements_per_hour[entry_time] = {}
+                if config.key not in measurements_per_hour[entry_time]:
+                    measurements_per_hour[entry_time][config.key] = 0
+
+                measurements_per_hour[entry_time][config.key] += float(raw_value) * config.value_factor
+        return measurements_per_hour
 
     def _flush_pending(self, states: dict[str, StatisticChannelState]) -> None:
         for state in states.values():
@@ -313,8 +349,11 @@ class BaseZonneplanStatisticsService(ABC):
             state.pending = []
 
         _LOGGER.info(
-            "Finished processing stats for %s",
-            {key: state.total_sum for key, state in states.items()},
+            "Finished processing stats until for %s",
+            {
+                key: {"value": state.total_sum, "time": state.last_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M")}
+                for key, state in states.items()
+            },
         )
 
     async def _get_last_statistic(self, statistic_id: str) -> StatisticsRow | None:
@@ -404,7 +443,7 @@ class BaseZonneplanStatisticsService(ABC):
 
 
 class ElectricityStatisticsService(BaseZonneplanStatisticsService):
-    """Handles external statistics ingestion for P1 electricity channels."""
+    """Handles external statistics ingestion for electricity (P1)."""
 
     def __init__(
         self,
@@ -451,7 +490,7 @@ class ElectricityStatisticsService(BaseZonneplanStatisticsService):
 
 
 class GasStatisticsService(BaseZonneplanStatisticsService):
-    """Handles external statistics ingestion for P1 electricity channels."""
+    """Handles external statistics ingestion for Gas (P1)."""
 
     def __init__(
         self,
@@ -483,4 +522,40 @@ class GasStatisticsService(BaseZonneplanStatisticsService):
         date_str = self._zonneplan_api_date_param(day)
         day_payload = await self.api.async_get(self.connection_uuid, f"/gas/charts/hours?date={date_str}")
         _LOGGER.debug("Fetched Gas day payload for %s: has_data=%s", date_str, bool(day_payload))
+        return day_payload
+
+
+class PvStatisticsService(BaseZonneplanStatisticsService):
+    """Handles external statistics ingestion for PV."""
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        api: AsyncConfigEntryAuth,
+        connection_uuid: str,
+        gas_id: str,
+    ) -> None:
+        super().__init__(
+            hass=hass,
+        )
+
+        self.api = api
+        self.connection_uuid = connection_uuid
+        self.channel_configs: tuple[StatisticChannelConfig, ...] = (
+            StatisticChannelConfig(
+                key="pv",
+                statistic_id=gas_id,
+                name="Zonne-energieproductie",
+                value_key=None,
+                date_key="measured_at",
+                value_factor=0.001,
+                unit_class=EnergyConverter.UNIT_CLASS,
+                unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+            ),
+        )
+
+    async def _fetch_day_payload(self, day: datetime) -> dict[str, Any] | None:
+        date_str = self._zonneplan_api_date_param(day)
+        day_payload = await self.api.async_get(self.connection_uuid, f"/pv_installation/charts/minutes?date={date_str}")
+        _LOGGER.debug("Fetched PV day payload for %s: has_data=%s", date_str, bool(day_payload))
         return day_payload

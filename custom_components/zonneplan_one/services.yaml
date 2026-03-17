@@ -11,6 +11,7 @@ fetch_statistics:
           options:
             - electricity
             - gas
+            - pv
       example: "electricity"
     start_date:
       name: Start date

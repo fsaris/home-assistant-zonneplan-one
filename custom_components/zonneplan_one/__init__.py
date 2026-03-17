@@ -68,7 +68,7 @@ _DATE_FORMATS = ("%Y%m%d", "%Y-%m-%d")
 
 SERVICE_FETCH_STATISTICS_SCHEMA = vol.Schema(
     {
-        vol.Required(_ATTR_ENDPOINT): vol.In([ELECTRICITY, GAS]),
+        vol.Required(_ATTR_ENDPOINT): vol.In([ELECTRICITY, GAS, "pv"]),
         vol.Required(_ATTR_START_DATE): str,
         vol.Optional(_ATTR_CONNECTION_UUID): str,
     }
@@ -295,6 +295,8 @@ def _async_setup_fetch_statistics_service(hass: HomeAssistant) -> None:
                     await conn_coordinators.p1_electricity.async_backfill_statistics(start_date)
                 elif endpoint == GAS and conn_coordinators.p1_gas is not None:
                     await conn_coordinators.p1_gas.async_backfill_statistics(start_date)
+                elif endpoint == "pv" and conn_coordinators.pv_installation is not None:
+                    await conn_coordinators.pv_installation.async_backfill_statistics(start_date)
 
     hass.services.async_register(
         DOMAIN,
