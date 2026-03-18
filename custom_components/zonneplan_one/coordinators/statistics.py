@@ -21,7 +21,7 @@ from homeassistant.components.recorder.statistics import (
 )
 from homeassistant.const import UnitOfEnergy, UnitOfVolume
 from homeassistant.core import HomeAssistant
-from homeassistant.util.unit_conversion import EnergyConverter
+from homeassistant.util.unit_conversion import EnergyConverter, VolumeConverter
 
 from ..api import AsyncConfigEntryAuth, ZonneplanRateLimitError
 from ..const import DOMAIN
@@ -39,8 +39,8 @@ class StatisticChannelConfig:
     date_key: str
     value_key: str | None
     value_factor: float
-    unit_class: str | None
-    unit_of_measurement: str | None
+    unit_class: str
+    unit_of_measurement: str
 
 
 @dataclass
@@ -513,7 +513,7 @@ class GasStatisticsService(BaseZonneplanStatisticsService):
                 value_key=None,
                 date_key="measured_at",
                 value_factor=0.001,
-                unit_class=None,
+                unit_class=VolumeConverter.UNIT_CLASS,
                 unit_of_measurement=UnitOfVolume.CUBIC_METERS,
             ),
         )
