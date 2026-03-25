@@ -402,7 +402,7 @@
       "fields": {
         "endpoint": {
           "name": "Endpoint",
-          "description": "The data endpoint to refetch statistics for (electricity, gas or pv)."
+          "description": "The data endpoint to refetch statistics for (electricity or gas)."
         },
         "start_date": {
           "name": "Start date",

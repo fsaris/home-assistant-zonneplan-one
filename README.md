@@ -205,7 +205,7 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 [![Open your Home Assistant instance and start setting up Energy sensors.](https://my.home-assistant.io/badges/config_energy.svg)](https://my.home-assistant.io/redirect/config_energy/)
 
 #### Solar production
-`Zonne-energieproductie` is what your panels produced (`statistic_id` => `zonneplan_one:pv_{connections_uuid}`)
+`Zonneplan Yield total` is what your panels produced
 
 #### Grid consumption
 `Stroom opgenomen uit het net` is what you used from the grid (`statistic_id` => `zonneplan_one:electricity_delivered_{connections_uuid}`)
