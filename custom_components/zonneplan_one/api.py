@@ -63,8 +63,8 @@ class AsyncConfigEntryAuth(ZonneplanApi):
     async def async_get_user_accounts(self) -> ZonneplanAccountsData | None:
         return await self._async_get("user-accounts/me")
 
-    async def async_get(self, connection_uuid: str, path: str) -> dict | None:
-        return await self._async_get("connections/" + connection_uuid + path)
+    async def async_get(self, connection_uuid: str, path: str, *, ignore_etag: bool = False) -> dict | None:
+        return await self._async_get("connections/" + connection_uuid + path, ignore_etag=ignore_etag)
 
     async def async_get_battery_chart(self, contract_uuid: str, chart: str, chart_date: date) -> dict | None:
         """Get battery chart data for the given contract and date."""
@@ -79,13 +79,13 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         """Get battery control mode."""
         return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization")
 
-    async def _async_get(self, path: str) -> dict | None:
+    async def _async_get(self, path: str, *, ignore_etag: bool = False) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 
         headers = self._request_headers
         url = "https://app-api.zonneplan.nl/" + path
 
-        if self._etags.get(url):
+        if not ignore_etag and self._etags.get(url):
             headers["If-None-Match"] = self._etags[url]
 
         _LOGGER.debug("ZonneplanAPI request header: %s", headers)

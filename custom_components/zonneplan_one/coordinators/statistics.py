@@ -68,7 +68,7 @@ class BaseZonneplanStatisticsService(ABC):
         self._refetched_statistics_yesterday: datetime | None = None
 
     @abstractmethod
-    async def _fetch_day_payload(self, day: datetime) -> dict[str, Any] | None:
+    async def _fetch_day_payload(self, day: datetime, *, ignore_etag: bool = False) -> dict[str, Any] | None:
         """Fetch day statistics payload."""
 
     def refetch_yesterday_cutoff_time(self) -> time:
@@ -129,6 +129,10 @@ class BaseZonneplanStatisticsService(ABC):
 
     async def _refetch_yesterday(self, start_of_day: datetime, data_today: dict[str, Any]) -> bool:
         """Refetch one day from API and re-apply values using recorder baseline stats."""
+        yesterday_payload = await self._fetch_day_payload(start_of_day)
+        if not yesterday_payload:
+            return False
+
         stats = await get_instance(self.hass).async_add_executor_job(
             statistics_during_period,
             self.hass,
@@ -164,8 +168,8 @@ class BaseZonneplanStatisticsService(ABC):
                 total_sum=float(baseline.get("sum", 0.0)),
                 last_state_value=float(baseline.get("state", 0.0)),
             )
+            _LOGGER.info("Last state to work with: %s", states[config.key])
 
-        yesterday_payload = await self._fetch_day_payload(start_of_day)
         measurements_yesterday = self._extract_measurements(yesterday_payload or {}, "refetch-yesterday")
         measurements_today = self._extract_measurements(data_today or {}, "current-day")
         self._ingest_measurements(measurements_yesterday, states)
@@ -216,7 +220,10 @@ class BaseZonneplanStatisticsService(ABC):
         consecutive_failures = 0
         while current_day < start_of_today:
             try:
-                day_payload = await self._fetch_day_payload(current_day)
+                day_payload = await self._fetch_day_payload(
+                    current_day,
+                    ignore_etag=True,
+                )
             except ZonneplanRateLimitError as err:
                 consecutive_failures += 1
                 if not retry_on_max_connections:
@@ -403,7 +410,7 @@ class BaseZonneplanStatisticsService(ABC):
 
         await self._backfill_history(states, start_of_today, retry_on_max_connections=True)
 
-        today_payload = await self._fetch_day_payload(start_of_today)
+        today_payload = await self._fetch_day_payload(start_of_today, ignore_etag=True)
         if today_payload:
             measurements = self._extract_measurements(today_payload, "backfill-today")
             self._ingest_measurements(measurements, states)
@@ -458,9 +465,11 @@ class ElectricityStatisticsService(BaseZonneplanStatisticsService):
             ),
         )
 
-    async def _fetch_day_payload(self, day: datetime) -> dict[str, Any] | None:
+    async def _fetch_day_payload(self, day: datetime, *, ignore_etag: bool = False) -> dict[str, Any] | None:
         date_str = self._zonneplan_api_date_param(day)
-        day_payload = await self.api.async_get(self.connection_uuid, f"/electricity-delivered/charts/hours?date={date_str}")
+        day_payload = await self.api.async_get(
+            self.connection_uuid, f"/electricity-delivered/charts/hours?date={date_str}", ignore_etag=ignore_etag
+        )
         _LOGGER.debug("Fetched Electricity day payload for %s: has_data=%s", date_str, bool(day_payload))
         return day_payload
 
@@ -494,8 +503,8 @@ class GasStatisticsService(BaseZonneplanStatisticsService):
             ),
         )
 
-    async def _fetch_day_payload(self, day: datetime) -> dict[str, Any] | None:
+    async def _fetch_day_payload(self, day: datetime, *, ignore_etag: bool = False) -> dict[str, Any] | None:
         date_str = self._zonneplan_api_date_param(day)
-        day_payload = await self.api.async_get(self.connection_uuid, f"/gas/charts/hours?date={date_str}")
+        day_payload = await self.api.async_get(self.connection_uuid, f"/gas/charts/hours?date={date_str}", ignore_etag=ignore_etag)
         _LOGGER.debug("Fetched Gas day payload for %s: has_data=%s", date_str, bool(day_payload))
         return day_payload
