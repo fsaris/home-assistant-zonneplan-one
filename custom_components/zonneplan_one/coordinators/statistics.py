@@ -548,7 +548,7 @@ class PvStatisticsService(BaseZonneplanStatisticsService):
                 name="Zonne-energieproductie",
                 value_key=None,
                 date_key="measured_at",
-                value_factor=0.00008333, # W to kW and 5min to H
+                value_factor=0.001,
                 unit_class=EnergyConverter.UNIT_CLASS,
                 unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
             ),
