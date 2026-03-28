@@ -8,15 +8,14 @@ from typing import Any
 
 import homeassistant.util.dt as dt_util
 from homeassistant.components.sensor import (
+    RestoreSensor,
     SensorDeviceClass,
-    SensorEntity,
 )
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
@@ -321,7 +320,7 @@ def _migrate_to_new_unique_id(hass: HomeAssistant, new_unique_id: str, old_uniqu
         _LOGGER.debug("No old entity found to migrate")
 
 
-class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
+class ZonneplanSensor(CoordinatorEntity, RestoreSensor, ABC):
     """Abstract class for a zonneplan sensor."""
 
     coordinator: ZonneplanDataUpdateCoordinator
@@ -343,6 +342,12 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
         self._install_index = install_index
         self.entity_description = description
 
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+
+        if restored_data := await self.async_get_last_sensor_data():
+            self._attr_native_value = restored_data.native_value
+
     @property
     @abstractmethod
     def install_uuid(self) -> str:
@@ -352,11 +357,6 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
     def unique_id(self) -> str | None:
         """Return a unique ID."""
         return self.install_uuid + "_" + self._sensor_key
-
-    @property
-    def available(self) -> bool:
-        """Return True if entity and coordinator.data is available."""
-        return super().available and self.coordinator.data is not None
 
     @property
     def last_reset(self) -> datetime | None:
@@ -381,7 +381,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreEntity, SensorEntity, ABC):
         if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
             return
 
-        if self.skip_update_based_on_daily_update_hour():
+        if self._attr_native_value is not None and self.skip_update_based_on_daily_update_hour():
             _LOGGER.info(
                 "Skip update %s until %sh",
                 self.unique_id,
