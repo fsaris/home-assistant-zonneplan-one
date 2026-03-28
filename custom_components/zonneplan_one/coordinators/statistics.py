@@ -23,7 +23,7 @@ from homeassistant.const import UnitOfEnergy, UnitOfVolume
 from homeassistant.core import HomeAssistant
 from homeassistant.util.unit_conversion import EnergyConverter, VolumeConverter
 
-from ..api import AsyncConfigEntryAuth, ZonneplanRateLimitError
+from ..api import AsyncConfigEntryAuth, ZonneplanApiError, ZonneplanRateLimitError
 from ..const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -50,6 +50,10 @@ class StatisticChannelState:
     total_sum: float
     last_state_value: float | None
     pending: list[StatisticData] = field(default_factory=list)
+
+
+class InvalidStatsError(Exception):
+    """Exception when construction stats fails."""
 
 
 class BaseZonneplanStatisticsService(ABC):
@@ -96,6 +100,10 @@ class BaseZonneplanStatisticsService(ABC):
                 )
 
         if not backfill_failed:
+            # when last stats are later than start of today no backfill happened,
+            # and we want to process today fully starting from start of today
+            if any(state.last_time > start_of_today for state in states.values()):
+                states = await self._load_states_for_day(start_of_today)
             measurements = self._extract_measurements(data, "current-day")
             self._ingest_measurements(measurements, states)
         self._flush_pending(states)
@@ -129,10 +137,25 @@ class BaseZonneplanStatisticsService(ABC):
 
     async def _refetch_yesterday(self, start_of_day: datetime, data_today: dict[str, Any]) -> bool:
         """Refetch one day from API and re-apply values using recorder baseline stats."""
-        yesterday_payload = await self._fetch_day_payload(start_of_day)
+        yesterday_payload = await self._fetch_day_payload(start_of_day, ignore_etag=True)
         if not yesterday_payload:
             return False
 
+        try:
+            states = await self._load_states_for_day(start_of_day)
+        except InvalidStatsError as e:
+            _LOGGER.warning(e)
+            return False
+
+        measurements_yesterday = self._extract_measurements(yesterday_payload or {}, "refetch-yesterday")
+        measurements_today = self._extract_measurements(data_today or {}, "current-day")
+        self._ingest_measurements(measurements_yesterday, states)
+        self._ingest_measurements(measurements_today, states)
+
+        self._flush_pending(states)
+        return True
+
+    async def _load_states_for_day(self, start_of_day: datetime) -> dict[str, StatisticChannelState]:
         stats = await get_instance(self.hass).async_add_executor_job(
             statistics_during_period,
             self.hass,
@@ -148,13 +171,13 @@ class BaseZonneplanStatisticsService(ABC):
         for config in self.channel_configs:
             rows = stats.get(config.statistic_id)
             if not rows:
-                _LOGGER.warning("No stats found for %s on %s", config.statistic_id, start_of_day)
-                return False
+                msg = "No stats found for %s on %s"
+                raise InvalidStatsError(msg, config.statistic_id, start_of_day)
 
             baseline = rows[0]
             if baseline is None:
-                _LOGGER.warning("Empty baseline stat for %s on %s", config.statistic_id, start_of_day)
-                return False
+                msg = "Empty baseline stat for %s on %s"
+                raise InvalidStatsError(msg, config.statistic_id, start_of_day)
 
             baseline_start = baseline.get("start")
             last_time = (
@@ -168,15 +191,20 @@ class BaseZonneplanStatisticsService(ABC):
                 total_sum=float(baseline.get("sum", 0.0)),
                 last_state_value=float(baseline.get("state", 0.0)),
             )
-            _LOGGER.info("Last state to work with: %s", states[config.key])
 
-        measurements_yesterday = self._extract_measurements(yesterday_payload or {}, "refetch-yesterday")
-        measurements_today = self._extract_measurements(data_today or {}, "current-day")
-        self._ingest_measurements(measurements_yesterday, states)
-        self._ingest_measurements(measurements_today, states)
+        _LOGGER.info(
+            "Last state to work with: %s",
+            {
+                key: {
+                    "last_time": state.last_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M"),
+                    "sum": state.total_sum,
+                    "last_state": state.last_state_value,
+                }
+                for key, state in states.items()
+            },
+        )
 
-        self._flush_pending(states)
-        return True
+        return states
 
     async def _load_current_states(self) -> dict[str, StatisticChannelState]:
         states: dict[str, StatisticChannelState] = {}
@@ -247,11 +275,14 @@ class BaseZonneplanStatisticsService(ABC):
                 await asyncio.sleep(wait_seconds)
                 continue
 
+            if not day_payload:
+                msg = "Missing day payload"
+                raise ZonneplanApiError(msg)
+
             consecutive_failures = 0
-            if day_payload:
-                measurements = self._extract_measurements(day_payload, "backfill")
-                self._ingest_measurements(measurements, states)
-                self._flush_pending(states)
+            measurements = self._extract_measurements(day_payload, "backfill")
+            self._ingest_measurements(measurements, states)
+            self._flush_pending(states)
             current_day += timedelta(days=1)
 
     def _extract_measurements(self, payload: dict[str, Any], context: str) -> list[dict[str, Any]]:
@@ -283,9 +314,11 @@ class BaseZonneplanStatisticsService(ABC):
                 entry_time = dt_util.parse_datetime(entry.get(config.date_key)).replace(minute=0, second=0, microsecond=0)
                 if (last_entry_time and entry_time < last_entry_time) or entry_time > datetime.now(tz=self.zonneplan_api_time_zone):
                     _LOGGER.debug(
-                        "Skipping %s entry for %s",
+                        "Skipping %s entry for %s last_entry_time=%s => %s",
                         config.key,
                         entry_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M"),
+                        last_entry_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M") if last_entry_time else "None",
+                        entry,
                     )
                     continue
                 last_entry_time = entry_time
@@ -303,6 +336,8 @@ class BaseZonneplanStatisticsService(ABC):
 
                 value = float(raw_value) * config.value_factor
                 state = states[config.key]
+
+                _LOGGER.debug("Process for %s value %s from %s", config.key, value, entry)
 
                 if entry_time > state.last_time:
                     state.total_sum += value
@@ -332,9 +367,13 @@ class BaseZonneplanStatisticsService(ABC):
             state.pending = []
 
         _LOGGER.info(
-            "Finished processing stats until for %s",
+            "Finished processing stats: %s",
             {
-                key: {"value": state.total_sum, "time": state.last_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M")}
+                key: {
+                    "last_time": state.last_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M"),
+                    "sum": state.total_sum,
+                    "last_state": state.last_state_value,
+                }
                 for key, state in states.items()
             },
         )
