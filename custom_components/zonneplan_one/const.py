@@ -921,7 +921,8 @@ SENSOR_TYPES: dict[
             native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
             value_factor=0.001,
             device_class=SensorDeviceClass.ENERGY,
-            state_class=SensorStateClass.TOTAL_INCREASING,
+            state_class=SensorStateClass.TOTAL,
+            last_reset_key="measurement_groups.2.date",
             entity_registry_enabled_default=True,
         ),
         "energy_produced_sum_this_month": ZonneplanSensorEntityDescription(
