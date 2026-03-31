@@ -44,17 +44,17 @@ _Some generic/summary sensors_
    - Net delivery costs this year `€` _(default disabled)_
    - Net production costs this month `€` _(default disabled)_
    - Net production costs this year `€` _(default disabled)_
-   - Net delivery today `kWh` 
+   - Net delivery today `kWh`
    - Net delivery this month `kWh`
    - Net delivery this year `kWh`
    - Net production today `kWh`
    - Net production this month `kWh`
-   - Net production this year `kWh` 
+   - Net production this year `kWh`
 
 
 ### Zonneplan Connect (P1 reader)
 _Sensors available if you have a Zonneplan Connect P1 reader_
-   
+
 - DSMR version _(default disabled)_
 - Electricity consumption: `W`
 - Electricity production: `W`
@@ -67,7 +67,7 @@ _Sensors available if you have a Zonneplan Connect P1 reader_
 
 ### Zonneplan Energy Electricity contract related
 _Sensors available if you have a Zonneplan Electricity contract._
-   
+
 - Current Zonneplan Electricity tariff: `€/kWh`
     - The full Electricity forecast is available as a forecast attribute of this sensor
 - Forecast electricity tariff hour 1-8: `€/kWh` _(default disabled)_
@@ -82,13 +82,13 @@ _Sensors available if you have a Zonneplan Electricity contract._
 
 ### Zonneplan Energy Gas contract related:
 _Sensors available if you have a Zonneplan Gas contract_
-   
+
 - Current Zonneplan Gas tariff: `€/m³`
 - Next Zonneplan Gas tariff: `€/m³`
-     
+
 ### Zonneplan Solar inverter
 _Sensors available if you have a Zonneplan solar inverter_
-   
+
 - Yield total: `kWh`
 - First measured: `date` _(default disabled)_
 - Last measured value: `W`
@@ -165,7 +165,7 @@ _Sensors available if you have a Zonneplan Nexus battery_
 
 ### Install with HACS (recommended)
 
-Ensure you have [HACS](https://hacs.xyz/) installed. 
+Ensure you have [HACS](https://hacs.xyz/) installed.
 
 [![Direct link to Zonneplan in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=fsaris&repository=home-assistant-zonneplan-one)
 
@@ -176,15 +176,15 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 
 ### Install manually
 <details>
-   
+
 1. Install this platform by creating a `custom_components` folder in the same folder as your configuration.yaml, if it doesn't already exist.
-2. Create another folder `zonneplan_one` in the `custom_components` folder. 
+2. Create another folder `zonneplan_one` in the `custom_components` folder.
 3. Copy all files from `custom_components/zonneplan_one` into the newly created `zonneplan_one` folder.
 </details>
 
 ### Installing main/beta version using HACS
 <details>
-   
+
 1. Go to `HACS` => `Integrations`
 1. Click on the three dots icon in right bottom of the **Zonneplan** card
 1. Click `Reinstall`
@@ -207,12 +207,14 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 #### Solar production
 `Zonneplan Yield total` is what your panels produced
 
-#### Grid consumption  
-`Zonneplan Electricity consumption today` is what you used from the grid
+#### Grid consumption
+`Stroom opgenomen uit het net` is what you used from the grid (`statistic_id` => `zonneplan_one:electricity_delivered_{connections_uuid}`)
 
 #### Return to grid
-`Zonneplan Electricity returned today` is what you returned to the grid
+`Stroom teruggeleverd aan het net` is what you returned to the grid (`statistic_id` => `zonneplan_one:electricity_produced__{connections_uuid}`)
 
+#### Gas consumption
+`Gas verbruik` is what you used from the gas grid (`statistic_id` => `zonneplan_one:gas_{connections_uuid}`)
 
 ## Using full forecast in graphs, tables and/or automations
 
@@ -230,10 +232,10 @@ Go to [Helpers](https://my.home-assistant.io/redirect/helpers/) and create and n
 From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41#discussioncomment-4642002)
 
 ```
-{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') 
+{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast')
   | selectattr('datetime', '>', utcnow().isoformat())
-  | selectattr('datetime', '<', (utcnow() + timedelta(hours = 11)).isoformat())  
-  | sort(attribute='electricity_price')  
+  | selectattr('datetime', '<', (utcnow() + timedelta(hours = 11)).isoformat())
+  | sort(attribute='electricity_price')
   | first %}
 
 {{ as_local(as_datetime(cheapest_hour_next_twelve_hours.datetime)) }}
@@ -261,25 +263,25 @@ selectattr('datetime', '<', (utcnow() + timedelta(hours = 15)).isoformat())
 {% set cheapest_hour_local_time = as_timestamp(strptime(cheapest_hour.datetime, '%Y-%m-%dT%H:%M:%S.%fZ')) + timezone_offset * 3600 %}
 De goedkoopste tijd is {{ 'vandaag' if as_timestamp(utcnow())|timestamp_custom('%Y-%m-%d') == cheapest_hour_local_time|timestamp_custom('%Y-%m-%d') else 'morgen' }} om {{ (cheapest_hour_local_time)|timestamp_custom('%H') }} uur en kost €{{"{:.2f}".format(cheapest_hour.electricity_price_excl_tax|float/10000000) }}/kWh.
   {% endif %}
-  
+
   {%- set cheapest_forecast =
   state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
   selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
   '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
   sort(attribute='electricity_price_excl_tax') | first %}
-  
+
   {%- set expensive_forecast =
   state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
   selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
   '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
   sort(attribute='electricity_price_excl_tax') | last %}
-  
+
   {%- for forecast in
   state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
   selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
   '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
   sort(attribute='datetime') %}
-  
+
   {%- set forecast_local_time = as_timestamp(strptime(forecast.datetime, '%Y-%m-%dT%H:%M:%S.%fZ')) + timezone_offset * 3600 %}
   • {{ (forecast_local_time)|timestamp_custom('%H:%M') }}    €{{ (forecast.electricity_price / 10000000) | round(2) }} (€{{ (forecast.electricity_price_excl_tax / 10000000) | round(2) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
   {%- endfor %}
@@ -312,13 +314,13 @@ fn: |
     const hours_to_show = getFromConfig('hours_to_show');
     const time_offset = parseInt(getFromConfig('time_offset'));
     vars.x = []; vars.y = []; vars.color = []; vars.hover = []
-    vars.min = {p: 999,t: null}; 
+    vars.min = {p: 999,t: null};
     vars.max = {p:-999,t:null};
-    vars.ymin = 999; 
+    vars.ymin = 999;
     vars.ymax = -999;
     vars.unit_of_measurement = hass.states['sensor.zonneplan_current_electricity_tariff'].attributes.unit_of_measurement
-    vars.now = {t: Date.now(), p: parseFloat(hass.states['sensor.zonneplan_current_electricity_tariff'].state)} 
-    vars.now.h = "<b>" + vars.now.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @now " 
+    vars.now = {t: Date.now(), p: parseFloat(hass.states['sensor.zonneplan_current_electricity_tariff'].state)}
+    vars.now.h = "<b>" + vars.now.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @now "
     vars.avg = { p: 0, c: 0 }
     let start = new Date();
     start.setHours(start.getHours() - (hours_to_show - time_offset));
@@ -326,7 +328,7 @@ fn: |
     end.setHours(start.getHours() + hours_to_show - 1);
     hass.states['sensor.zonneplan_current_electricity_tariff']?.attributes?.forecast?.map(e => {
       if (start >= new Date(e.datetime) || end <  new Date(e.datetime)) return;
-      var t = new Date(e.datetime).getTime()+1800000 
+      var t = new Date(e.datetime).getTime()+1800000
       var p = e.electricity_price/10000000
       vars.avg.p += p
       vars.avg.c++
@@ -335,14 +337,14 @@ fn: |
         if (p<vars.min.p) vars.min = {p,t,c}
         if (p>vars.max.p) vars.max = {p,t,c}
       }
-      
+
       if (p<vars.ymin) vars.ymin = p
       if (p>vars.ymax) vars.ymax = p
       vars.x.push(t)
       vars.y.push(p)
       vars.color.push(c)
-      vars.hover.push(String(new Date(t).getHours()).padStart(2,"0") + "-" + 
-        String(new Date((new Date(t).getTime()+3600000)).getHours()).padStart(2,"0") + ": <b>" + 
+      vars.hover.push(String(new Date(t).getHours()).padStart(2,"0") + "-" +
+        String(new Date((new Date(t).getTime()+3600000)).getHours()).padStart(2,"0") + ": <b>" +
         p.toFixed(3) + "</b> " + vars.unit_of_measurement)
     })
     vars.min.h = "<b>" + vars.min.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @ " + new Date(vars.min.t).getHours() + ":00"
@@ -447,7 +449,7 @@ If you run into issues during setup or when entries do not update anymore please
 1. Go to the integration: [show Zonneplan in your Home Assistant instance](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one).
 2. Click on the `Zonneplan` device
 3. Click `Download diagnostics` in the `Device info` block
-4. _Sensitive data is already redacted in this file_ 
+4. _Sensitive data is already redacted in this file_
 
 ### Debug logging
 1. Go to the integration: [show Zonneplan in your Home Assistant instance](https://my.home-assistant.io/redirect/integration/?domain=zonneplan_one).

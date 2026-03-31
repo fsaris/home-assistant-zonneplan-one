@@ -2,6 +2,7 @@
 
 import logging
 
+import homeassistant.helpers.config_validation as cv
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
@@ -43,6 +44,7 @@ from .coordinators.electricity_home_consumption_data_coordinator import (
 from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
+from .services import async_setup_fetch_statistics_service
 
 PLATFORMS = [
     Platform.SENSOR,
@@ -51,6 +53,9 @@ PLATFORMS = [
     Platform.NUMBER,
     Platform.SELECT,
 ]
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,6 +71,8 @@ async def async_setup(
         hass,
         api.ZonneplanOAuth2Implementation(api.AsyncConfigEntryAuth(aiohttp_client.async_get_clientsession(hass))),
     )
+
+    async_setup_fetch_statistics_service(hass)
 
     return True
 
