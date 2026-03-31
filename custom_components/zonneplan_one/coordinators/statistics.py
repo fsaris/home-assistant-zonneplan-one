@@ -7,6 +7,7 @@ from typing import Any
 
 import homeassistant.util.dt as dt_util
 from aiohttp.client_exceptions import ClientResponseError
+from homeassistant.components import persistent_notification
 from homeassistant.components.recorder import get_instance
 from homeassistant.components.recorder.models import (
     StatisticData,
@@ -236,7 +237,12 @@ class BaseZonneplanStatisticsService(ABC):
         return datetime(now.year, now.month, 1, tzinfo=self.zonneplan_api_time_zone)
 
     async def _backfill_history(
-        self, states: dict[str, StatisticChannelState], start_of_today: datetime, *, retry_on_max_connections: bool
+        self,
+        states: dict[str, StatisticChannelState],
+        start_of_today: datetime,
+        notification_id: str | None = None,
+        *,
+        retry_on_max_connections: bool,
     ) -> None:
         current_day = min(state.last_time for state in states.values())
         _LOGGER.info(
@@ -252,31 +258,41 @@ class BaseZonneplanStatisticsService(ABC):
                     current_day,
                     ignore_etag=True,
                 )
+
+                if notification_id:
+                    msg = f"Fetched {self._zonneplan_api_date_param(current_day)}"
+                    persistent_notification.create(self.hass, msg, "Statistics backfill", notification_id)
+
             except ZonneplanRateLimitError as err:
                 consecutive_failures += 1
                 if not retry_on_max_connections:
                     raise
+
                 if consecutive_failures >= _BACKFILL_MAX_RETRIES:
-                    _LOGGER.warning(
-                        "Rate limit hit %s consecutive times at %s, giving up backfill",
-                        consecutive_failures,
-                        current_day,
-                    )
+                    msg = f"Rate limit hit {consecutive_failures} consecutive times at {current_day}, giving up backfill"
+                    _LOGGER.warning(msg)
+                    if notification_id:
+                        persistent_notification.create(self.hass, msg, "Statistics backfill failed", notification_id)
                     raise
+
                 wait_seconds = (err.retry_after + 20) if err.retry_after is not None else 60
                 wait_seconds *= consecutive_failures
-                _LOGGER.warning(
-                    "Rate limited during backfill at %s (attempt %s/%s), persisted current stats and waiting %s seconds before resume",
-                    current_day,
-                    consecutive_failures,
-                    _BACKFILL_MAX_RETRIES,
-                    wait_seconds,
+
+                msg = (
+                    f"Rate limited during backfill at {current_day} (attempt {consecutive_failures}/{_BACKFILL_MAX_RETRIES}), "
+                    f"saved current stats and waiting {wait_seconds} seconds before resume"
                 )
+                _LOGGER.warning(msg)
+                if notification_id:
+                    persistent_notification.create(self.hass, msg, "Statistics backfill paused", notification_id)
+
                 await asyncio.sleep(wait_seconds)
                 continue
 
             if not day_payload:
                 msg = "Missing day payload"
+                if notification_id:
+                    persistent_notification.create(self.hass, msg, "Statistics backfill failed", notification_id)
                 raise ZonneplanApiError(msg)
 
             consecutive_failures = 0
@@ -402,12 +418,12 @@ class BaseZonneplanStatisticsService(ABC):
         start_of_day = start_date.astimezone(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
         start_of_today = dt_util.now(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
 
-        _LOGGER.info(
-            "Starting manual backfill for %s from %s to %s",
-            [config.statistic_id for config in self.channel_configs],
-            start_of_day,
-            start_of_today,
-        )
+        notification_id = ",".join([config.statistic_id for config in self.channel_configs])
+        msg = f"Starting manual backfill for {notification_id} from {start_of_day} to {start_of_today}"
+
+        _LOGGER.info(msg)
+
+        persistent_notification.create(self.hass, msg, "Statistics backfill started", notification_id)
 
         baseline_window_start = start_of_day - timedelta(days=1)
         recorder_stats = await get_instance(self.hass).async_add_executor_job(
@@ -447,7 +463,7 @@ class BaseZonneplanStatisticsService(ABC):
                 last_state_value=last_state_value,
             )
 
-        await self._backfill_history(states, start_of_today, retry_on_max_connections=True)
+        await self._backfill_history(states, start_of_today, notification_id, retry_on_max_connections=True)
 
         today_payload = await self._fetch_day_payload(start_of_today, ignore_etag=True)
         if today_payload:
@@ -455,10 +471,10 @@ class BaseZonneplanStatisticsService(ABC):
             self._ingest_measurements(measurements, states)
             self._flush_pending(states)
 
-        _LOGGER.info(
-            "Manual backfill completed for %s",
-            [config.statistic_id for config in self.channel_configs],
-        )
+        msg = f"Manual backfill completed for {notification_id}"
+        _LOGGER.info(msg)
+
+        persistent_notification.create(self.hass, msg, "Statistics backfill complete", notification_id)
 
     def _zonneplan_api_date_param(self, day: datetime) -> str:
         return day.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d")
