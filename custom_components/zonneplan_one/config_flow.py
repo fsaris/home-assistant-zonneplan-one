@@ -68,7 +68,7 @@ class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandl
 
         # Use email from existing config on re-auth
         existing_entry = await self.async_set_unique_id(DOMAIN)
-        if existing_entry and "email" in existing_entry.data:
+        if (not user_input or CONF_EMAIL not in user_input) and existing_entry and "email" in existing_entry.data:
             user_input = {CONF_EMAIL: existing_entry.data["email"]}
 
         if user_input and CONF_EMAIL in user_input:
@@ -91,7 +91,7 @@ class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandl
                 step_id="auth",
                 data_schema=vol.Schema(
                     {
-                        vol.Required(CONF_EMAIL, default=""): str,
+                        vol.Required(CONF_EMAIL, default=self._email): str,
                     }
                 ),
                 last_step=False,
@@ -120,7 +120,7 @@ class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandl
         existing_entry = await self.async_set_unique_id(DOMAIN)
         if existing_entry:
             self.logger.info("Update entry [%s]: %s", existing_entry.entry_id, data["email"])
-            self.hass.config_entries.async_update_entry(existing_entry, data=data)
+            self.hass.config_entries.async_update_entry(existing_entry, title=data["email"], data=data)
             await self.hass.config_entries.async_reload(existing_entry.entry_id)
             return self.async_abort(reason="reauth_successful")
 
