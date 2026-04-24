@@ -15,6 +15,6 @@
   "issue_tracker": "https://github.com/fsaris/home-assistant-zonneplan-one/issues",
   "requirements": [],
   "ssdp": [],
-  "version": "2026.4.0",
+  "version": "2026.4.1",
   "zeroconf": []
 }
