@@ -963,6 +963,13 @@ SENSOR_TYPES: dict[
                 ),
             ],
         ),
+        "charge_point_model_name": ZonneplanSensorEntityDescription(
+            key="meta.charge_point_model_name",
+            name="Charge point model name",
+            translation_key="charge_point_model_name",
+            icon="phu:generic-car-charger",
+            entity_registry_enabled_default=False,
+        ),
         "power_actual": ZonneplanSensorEntityDescription(
             key="state.power_actual",
             name="Charge point power",
@@ -1192,6 +1199,12 @@ BINARY_SENSORS_TYPES: dict[str, dict[str, ZonneplanBinarySensorEntityDescription
             key="state.dynamic_charging_enabled",
             name="Charge point dynamic charging enabled",
             translation_key="charge_point_dynamic_charging_enabled",
+            entity_registry_enabled_default=True,
+        ),
+        "charge_on_solar_enabled": ZonneplanBinarySensorEntityDescription(
+            key="state.charge_on_solar_enabled",
+            name="Charge on solar enabled",
+            translation_key="charge_on_solar_enabled",
             entity_registry_enabled_default=True,
         ),
         "dynamic_charging_flex_enabled": ZonneplanBinarySensorEntityDescription(
