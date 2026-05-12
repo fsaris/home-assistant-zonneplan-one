@@ -102,6 +102,7 @@ _Sensors available if you have a Zonneplan solar inverter_
 _Sensors available if you have a Zonneplan charge point/laadpaal_
 
 - Charge point state
+- Charge point model name _(default disabled)_
 - Charge point power `W`
 - Charge point energy delivered session `kWh`
 - Charge point next schedule start `date`
@@ -126,6 +127,7 @@ _Sensors available if you have a Zonneplan charge point/laadpaal_
 - Charge point dynamic charging enabled `on/off`
 - Charge point dynamic charging flex enabled `on/off`
 - Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
+- Charge on solar enabled `on/off`
 - Buttons to start/stop charge
 
 ### Zonneplan Battery
