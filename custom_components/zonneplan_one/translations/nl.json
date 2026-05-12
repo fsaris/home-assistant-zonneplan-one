@@ -299,6 +299,9 @@
       "charge_point_power": {
         "name": "Laadpaalvermogen"
       },
+      "charge_point_model_name": {
+        "name": "Laadpaal model"
+      },
       "charge_point_energy_delivered_session": {
         "name": "Laadpaal energie geleverd sessie"
       },
@@ -372,6 +375,9 @@
     "binary_sensor": {
       "dynamic_charging_enabled": {
         "name": "Powerplay"
+      },
+      "charge_on_solar_enabled": {
+        "name": "Zonladen"
       },
       "dynamic_load_balancing_enabled": {
         "name": "Dynamische load balancing ingeschakeld"
