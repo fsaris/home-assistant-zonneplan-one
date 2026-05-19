@@ -218,6 +218,8 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 #### Gas consumption
 `Gas verbruik` is what you used from the gas grid (`statistic_id` => `zonneplan_one:gas_{connections_uuid}`)
 
+_See [Fetching historical data for Electricity and Gas usage](#fetching-historical-data-for-electricity-and-gas-usage) how to fetch more historical data for these sensors._
+
 ## Using full forecast in graphs, tables and/or automations
 
 The full forecast is available as attributes of the `Current Zonneplan Electricity tariff` sensor. The incl. tax and excl. tax values are present.
@@ -442,6 +444,20 @@ entities:
 ```
 
 </details>
+
+
+## Fetching historical data for Electricity and Gas usage
+
+When the integration is set up it will fetch the last 30 days of historical data for Electricity and Gas usage. If you want to fetch more historical data you can trigger this manually by calling the `zonneplan_one.fetch_historical_data` [action](https://my.home-assistant.io/redirect/developer_services/).
+
+With this action you can fetch the P1 Electricity and Gas data history that's also visible in the Zonneplan app.
+
+Go to [Developer Tools -> Actions](https://my.home-assistant.io/redirect/developer_services/) and search for `zonneplan_one.fetch_historical_data` and fill the required fields.
+
+Fields of the action are:
+- Endpoint: `electricity`/`gas`
+- Start date: fill this with the start date of your contract
+
 
 ## Troubleshooting
 
