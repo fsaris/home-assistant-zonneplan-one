@@ -145,7 +145,7 @@ class BaseZonneplanStatisticsService(ABC):
         try:
             states = await self._load_states_for_day(start_of_day)
         except InvalidStatsError as e:
-            _LOGGER.warning(e)
+            _LOGGER.info(e)
             return False
 
         measurements_yesterday = self._extract_measurements(yesterday_payload or {}, "refetch-yesterday")
