@@ -197,6 +197,24 @@
       "electricity_production_costs_this_year": {
         "name": "Teruglevering dit jaar"
       },
+      "electricity_delivery_price_per_unit_today": {
+        "name": "Afname gemiddelde prijs per KWh vandaag"
+      },
+      "electricity_delivery_price_per_unit_this_month": {
+        "name": "Afname gemiddelde prijs per KWh deze maand"
+      },
+      "electricity_delivery_price_per_unit_this_year": {
+        "name": "Afname gemiddelde prijs per KWh dit jaar"
+      },
+      "electricity_production_price_per_unit_today": {
+        "name": "Teruglevering gemiddelde prijs per KWh vandaag"
+      },
+      "electricity_production_price_per_unit_this_month": {
+        "name": "Teruglevering gemiddelde prijs per KWh deze maand"
+      },
+      "electricity_production_price_per_unit_this_year": {
+        "name": "Teruglevering gemiddelde prijs per KWh dit jaar"
+      },
       "gas_consumption_today": {
         "name": "Gasverbruik vandaag"
       },
