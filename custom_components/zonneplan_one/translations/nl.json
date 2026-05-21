@@ -170,6 +170,24 @@
       "powerplay_today": {
         "name": "Powerplay vandaag"
       },
+      "installation_wp": {
+        "name": "Installatie Wp"
+      },
+      "panel_wp": {
+        "name": "Paneel Wp"
+      },
+      "panel_count": {
+        "name": "Panelen aantal"
+      },
+      "inverter_model_name": {
+        "name": "Omvormer model"
+      },
+      "inverter_firmware_version": {
+        "name": "Omvormer firmware versie"
+      },
+      "module_firmware_version": {
+        "name": "Module firmware versie"
+      },
       "yield_today": {
         "name": "Opbrengst vandaag"
       },
