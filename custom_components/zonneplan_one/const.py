@@ -759,6 +759,11 @@ SENSOR_TYPES: dict[
             name="Inverter state",
             translation_key="inverter_state",
         ),
+        "host_device_model_name": ZonneplanSensorEntityDescription(
+            key="contracts.{install_index}.meta.host_device_model_name",
+            name="Host device model name",
+            translation_key="host_device_model_name",
+        ), 
         "total_earned": ZonneplanSensorEntityDescription(
             key="contracts.{install_index}.meta.total_earned",
             name="Total",
