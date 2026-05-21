@@ -274,6 +274,9 @@
           "Discharging": "Ontladen"
         }
       },
+      "host_device_model_name": {
+        "name": "Model naam"
+      },
       "battery_control_mode": {
         "name": "Batterijbesturingsmodus",
         "state": {
