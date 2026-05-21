@@ -763,7 +763,7 @@ SENSOR_TYPES: dict[
             key="contracts.{install_index}.meta.host_device_model_name",
             name="Host device model name",
             translation_key="host_device_model_name",
-        ), 
+        ),
         "total_earned": ZonneplanSensorEntityDescription(
             key="contracts.{install_index}.meta.total_earned",
             name="Total",
