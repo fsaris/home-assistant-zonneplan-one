@@ -143,6 +143,7 @@ _Sensors available if you have a Zonneplan Nexus battery_
 - Battery cycles
 - Dynamic charging enabled `on/off`
 - Battery state
+- Host device model name _(default disabled)_
 - Percentage `%`
 - Power `W` _(default disabled)_
 - Delivery today `kWh`
