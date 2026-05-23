@@ -78,7 +78,7 @@ class BatteryEntity:
         return {
             "identifiers": {(DOMAIN, self.install_uuid)},
             "name": self.coordinator.contract["label"],
-            "model": self.coordinator.contract["host_device_model_name"],
+            "model": self.coordinator.contract.get("meta", {}).get("host_device_model_name"),
             "serial_number": self.coordinator.contract.get("meta", {}).get("identifier"),
         }
 
