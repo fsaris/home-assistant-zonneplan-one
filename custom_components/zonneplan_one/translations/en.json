@@ -26,7 +26,7 @@
       "default": "Successfully authenticated"
     },
     "error": {
-      "failed_to_request_login": "Failed to request login link *(check logs)*",
+      "failed_to_request_login": "Failed to request login link, try again at a later point. *(If keeps failing, check logs)*",
       "no_password": "No password received yet *(did you follow the link from the email?)*"
     }
   },
