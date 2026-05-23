@@ -406,6 +406,46 @@ SENSOR_TYPES: dict[
                 last_reset_key="measurement_groups.0.date",
                 entity_registry_enabled_default=False,
             ),
+            "installation_wp": ZonneplanSensorEntityDescription(
+                key="contracts.{install_index}.meta.installation_wp",
+                name="Installation Wp",
+                translation_key="installation_wp",
+                icon="mdi:solar-power",
+                entity_registry_enabled_default=False,
+            ),
+            "panel_wp": ZonneplanSensorEntityDescription(
+                key="contracts.{install_index}.meta.panel_wp",
+                name="Panel Wp",
+                translation_key="panel_wp",
+                icon="mdi:solar-power",
+                entity_registry_enabled_default=False,
+            ),
+            "panel_count": ZonneplanSensorEntityDescription(
+                key="contracts.{install_index}.meta.panel_count",
+                name="Panel count",
+                translation_key="panel_count",
+                icon="mdi:solar-power",
+                entity_registry_enabled_default=False,
+            ),
+            "inverter_model_name": ZonneplanSensorEntityDescription(
+                key="contracts.{install_index}.meta.inverter_model_name",
+                name="Inverter model name",
+                translation_key="inverter_model_name",
+                icon="mdi:solar-power",
+                entity_registry_enabled_default=False,
+            ),
+            "inverter_firmware_version": ZonneplanSensorEntityDescription(
+                key="contracts.{install_index}.meta.inverter_firmware_version",
+                name="Inverter firmware version",
+                translation_key="inverter_firmware_version",
+                entity_registry_enabled_default=True,
+            ),
+            "module_firmware_version": ZonneplanSensorEntityDescription(
+                key="contracts.{install_index}.meta.module_firmware_version",
+                name="Module firmware version",
+                translation_key="module_firmware_version",
+                entity_registry_enabled_default=True,
+            ),
         },
         "totals": {
             "total_today": ZonneplanSensorEntityDescription(
@@ -718,6 +758,11 @@ SENSOR_TYPES: dict[
             key="contracts.{install_index}.meta.inverter_state",
             name="Inverter state",
             translation_key="inverter_state",
+        ),
+        "host_device_model_name": ZonneplanSensorEntityDescription(
+            key="contracts.{install_index}.meta.host_device_model_name",
+            name="Host device model name",
+            translation_key="host_device_model_name",
         ),
         "total_earned": ZonneplanSensorEntityDescription(
             key="contracts.{install_index}.meta.total_earned",

@@ -97,6 +97,12 @@ _Sensors available if you have a Zonneplan solar inverter_
 - Powerplay/power limit active: `on/off` _(default disabled)_
 - Powerplay total: `€` _(default disabled)_
 - Powerplay today: `€` _(default disabled)_
+- Installation Wp _(default disabled)_
+- Panel Wp _(default disabled)_
+- Panel count _(default disabled)_
+- Inverter model name _(default disabled)_
+- Inverter firmware version
+- Module firmware version
 
 ### Zonneplan Charge point/Laadpaal
 _Sensors available if you have a Zonneplan charge point/laadpaal_
@@ -137,6 +143,7 @@ _Sensors available if you have a Zonneplan Nexus battery_
 - Battery cycles
 - Dynamic charging enabled `on/off`
 - Battery state
+- Host device model name _(default disabled)_
 - Percentage `%`
 - Power `W` _(default disabled)_
 - Delivery today `kWh`
