@@ -45,8 +45,22 @@ class ZonneplanApi:
                 response_json = await response.json()
                 _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
 
-        except (TimeoutError, aiohttp.ClientError):
+        except TimeoutError:
             _LOGGER.exception("Timeout calling ZonneplanAPI to request login email")
+            return None
+
+        except aiohttp.ClientResponseError as err:
+            _LOGGER.exception(
+                "HTTP error calling ZonneplanAPI to request login email: %s %s",
+                err.status,
+                err.message,
+            )
+            return None
+
+        except aiohttp.ClientError:
+            _LOGGER.exception(
+                "Client error calling ZonneplanAPI to request login email: %s",
+            )
             return None
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
@@ -71,8 +85,22 @@ class ZonneplanApi:
                 response_json = await response.json()
                 _LOGGER.debug("Temporary password response body json: %s", response_json)
 
-        except (TimeoutError, aiohttp.ClientError):
+        except TimeoutError:
             _LOGGER.exception("Timeout calling ZonneplanAPI to request temporary password")
+            return None
+
+        except aiohttp.ClientResponseError as err:
+            _LOGGER.exception(
+                "HTTP error calling ZonneplanAPI to request login email: %s %s",
+                err.status,
+                err.message,
+            )
+            return None
+
+        except aiohttp.ClientError:
+            _LOGGER.exception(
+                "Client error calling ZonneplanAPI to request login email: %s",
+            )
             return None
 
         _LOGGER.debug("Temporary password response header: %s", response.headers)

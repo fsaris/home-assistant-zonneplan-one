@@ -26,7 +26,7 @@
       "default": "Inloggen gelukt"
     },
     "error": {
-      "failed_to_request_login": "Het opvragen van een login link ging mis *(controleer de logs)*",
+      "failed_to_request_login": "Het opvragen van een login link ging mis, probeer het later nog een keer. *(Blijft het mis gaan, controleer dan de logs)*",
       "no_password": "Nog een wachtwoord ontvangen *(heb je op de link uit de mail van Zonneplan geklikt?)*"
     }
   },
