@@ -192,6 +192,11 @@ _Sensors available if you have a Zonneplan Nexus battery_
 - Max discharge power (Home optimization) `slider in: W`
 - Max charge power (Home optimization) `slider in: W`
 
+- When `Backup power` feature is available
+  - Backup power usable capacity `Wh`
+  - Backup power active `on/off`
+  - Reserve discharge cutoff `slider in: Wh`
+
 
 ## Installation
 

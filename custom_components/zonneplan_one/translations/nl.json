@@ -366,6 +366,9 @@
       "battery_cycles": {
         "name": "Batterijcycli"
       },
+      "backup_power_usable_capacity_wh": {
+        "name": "Beschikbare noodreserve"
+      },
       "charge_point_state": {
         "name": "Laadpaalstatus",
         "state": {
@@ -490,6 +493,9 @@
       "grid_congestion_active": {
         "name": "Netcongestie"
       },
+      "backup_power_active": {
+        "name": "Noodstroom actief"
+      },
       "powerplay_enabled": {
         "name": "Powerplay"
       },
@@ -541,6 +547,9 @@
       },
       "max_charge_power": {
         "name": "Zonnestroom opslaan (Huisoptimalisatie)"
+      },
+      "reserve_discharge_cutoff_wh": {
+        "name": "Minimum noodstroom reserve"
       }
     },
     "select": {

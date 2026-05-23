@@ -79,6 +79,18 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         """Get battery control mode."""
         return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization")
 
+    async def async_set_reserve_discharge(self, connection_uuid: str, contract_uuid: str, value: int) -> dict:
+        """Set battery reserve discharge."""
+        params = {"reserved_state_of_charge_wh": value}
+
+        _LOGGER.info("set_backup_power_reserved_state_of_charge: params %s", params)
+
+        return await self.async_post(
+            connection_uuid,
+            f"/home-battery-installation/{contract_uuid}/actions/set_backup_power_reserved_state_of_charge",
+            params,
+        )
+
     async def _async_get(self, path: str, *, ignore_etag: bool = False) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 

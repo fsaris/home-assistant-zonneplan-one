@@ -983,6 +983,13 @@ SENSOR_TYPES: dict[
             entity_registry_enabled_default=True,
             state_class=SensorStateClass.TOTAL,
         ),
+        "backup_power_usable_capacity_wh": ZonneplanSensorEntityDescription(
+            key="contracts.{install_index}.meta.backup_power_usable_capacity_wh",
+            name="Backup power usable capacity",
+            translation_key="battery_cycles",
+            native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
+            device_class=SensorDeviceClass.ENERGY,
+        ),
     },
     BATTERY_CHARTS: {
         "result_this_year": ZonneplanSensorEntityDescription(
@@ -1437,6 +1444,11 @@ BINARY_SENSORS_TYPES: dict[str, dict[str, ZonneplanBinarySensorEntityDescription
             translation_key="grid_congestion_active",
             entity_registry_enabled_default=True,
         ),
+        "backup_power_active": ZonneplanBinarySensorEntityDescription(
+            key="contracts.{install_index}.meta.backup_power_active",
+            name="Backup power active",
+            translation_key="backup_power_active",
+        ),
     },
     PV_INSTALL: {
         "dynamic_control_enabled": ZonneplanBinarySensorEntityDescription(
@@ -1553,7 +1565,18 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
             native_step=100,
             icon="mdi:battery-arrow-up-outline",
         ),
-    }
+    },
+    BATTERY: {
+        "reserve_discharge_cutoff_wh": ZonneplanNumberEntityDescription(
+            key="contracts.{install_index}.meta.reserve_discharge_cutoff_wh",
+            name="Reserve discharge cutoff",
+            translation_key="reserve_discharge_cutoff_wh",
+            mode=NumberMode.SLIDER,
+            native_step=100,
+            icon="mdi:battery-negative",
+            entity_registry_enabled_default=False,
+        ),
+    },
 }
 
 SELECT_TYPES = {
