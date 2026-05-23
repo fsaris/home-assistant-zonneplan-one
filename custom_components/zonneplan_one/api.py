@@ -187,7 +187,7 @@ class ZonneplanOAuth2Implementation(config_entry_oauth2_flow.AbstractOAuth2Imple
         """Domain that is providing the implementation."""
         return DOMAIN
 
-    async def async_request_temp_pass(self, email: str) -> str:
+    async def async_request_temp_pass(self, email: str) -> str | None:
         return await self._api.async_request_temp_pass(email)
 
     async def async_resolve_external_data(self, external_data: Any) -> dict:
