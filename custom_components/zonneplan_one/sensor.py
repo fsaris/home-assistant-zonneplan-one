@@ -177,9 +177,10 @@ async def add_electricity_sensors(
         for sensor_key in SENSOR_TYPES[ELECTRICITY]
     )
 
+    """Migrate typo in forecast_ sensor keys."""
     for sensor_key in SENSOR_TYPES[ELECTRICITY]:
-        if sensor_key.startswith("forcast_"):
-            _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{uuid}_{sensor_key.replace('forcast_', 'forecast_')}")
+        if sensor_key.startswith("forecast_"):
+            _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{uuid}_{sensor_key.replace('forecast_', 'forcast_')}")
 
     """Migrate old unique ids to new unique ids."""
     for other_connection_uud in other_connection_uuids:
