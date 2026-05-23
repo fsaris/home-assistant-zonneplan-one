@@ -29,21 +29,44 @@ _Some generic/summary sensors_
    - Electricity consumption today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity delivery costs today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity delivery costs this month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs this month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity delivery costs this year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs this year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity production costs today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity production costs this month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs this month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity production costs this year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs this year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Gas consumption today: `m³` _(when a gas meter is registered in the P1 reader)_
    - Gas delivery costs today: `€` _(when there is a Zonneplan gas contract and a gas meter registered in the P1 reader, default disabled)_
+   - Gas delivery costs today (excl. tax): `€` _(when there is a Zonneplan gas contract and a gas meter registered in the P1 reader, default disabled)_
 
 
 - Net values _(available when there is a Zonneplan Battery)_
 
    - Net delivery costs this month `€` _(default disabled)_
+   - Net delivery costs this month (excl. tax) `€` _(default disabled)_
    - Net delivery costs this year `€` _(default disabled)_
+   - Net delivery costs this year (excl. tax) `€` _(default disabled)_
    - Net production costs this month `€` _(default disabled)_
+   - Net production costs this month (excl. tax) `€` _(default disabled)_
    - Net production costs this year `€` _(default disabled)_
+   - Net production costs this year (excl. tax) `€` _(default disabled)_
    - Net delivery today `kWh`
    - Net delivery this month `kWh`
    - Net delivery this year `kWh`

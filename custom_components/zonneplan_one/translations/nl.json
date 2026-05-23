@@ -200,44 +200,83 @@
       "electricity_delivery_costs_today": {
         "name": "Afname vandaag"
       },
+      "electricity_delivery_costs_today_excl_tax": {
+        "name": "Afname vandaag (excl. btw)"
+      },
       "electricity_delivery_costs_this_month": {
         "name": "Afname deze maand"
+      },
+      "electricity_delivery_costs_this_month_excl_tax": {
+        "name": "Afname deze maand (excl. btw)"
       },
       "electricity_delivery_costs_this_year": {
         "name": "Afname dit jaar"
       },
+      "electricity_delivery_costs_this_year_excl_tax": {
+        "name": "Afname dit jaar (excl. btw)"
+      },
       "electricity_production_costs_today": {
         "name": "Teruglevering vandaag"
+      },
+      "electricity_production_costs_today_excl_tax": {
+        "name": "Teruglevering vandaag (excl. btw)"
       },
       "electricity_production_costs_this_month": {
         "name": "Teruglevering deze maand"
       },
+      "electricity_production_costs_this_month_excl_tax": {
+        "name": "Teruglevering deze maand (excl. btw)"
+      },
       "electricity_production_costs_this_year": {
         "name": "Teruglevering dit jaar"
+      },
+      "electricity_production_costs_this_year_excl_tax": {
+        "name": "Teruglevering dit jaar (excl. btw)"
       },
       "electricity_delivery_price_per_unit_today": {
         "name": "Afname gemiddelde prijs per KWh vandaag"
       },
+      "electricity_delivery_price_per_unit_today_excl_tax": {
+        "name": "Afname gemiddelde prijs per KWh vandaag (excl. btw)"
+      },
       "electricity_delivery_price_per_unit_this_month": {
         "name": "Afname gemiddelde prijs per KWh deze maand"
+      },
+      "electricity_delivery_price_per_unit_this_month_excl_tax": {
+        "name": "Afname gemiddelde prijs per KWh deze maand (excl. btw)"
       },
       "electricity_delivery_price_per_unit_this_year": {
         "name": "Afname gemiddelde prijs per KWh dit jaar"
       },
+      "electricity_delivery_price_per_unit_this_year_excl_tax": {
+        "name": "Afname gemiddelde prijs per KWh dit jaar (excl. btw)"
+      },
       "electricity_production_price_per_unit_today": {
         "name": "Teruglevering gemiddelde prijs per KWh vandaag"
+      },
+      "electricity_production_price_per_unit_today_excl_tax": {
+        "name": "Teruglevering gemiddelde prijs per KWh vandaag (excl. btw)"
       },
       "electricity_production_price_per_unit_this_month": {
         "name": "Teruglevering gemiddelde prijs per KWh deze maand"
       },
+      "electricity_production_price_per_unit_this_month_excl_tax": {
+        "name": "Teruglevering gemiddelde prijs per KWh deze maand (excl. btw)"
+      },
       "electricity_production_price_per_unit_this_year": {
         "name": "Teruglevering gemiddelde prijs per KWh dit jaar"
+      },
+      "electricity_production_price_per_unit_this_year_excl_tax": {
+        "name": "Teruglevering gemiddelde prijs per KWh dit jaar (excl. btw)"
       },
       "gas_consumption_today": {
         "name": "Gasverbruik vandaag"
       },
       "gas_delivery_costs_today": {
         "name": "Gas afname vandaag"
+      },
+      "gas_delivery_costs_today_excl_tax": {
+        "name": "Gas afname vandaag (excl. btw)"
       },
       "electricity_consumption": {
         "name": "Elektriciteitsverbruik"
@@ -383,14 +422,26 @@
       "delivery_costs_this_month": {
         "name": "Netto afname deze maand"
       },
+      "delivery_costs_this_month_excl_tax": {
+        "name": "Netto afname deze maand (excl. btw)"
+      },
       "delivery_costs_this_year": {
         "name": "Netto afname dit jaar"
+      },
+      "delivery_costs_this_year_excl_tax": {
+        "name": "Netto afname dit jaar (excl. btw)"
       },
       "production_costs_this_month": {
         "name": "Netto teruggeleverd deze maand"
       },
+      "production_costs__this_monthexcl_tax": {
+        "name": "Netto teruggeleverd deze maand (excl. btw)"
+      },
       "production_costs_this_year": {
         "name": "Netto teruggeleverd dit jaar"
+      },
+      "production_costs_this_year_excl_tax": {
+        "name": "Netto teruggeleverd dit jaar (excl. btw)"
       },
       "energy_delivered_sum_today": {
         "name": "Netto afname vandaag"
