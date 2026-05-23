@@ -26,7 +26,7 @@
       "default": "[%key:common::config_flow::create_entry::authenticated%]"
     },
     "error": {
-      "failed_to_request_login": "Failed to request login link *(check logs)*",
+      "failed_to_request_login": "Failed to request login link, try again at a later point. *(If keeps failing, check logs)*",
       "no_password": "No password received yet *(did you follow the link from the email?)*"
     }
   },
@@ -151,6 +151,24 @@
       },
       "electricity_production_costs_this_year": {
         "name": "Electricity production costs this year"
+      },
+      "electricity_delivery_price_per_unit_today": {
+        "name": "Electricity delivery price per unit today"
+      },
+      "electricity_delivery_price_per_unit_this_month": {
+        "name": "Electricity delivery price per unit this month"
+      },
+      "electricity_delivery_price_per_unit_this_year": {
+        "name": "Electricity delivery price per unit this year"
+      },
+      "electricity_production_price_per_unit_today": {
+        "name": "Electricity production price per unit today"
+      },
+      "electricity_production_price_per_unit_this_month": {
+        "name": "Electricity production price per unit this month"
+      },
+      "electricity_production_price_per_unit_this_year": {
+        "name": "Electricity production price per unit this year"
       },
       "gas_consumption_today": {
         "name": "Gas consumption today"

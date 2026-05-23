@@ -29,21 +29,44 @@ _Some generic/summary sensors_
    - Electricity consumption today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity returned today: `kWh` _(can be used as entity on Energy Dashboard)_
    - Electricity delivery costs today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity delivery costs this month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs this month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity delivery costs this year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery costs this year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity production costs today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity production costs this month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs this month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Electricity production costs this year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production costs this year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity delivery price per unit year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit today: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit today (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit month: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit month (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit year: `€` _(when there is a Zonneplan Energy contract, default disabled)_
+   - Electricity production price per unit year (excl. tax): `€` _(when there is a Zonneplan Energy contract, default disabled)_
    - Gas consumption today: `m³` _(when a gas meter is registered in the P1 reader)_
    - Gas delivery costs today: `€` _(when there is a Zonneplan gas contract and a gas meter registered in the P1 reader, default disabled)_
+   - Gas delivery costs today (excl. tax): `€` _(when there is a Zonneplan gas contract and a gas meter registered in the P1 reader, default disabled)_
 
 
 - Net values _(available when there is a Zonneplan Battery)_
 
    - Net delivery costs this month `€` _(default disabled)_
+   - Net delivery costs this month (excl. tax) `€` _(default disabled)_
    - Net delivery costs this year `€` _(default disabled)_
+   - Net delivery costs this year (excl. tax) `€` _(default disabled)_
    - Net production costs this month `€` _(default disabled)_
+   - Net production costs this month (excl. tax) `€` _(default disabled)_
    - Net production costs this year `€` _(default disabled)_
+   - Net production costs this year (excl. tax) `€` _(default disabled)_
    - Net delivery today `kWh`
    - Net delivery this month `kWh`
    - Net delivery this year `kWh`
@@ -97,11 +120,18 @@ _Sensors available if you have a Zonneplan solar inverter_
 - Powerplay/power limit active: `on/off` _(default disabled)_
 - Powerplay total: `€` _(default disabled)_
 - Powerplay today: `€` _(default disabled)_
+- Installation Wp _(default disabled)_
+- Panel Wp _(default disabled)_
+- Panel count _(default disabled)_
+- Inverter model name _(default disabled)_
+- Inverter firmware version
+- Module firmware version
 
 ### Zonneplan Charge point/Laadpaal
 _Sensors available if you have a Zonneplan charge point/laadpaal_
 
 - Charge point state
+- Charge point model name _(default disabled)_
 - Charge point power `W`
 - Charge point energy delivered session `kWh`
 - Charge point next schedule start `date`
@@ -126,6 +156,7 @@ _Sensors available if you have a Zonneplan charge point/laadpaal_
 - Charge point dynamic charging enabled `on/off`
 - Charge point dynamic charging flex enabled `on/off`
 - Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
+- Charge on solar enabled `on/off`
 - Buttons to start/stop charge
 
 ### Zonneplan Battery
@@ -135,6 +166,7 @@ _Sensors available if you have a Zonneplan Nexus battery_
 - Battery cycles
 - Dynamic charging enabled `on/off`
 - Battery state
+- Host device model name _(default disabled)_
 - Percentage `%`
 - Power `W` _(default disabled)_
 - Delivery today `kWh`
@@ -215,6 +247,8 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 
 #### Gas consumption
 `Gas verbruik` is what you used from the gas grid (`statistic_id` => `zonneplan_one:gas_{connections_uuid}`)
+
+_See [Fetching historical data for Electricity and Gas usage](#fetching-historical-data-for-electricity-and-gas-usage) how to fetch more historical data for these sensors._
 
 ## Using full forecast in graphs, tables and/or automations
 
@@ -440,6 +474,20 @@ entities:
 ```
 
 </details>
+
+
+## Fetching historical data for Electricity and Gas usage
+
+When the integration is set up it will fetch the last 30 days of historical data for Electricity and Gas usage. If you want to fetch more historical data you can trigger this manually by calling the `zonneplan_one.fetch_historical_data` [action](https://my.home-assistant.io/redirect/developer_services/).
+
+With this action you can fetch the P1 Electricity and Gas data history that's also visible in the Zonneplan app.
+
+Go to [Developer Tools -> Actions](https://my.home-assistant.io/redirect/developer_services/) and search for `zonneplan_one.fetch_historical_data` and fill the required fields.
+
+Fields of the action are:
+- Endpoint: `electricity`/`gas`
+- Start date: fill this with the start date of your contract
+
 
 ## Troubleshooting
 

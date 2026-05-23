@@ -26,7 +26,7 @@
       "default": "Inloggen gelukt"
     },
     "error": {
-      "failed_to_request_login": "Het opvragen van een login link ging mis *(controleer de logs)*",
+      "failed_to_request_login": "Het opvragen van een login link ging mis, probeer het later nog een keer. *(Blijft het mis gaan, controleer dan de logs)*",
       "no_password": "Nog een wachtwoord ontvangen *(heb je op de link uit de mail van Zonneplan geklikt?)*"
     }
   },
@@ -170,6 +170,24 @@
       "powerplay_today": {
         "name": "Powerplay vandaag"
       },
+      "installation_wp": {
+        "name": "Installatie Wp"
+      },
+      "panel_wp": {
+        "name": "Paneel Wp"
+      },
+      "panel_count": {
+        "name": "Panelen aantal"
+      },
+      "inverter_model_name": {
+        "name": "Omvormer model"
+      },
+      "inverter_firmware_version": {
+        "name": "Omvormer firmware versie"
+      },
+      "module_firmware_version": {
+        "name": "Module firmware versie"
+      },
       "yield_today": {
         "name": "Opbrengst vandaag"
       },
@@ -182,26 +200,83 @@
       "electricity_delivery_costs_today": {
         "name": "Afname vandaag"
       },
+      "electricity_delivery_costs_today_excl_tax": {
+        "name": "Afname vandaag (excl. btw)"
+      },
       "electricity_delivery_costs_this_month": {
         "name": "Afname deze maand"
+      },
+      "electricity_delivery_costs_this_month_excl_tax": {
+        "name": "Afname deze maand (excl. btw)"
       },
       "electricity_delivery_costs_this_year": {
         "name": "Afname dit jaar"
       },
+      "electricity_delivery_costs_this_year_excl_tax": {
+        "name": "Afname dit jaar (excl. btw)"
+      },
       "electricity_production_costs_today": {
         "name": "Teruglevering vandaag"
+      },
+      "electricity_production_costs_today_excl_tax": {
+        "name": "Teruglevering vandaag (excl. btw)"
       },
       "electricity_production_costs_this_month": {
         "name": "Teruglevering deze maand"
       },
+      "electricity_production_costs_this_month_excl_tax": {
+        "name": "Teruglevering deze maand (excl. btw)"
+      },
       "electricity_production_costs_this_year": {
         "name": "Teruglevering dit jaar"
+      },
+      "electricity_production_costs_this_year_excl_tax": {
+        "name": "Teruglevering dit jaar (excl. btw)"
+      },
+      "electricity_delivery_price_per_unit_today": {
+        "name": "Afname gemiddelde prijs per KWh vandaag"
+      },
+      "electricity_delivery_price_per_unit_today_excl_tax": {
+        "name": "Afname gemiddelde prijs per KWh vandaag (excl. btw)"
+      },
+      "electricity_delivery_price_per_unit_this_month": {
+        "name": "Afname gemiddelde prijs per KWh deze maand"
+      },
+      "electricity_delivery_price_per_unit_this_month_excl_tax": {
+        "name": "Afname gemiddelde prijs per KWh deze maand (excl. btw)"
+      },
+      "electricity_delivery_price_per_unit_this_year": {
+        "name": "Afname gemiddelde prijs per KWh dit jaar"
+      },
+      "electricity_delivery_price_per_unit_this_year_excl_tax": {
+        "name": "Afname gemiddelde prijs per KWh dit jaar (excl. btw)"
+      },
+      "electricity_production_price_per_unit_today": {
+        "name": "Teruglevering gemiddelde prijs per KWh vandaag"
+      },
+      "electricity_production_price_per_unit_today_excl_tax": {
+        "name": "Teruglevering gemiddelde prijs per KWh vandaag (excl. btw)"
+      },
+      "electricity_production_price_per_unit_this_month": {
+        "name": "Teruglevering gemiddelde prijs per KWh deze maand"
+      },
+      "electricity_production_price_per_unit_this_month_excl_tax": {
+        "name": "Teruglevering gemiddelde prijs per KWh deze maand (excl. btw)"
+      },
+      "electricity_production_price_per_unit_this_year": {
+        "name": "Teruglevering gemiddelde prijs per KWh dit jaar"
+      },
+      "electricity_production_price_per_unit_this_year_excl_tax": {
+        "name": "Teruglevering gemiddelde prijs per KWh dit jaar (excl. btw)"
       },
       "gas_consumption_today": {
         "name": "Gasverbruik vandaag"
       },
       "gas_delivery_costs_today": {
         "name": "Gas afname vandaag"
+      },
+      "gas_delivery_costs_today_excl_tax": {
+        "name": "Gas afname vandaag (excl. btw)"
       },
       "electricity_consumption": {
         "name": "Elektriciteitsverbruik"
@@ -237,6 +312,9 @@
           "Charging": "Opladen",
           "Discharging": "Ontladen"
         }
+      },
+      "host_device_model_name": {
+        "name": "Model naam"
       },
       "battery_control_mode": {
         "name": "Batterijbesturingsmodus",
@@ -299,6 +377,9 @@
       "charge_point_power": {
         "name": "Laadpaalvermogen"
       },
+      "charge_point_model_name": {
+        "name": "Laadpaal model"
+      },
       "charge_point_energy_delivered_session": {
         "name": "Laadpaal energie geleverd sessie"
       },
@@ -341,14 +422,26 @@
       "delivery_costs_this_month": {
         "name": "Netto afname deze maand"
       },
+      "delivery_costs_this_month_excl_tax": {
+        "name": "Netto afname deze maand (excl. btw)"
+      },
       "delivery_costs_this_year": {
         "name": "Netto afname dit jaar"
+      },
+      "delivery_costs_this_year_excl_tax": {
+        "name": "Netto afname dit jaar (excl. btw)"
       },
       "production_costs_this_month": {
         "name": "Netto teruggeleverd deze maand"
       },
+      "production_costs__this_monthexcl_tax": {
+        "name": "Netto teruggeleverd deze maand (excl. btw)"
+      },
       "production_costs_this_year": {
         "name": "Netto teruggeleverd dit jaar"
+      },
+      "production_costs_this_year_excl_tax": {
+        "name": "Netto teruggeleverd dit jaar (excl. btw)"
       },
       "energy_delivered_sum_today": {
         "name": "Netto afname vandaag"
@@ -372,6 +465,9 @@
     "binary_sensor": {
       "dynamic_charging_enabled": {
         "name": "Powerplay"
+      },
+      "charge_on_solar_enabled": {
+        "name": "Zonladen"
       },
       "dynamic_load_balancing_enabled": {
         "name": "Dynamische load balancing ingeschakeld"
