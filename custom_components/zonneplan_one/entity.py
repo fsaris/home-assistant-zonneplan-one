@@ -125,7 +125,7 @@ class PvEntity:
             )
             device_info["model"] = (
                 self.coordinator.contracts[self._install_index]["meta"].get("inverter_model_name", "")
-                + ", "
+                + " "
                 + str(self.coordinator.contracts[self._install_index]["meta"].get("panel_count", ""))
                 + " x "
                 + str(self.coordinator.contracts[self._install_index]["meta"].get("panel_wp", ""))
