@@ -1207,8 +1207,9 @@ SENSOR_TYPES: dict[
             native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
             value_factor=0.001,
             device_class=SensorDeviceClass.ENERGY,
-            state_class=SensorStateClass.TOTAL_INCREASING,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
+            last_reset_key="measurement_groups.2.date",
         ),
         "energy_delivered_sum_this_year": ZonneplanSensorEntityDescription(
             key="measurement_groups.3.meta.energy_delivered_sum",
@@ -1217,8 +1218,9 @@ SENSOR_TYPES: dict[
             native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
             value_factor=0.001,
             device_class=SensorDeviceClass.ENERGY,
-            state_class=SensorStateClass.TOTAL_INCREASING,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
+            last_reset_key="measurement_groups.3.date",
         ),
         "energy_produced_sum_today": ZonneplanSensorEntityDescription(
             key="measurement_groups.2.measurements.-1.values.p",
@@ -1238,8 +1240,9 @@ SENSOR_TYPES: dict[
             native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
             value_factor=0.001,
             device_class=SensorDeviceClass.ENERGY,
-            state_class=SensorStateClass.TOTAL_INCREASING,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
+            last_reset_key="measurement_groups.2.date",
         ),
         "energy_produced_sum_this_year": ZonneplanSensorEntityDescription(
             key="measurement_groups.3.meta.energy_produced_sum",
@@ -1248,8 +1251,9 @@ SENSOR_TYPES: dict[
             native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
             value_factor=0.001,
             device_class=SensorDeviceClass.ENERGY,
-            state_class=SensorStateClass.TOTAL_INCREASING,
+            state_class=SensorStateClass.TOTAL,
             entity_registry_enabled_default=True,
+            last_reset_key="measurement_groups.3.date",
         ),
     },
     CHARGE_POINT: {
