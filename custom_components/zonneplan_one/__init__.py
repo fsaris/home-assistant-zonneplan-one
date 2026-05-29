@@ -11,6 +11,7 @@ from homeassistant.helpers import (
 )
 
 from . import api, config_flow
+from .config_flow import CONF_ENABLE_GAS
 from .const import (
     BATTERY,
     BATTERY_CHARTS,
@@ -79,6 +80,10 @@ async def async_setup(
 
 async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) -> bool:  # noqa: PLR0912
     """Set up Zonneplan from a config entry."""
+    # Get enable_gas option, default to True
+    # Guard against None options dict (can occur on first setup before options are saved)
+    enable_gas = (entry.options or {}).get(CONF_ENABLE_GAS, True)
+
     implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(hass, entry)
 
     session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
@@ -113,7 +118,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
                     ),
                 )
 
-            if GAS in contracts:
+            # Only instantiate GAS coordinator if gas meter is registered AND gas is enabled
+            gas_meter_registered_in_connection = False
+            if enable_gas and GAS in contracts:
+                for contract in contracts[GAS]:
+                    if contract.get("meta", {}).get("gas_last_measured_at"):
+                        gas_meter_registered_in_connection = True
+                        break
+
+            if gas_meter_registered_in_connection:
                 account_coordinator.add_coordinator(
                     connection["uuid"],
                     GAS,
@@ -125,6 +138,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
                         contracts[GAS][0],
                     ),
                 )
+            elif GAS in contracts:
+                if not enable_gas:
+                    _LOGGER.debug(
+                        "Skipping GAS coordinator for connection %s: gas disabled in options",
+                        connection["uuid"],
+                    )
+                else:
+                    _LOGGER.debug(
+                        "Skipping GAS coordinator for connection %s: no gas meter registered",
+                        connection["uuid"],
+                    )
 
             if PV_INSTALL in contracts:
                 account_coordinator.add_coordinator(
@@ -153,10 +177,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
                 )
 
                 gas_meter_registered = False
-                for contract in contracts[P1_INSTALL]:
-                    if contract.get("meta", {}).get("gas_last_measured_at"):
-                        gas_meter_registered = True
-                        break
+                if enable_gas:
+                    for contract in contracts[P1_INSTALL]:
+                        if contract.get("meta", {}).get("gas_last_measured_at"):
+                            gas_meter_registered = True
+                            break
 
                 if gas_meter_registered:
                     account_coordinator.add_coordinator(
@@ -168,6 +193,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
                             address_group["uuid"],
                             connection["uuid"],
                             contracts[P1_INSTALL],
+                            enable_gas=enable_gas,
                         ),
                     )
 

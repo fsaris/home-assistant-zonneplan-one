@@ -14,12 +14,19 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
+CONF_ENABLE_GAS = "enable_gas"
+
 
 class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN):
     """Config flow to handle Zonneplan authentication."""
 
     DOMAIN = DOMAIN
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
+
+    @staticmethod
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> config_entries.OptionsFlow:
+        """Return the options flow."""
+        return ZonneplanOptionsFlowHandler(config_entry)
 
     def __init__(self) -> None:
         self._email = ""
@@ -126,3 +133,29 @@ class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandl
 
         self.logger.info("Create entry: %s", data["email"])
         return self.async_create_entry(title=data["email"], data=data)
+
+
+class ZonneplanOptionsFlowHandler(config_entries.OptionsFlow):
+    """Options flow for Zonneplan integration."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
+        """Manage options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        # Default enable_gas to True if not set
+        current_options = dict(self.config_entry.options or {})
+        enable_gas = current_options.get(CONF_ENABLE_GAS, True)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_ENABLE_GAS, default=enable_gas): bool,
+                }
+            ),
+        )

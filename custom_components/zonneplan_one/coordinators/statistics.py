@@ -290,10 +290,10 @@ class BaseZonneplanStatisticsService(ABC):
                 continue
 
             if not day_payload:
-                msg = "Missing day payload"
-                if notification_id:
-                    persistent_notification.create(self.hass, msg, "Statistics backfill failed", notification_id)
-                raise ZonneplanApiError(msg)
+                # For connections with no data (e.g., no gas meter), skip this day instead of failing
+                _LOGGER.debug("Empty day payload for %s, advancing to next day", current_day)
+                current_day += timedelta(days=1)
+                continue
 
             consecutive_failures = 0
             measurements = self._extract_measurements(day_payload, "backfill")

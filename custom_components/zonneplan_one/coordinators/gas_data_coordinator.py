@@ -24,7 +24,7 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     address_uuid: str
     connection_uuid: str
     contracts: list[ZonneplanContract]
-    _statistics_service: GasStatisticsService
+    _statistics_service: GasStatisticsService | None
 
     def __init__(
         self,
@@ -33,6 +33,7 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         address_uuid: str,
         connection_uuid: str,
         contracts: list[ZonneplanContract],
+        enable_gas: bool = True,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -48,12 +49,15 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self.connection_uuid = connection_uuid
         self.contracts = contracts
 
-        self._statistics_service = GasStatisticsService(
-            hass=hass,
-            api=self.api,
-            connection_uuid=self.connection_uuid,
-            gas_id=self.statistics_id,
-        )
+        if enable_gas:
+            self._statistics_service = GasStatisticsService(
+                hass=hass,
+                api=self.api,
+                connection_uuid=self.connection_uuid,
+                gas_id=self.statistics_id,
+            )
+        else:
+            self._statistics_service = None
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
@@ -66,7 +70,7 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             raise
         else:
             _LOGGER.debug("Update gas data: %s", gas)
-            if gas:
+            if gas and self._statistics_service:
                 await self._statistics_service.process_payload(gas)
 
             return gas or self.data
@@ -77,4 +81,5 @@ class GasDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
     async def async_backfill_statistics(self, start_date: datetime) -> None:
         """Backfill statistics from start_date until now."""
-        await self._statistics_service.async_backfill_from(start_date)
+        if self._statistics_service:
+            await self._statistics_service.async_backfill_from(start_date)
