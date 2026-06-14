@@ -1,8 +1,10 @@
 """The Zonneplan integration."""
 
 import logging
+from datetime import timedelta
 
 import homeassistant.helpers.config_validation as cv
+import homeassistant.util.dt as dt_util
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
@@ -96,6 +98,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
 
             contracts = {}
             for contract in connection["contracts"]:
+                # Filter out ended contracts
+                try:
+                    end_data = contract["end_date"] and dt_util.parse_datetime(contract["end_date"])
+                    if end_data and end_data < dt_util.now():
+                        _LOGGER.info("Skipping ended contract %s (ended at %s)", contract["type"], end_data)
+                        continue
+                except ValueError:
+                    _LOGGER.warning("Could not parse end_date: %s", contract["end_date"])
+
                 if contract["type"] not in contracts:
                     contracts[contract["type"]] = []
                 contracts[contract["type"]].append(contract)
@@ -154,9 +165,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
 
                 gas_meter_registered = False
                 for contract in contracts[P1_INSTALL]:
-                    if contract.get("meta", {}).get("gas_last_measured_at"):
-                        gas_meter_registered = True
-                        break
+                    gas_last_measured_at = contract.get("meta", {}).get("gas_last_measured_at")
+                    if gas_last_measured_at:
+                        # Check if gas_last_measured_at is not older than 1 week
+                        try:
+                            last_measured_dt = dt_util.parse_datetime(gas_last_measured_at)
+                            if last_measured_dt and (dt_util.now() - last_measured_dt <= timedelta(weeks=1)):
+                                gas_meter_registered = True
+                                break
+                            if last_measured_dt:
+                                _LOGGER.info("Skipped GAS because last measured value (%s) is older than 1 week", gas_last_measured_at)
+                        except ValueError:
+                            _LOGGER.warning("Could not parse gas_last_measured_at: %s", gas_last_measured_at)
 
                 if gas_meter_registered:
                     account_coordinator.add_coordinator(
