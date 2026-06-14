@@ -87,6 +87,7 @@ _Sensors available if you have a Zonneplan Connect P1 reader_
 - Electricity last measured production: `date`
 - Gas first measured: `date` _(when a gas meter is registered in the P1 reader, default disabled)_
 - Gas last measured: `date` _(when a gas meter is registered in the P1 reader)_
+  - Note: Gas meter sensors are only available if gas was never measured or if the date is not older than 1 week.
 
 ### Zonneplan Energy Electricity contract related
 _Sensors available if you have a Zonneplan Electricity contract._
