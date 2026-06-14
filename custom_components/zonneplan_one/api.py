@@ -71,13 +71,13 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         chart_date_str = chart_date.isoformat()
         return await self._async_get(f"contracts/{contract_uuid}/home_battery_installation/charts/{chart}?date={chart_date_str}")
 
-    async def async_get_battery_control_mode(self, contract_uuid: str) -> dict | None:
+    async def async_get_battery_control_mode(self, contract_uuid: str, *, ignore_etag: bool = False) -> dict | None:
         """Get battery control mode."""
-        return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode")
+        return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode", ignore_etag=ignore_etag)
 
-    async def async_get_battery_home_optimization(self, contract_uuid: str) -> dict | None:
-        """Get battery control mode."""
-        return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization")
+    async def async_get_battery_home_optimization(self, contract_uuid: str, *, ignore_etag: bool = False) -> dict | None:
+        """Get battery home optimization."""
+        return await self._async_get(f"api/contracts/{contract_uuid}/home-battery/control-mode/home_optimization", ignore_etag=ignore_etag)
 
     async def async_set_reserve_discharge(self, connection_uuid: str, contract_uuid: str, value: int) -> dict:
         """Set battery reserve discharge."""

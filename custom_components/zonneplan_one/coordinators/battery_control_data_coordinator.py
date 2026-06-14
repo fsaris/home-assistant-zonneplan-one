@@ -51,11 +51,20 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
             data = self.data or {}
 
-            battery_control_mode = await self.api.async_get_battery_control_mode(self.contract["uuid"])
+            # On first fetch (no cached data), ignore etag to ensure we get a full 200 response
+            # instead of a 304, which would return None and leave the data empty.
+            # Subsequent fetches use etags normally for efficiency.
+            has_cached_battery_control = "battery_control_mode" in data
+            battery_control_mode = await self.api.async_get_battery_control_mode(
+                self.contract["uuid"], ignore_etag=not has_cached_battery_control
+            )
             if battery_control_mode:
                 data["battery_control_mode"] = battery_control_mode
 
-            battery_home_optimization = await self.api.async_get_battery_home_optimization(self.contract["uuid"])
+            has_cached_battery_optimization = "battery_home_optimization" in data
+            battery_home_optimization = await self.api.async_get_battery_home_optimization(
+                self.contract["uuid"], ignore_etag=not has_cached_battery_optimization
+            )
             if battery_home_optimization:
                 data["battery_home_optimization"] = battery_home_optimization
 
