@@ -91,6 +91,9 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             params,
         )
 
+    async def async_get_consumer_prices(self, chart_name: str) -> dict | None:
+        return await self._async_get(f"api/consumer-prices/charts/{chart_name}")
+
     async def _async_get(self, path: str, *, ignore_etag: bool = False) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 
