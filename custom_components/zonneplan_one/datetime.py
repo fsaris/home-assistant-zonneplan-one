@@ -76,6 +76,22 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
         return self.install_uuid + "_" + self._entity_key
 
     @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        if not self.coordinator.data or not self.coordinator.last_update_success:
+            return False
+
+        state = self.coordinator.get_data_value("state")
+
+        if not state or not state["connectivity_state"]:
+            return False
+
+        if "processing" in state:
+            return False
+
+        return state["state"] == "VehicleDetected"
+
+    @property
     def native_value(self) -> datetime:
         value = self.coordinator.get_data_value(self.entity_description.key.format(install_index=self._install_index))
         return dt_util.parse_datetime(value) if isinstance(value, str) else None

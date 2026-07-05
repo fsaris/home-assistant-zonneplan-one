@@ -248,7 +248,10 @@ class ZonneplanDynamicChargeDesiredPercentageNumber(ChargePointEntity, Coordinat
         if not state or not state["connectivity_state"]:
             return False
 
-        return "processing" not in state
+        if "processing" in state:
+            return False
+
+        return state["state"] == "VehicleDetected"
 
     @property
     def native_value(self) -> float:
