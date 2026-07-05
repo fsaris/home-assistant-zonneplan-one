@@ -539,6 +539,9 @@
       },
       "stop_charge": {
         "name": "Stop laden"
+      },
+      "dynamic_charge": {
+        "name": "Start laden (percentage)"
       }
     },
     "number": {
@@ -550,6 +553,17 @@
       },
       "reserve_discharge_cutoff_wh": {
         "name": "Minimum noodstroom reserve"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Gewenste afstand"
+      },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Gewenste pecentage"
+      }
+    },
+    "datetime": {
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Gewenste eindtijd"
       }
     },
     "select": {
