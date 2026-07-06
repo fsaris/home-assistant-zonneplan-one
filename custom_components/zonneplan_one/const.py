@@ -155,6 +155,48 @@ SENSOR_TYPES: dict[
             entity_registry_enabled_default=True,
             attributes=[
                 Attribute(
+                    key="legacy_price_per_hour",
+                    label="forecast",
+                )
+            ],
+        ),
+        "current_quarter_hourly_electricity_tariff": ZonneplanSensorEntityDescription(
+            key="quarter_hourly_electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_quarter_hour.{
+                    datetime.now(UTC)
+                    .replace(minute=(datetime.now(UTC).minute // 15) * 15, second=0, microsecond=0)
+                    .strftime('%Y-%m-%d %H:%M')
+                }.price_tax_included.amount"
+            ),
+            name="Current quarter hourly electricity tariff",
+            translation_key="current_quarter_hourly_electricity_tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=2,
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="price_per_quarter_hour",
+                    label="forecast",
+                )
+            ],
+        ),
+        "current_hourly_electricity_tariff": ZonneplanSensorEntityDescription(
+            key="hourly_electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
+            name="Current hourly electricity tariff",
+            translation_key="hourly_electricity_tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=2,
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
                     key="price_per_hour",
                     label="forecast",
                 )
