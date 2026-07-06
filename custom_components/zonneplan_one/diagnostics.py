@@ -10,7 +10,22 @@ if TYPE_CHECKING:
 
     from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 
-TO_REDACT = ["address", "organization", "chat", "user_account"]
+TO_REDACT = [
+    "address",
+    "chat",
+    "coordinate",
+    "coordinates",
+    "identifier",
+    "lat",
+    "latitude",
+    "lng",
+    "lon",
+    "longitude",
+    "organization",
+    "serial_number",
+    "sgn_serial_number",
+    "user_account",
+]
 
 
 async def async_get_config_entry_diagnostics(
@@ -32,5 +47,5 @@ async def async_get_config_entry_diagnostics(
     return {
         "account_data": async_redact_data(entry.runtime_data.data, TO_REDACT),
         "last_api_responses": async_redact_data(entry.runtime_data.api.diagnostics, TO_REDACT),
-        "coordinator_data": coordinator_data,
+        "coordinator_data": async_redact_data(coordinator_data, TO_REDACT),
     }

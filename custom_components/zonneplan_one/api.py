@@ -97,7 +97,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
     async def _async_get(self, path: str, *, ignore_etag: bool = False) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 
-        headers = self._request_headers
+        headers = dict(self._request_headers)
         url = "https://app-api.zonneplan.nl/" + path
 
         if not ignore_etag and self._etags.get(url):
@@ -159,7 +159,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             "POST",
             "https://app-api.zonneplan.nl/connections/" + connection_uuid + path,
             json=params,
-            headers=self._request_headers,
+            headers=dict(self._request_headers),
         )
 
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
