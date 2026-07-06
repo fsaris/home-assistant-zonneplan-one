@@ -48,7 +48,7 @@ BATTERY_CHARTS = "battery_charts"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 
-VERSION = "2026.6.0"
+VERSION = "2026.7.0"
 
 
 @dataclass
