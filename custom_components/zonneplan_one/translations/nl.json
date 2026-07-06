@@ -52,6 +52,12 @@
       "current_electricity_tariff": {
         "name": "Huidig elektriciteitstarief"
       },
+      "current_quarter_hourly_electricity_tariff": {
+        "name": "Huidig kwartier elektriciteitstarief"
+      },
+      "current_hourly_electricity_tariff": {
+        "name": "Huidig uur elektriciteitstarief"
+      },
       "current_gas_tariff": {
         "name": "Huidig gastarief"
       },

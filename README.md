@@ -92,13 +92,17 @@ _Sensors available if you have a Zonneplan Connect P1 reader_
 ### Zonneplan Energy Electricity contract related
 _Sensors available if you have a Zonneplan Electricity contract._
 
-- Current Zonneplan Electricity tariff: `€/kWh`
+- Current Zonneplan Electricity tariff: `€/kWh` _(**deprecated**, default disabled)_
     - The full Electricity forecast is available as a forecast attribute of this sensor
-- Forecast electricity tariff hour 1-8: `€/kWh` _(default disabled)_
-- Forecast tariff group hour 1-8 _(default disabled)_
+- Current hourly electricity tariff: `€/kWh`
+    - The full hourly electricity tariff forecast is available as a forecast attribute of this sensor
+- Current quarter hourly electricity tariff: `€/kWh`
+    - The full quarter hourly electricity tariff forecast is available as a forecast attribute of this sensor
+- Forecast electricity tariff hour 1-8: `€/kWh` _(**deprecated**, default disabled)_
+- Forecast tariff group hour 1-8 _(**deprecated**, default disabled)_
 - Current usage: `W` _(default disabled)_
 - Current usage measured at: `date` _(default disabled)_
-- Current tariff group
+- Current tariff group _(**deprecated**, default disabled)_
 - Sustainability score
 - Status message _(default disabled)_
 - Status tip
@@ -258,7 +262,7 @@ _See [Fetching historical data for Electricity and Gas usage](#fetching-historic
 
 ## Using full forecast in graphs, tables and/or automations
 
-The full forecast is available as attributes of the `Current Zonneplan Electricity tariff` sensor. The incl. tax and excl. tax values are present.
+The full forecast is available as attributes of the `Current quarter hourly electricity tariff` or `Current hourly electricity tariff` sensor. The incl. tax and excl. tax values are present.
 Zonneplan doesn't deliver a constant set of forecast values.
 
 Using a helper you can turn this data into a single "cheapest price at" sensor. Or with some template magic you can turn it in a nice table so shown on your dashboard. Or fill a graph like shown in the official app.
@@ -272,13 +276,13 @@ Go to [Helpers](https://my.home-assistant.io/redirect/helpers/) and create and n
 From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41#discussioncomment-4642002)
 
 ```
-{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast')
-  | selectattr('datetime', '>', utcnow().isoformat())
-  | selectattr('datetime', '<', (utcnow() + timedelta(hours = 11)).isoformat())
-  | sort(attribute='electricity_price')
+{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
+  | selectattr('start_date', '>', utcnow().isoformat())
+  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
+  | sort(attribute='price_tax_included.amount')
   | first %}
 
-{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.datetime)) }}
+{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
 ```
 
 ![Setup template sensor helper](./images/sensor_cheapest_hour.png)
@@ -292,39 +296,47 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41)
 
 ```
-{% set timezone_offset = 2 %} {# Verander 2 naar je gewenste offset in uren #}
-{% set cheapest_hour_next_fifteen_hours =
-state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
-selectattr('datetime', '>', utcnow().isoformat()) |
-selectattr('datetime', '<', (utcnow() + timedelta(hours = 15)).isoformat())
-| sort(attribute='electricity_price') %}
-{% if cheapest_hour_next_fifteen_hours | length > 0 %}
-{% set cheapest_hour = cheapest_hour_next_fifteen_hours | first %}
-{% set cheapest_hour_local_time = as_timestamp(strptime(cheapest_hour.datetime, '%Y-%m-%dT%H:%M:%S.%fZ')) + timezone_offset * 3600 %}
-De goedkoopste tijd is {{ 'vandaag' if as_timestamp(utcnow())|timestamp_custom('%Y-%m-%d') == cheapest_hour_local_time|timestamp_custom('%Y-%m-%d') else 'morgen' }} om {{ (cheapest_hour_local_time)|timestamp_custom('%H') }} uur en kost €{{"{:.2f}".format(cheapest_hour.electricity_price_excl_tax|float/10000000) }}/kWh.
-  {% endif %}
+{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
+  | selectattr('start_date', '>', utcnow().isoformat())
+  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
+  | sort(attribute='price_tax_included.amount')
+  | first %}
 
-  {%- set cheapest_forecast =
-  state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
-  selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
-  '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
-  sort(attribute='electricity_price_excl_tax') | first %}
+{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
 
-  {%- set expensive_forecast =
-  state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
-  selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
-  '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
-  sort(attribute='electricity_price_excl_tax') | last %}
+{%- set timezone_offset = 2 %} {# Verander 2 naar je gewenste offset in uren #}
+{%- set cheapest_hour_next_fifteen_hours =
+state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
+selectattr('start_date', '>', utcnow().isoformat()) |
+selectattr('start_date', '<', (utcnow() + timedelta(hours = 15)).isoformat())
+| sort(attribute='price_tax_included.amount') %}
+{%- if cheapest_hour_next_fifteen_hours | length > 0 %}
+  {%- set cheapest_hour = cheapest_hour_next_fifteen_hours | first %}
+  {%- set cheapest_hour_local_time = as_timestamp(as_datetime(cheapest_hour.start_date)) + timezone_offset * 3600 %}
+De goedkoopste tijd is {{ 'vandaag' if as_timestamp(utcnow())|timestamp_custom('%Y-%m-%d') == cheapest_hour_local_time|timestamp_custom('%Y-%m-%d') else 'morgen' }} om {{ (cheapest_hour_local_time)|timestamp_custom('%H') }} uur en kost €{{"{:.3f}".format(cheapest_hour.price_tax_excluded.amount|float/10000000) }}/kWh.
+{% endif %}
 
-  {%- for forecast in
-  state_attr('sensor.zonneplan_current_electricity_tariff', 'forecast') |
-  selectattr('datetime', '>', utcnow().isoformat()) | selectattr('datetime',
-  '<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
-  sort(attribute='datetime') %}
+{%- set cheapest_forecast =
+state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
+selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
+'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+sort(attribute='price_tax_excluded.amount') | first %}
 
-  {%- set forecast_local_time = as_timestamp(strptime(forecast.datetime, '%Y-%m-%dT%H:%M:%S.%fZ')) + timezone_offset * 3600 %}
-  • {{ (forecast_local_time)|timestamp_custom('%H:%M') }}    €{{ (forecast.electricity_price / 10000000) | round(2) }} (€{{ (forecast.electricity_price_excl_tax / 10000000) | round(2) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
-  {%- endfor %}
+{%- set expensive_forecast =
+state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
+selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
+'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+sort(attribute='price_tax_excluded.amount') | last %}
+
+{%- for forecast in
+state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
+selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
+'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+sort(attribute='start_date') %}
+
+{%- set forecast_local_time = as_timestamp(as_datetime(forecast.start_date)) + timezone_offset * 3600 %}
+• {{ (forecast_local_time)|timestamp_custom('%H:%M') }}    €{{ "{:.3f}".format(forecast.price_tax_included.amount / 10000000) }} (€{{ "{:.3f}".format(forecast.price_tax_excluded.amount / 10000000) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
+{%- endfor %}
 ```
 
 _Example:_
@@ -391,7 +403,6 @@ fn: |
     vars.max.h = "<b>" + vars.max.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @ " +  new Date(vars.max.t).getHours() + ":00"
     vars.avg.p = vars.avg.p / vars.avg.c
     vars.avg.h = "<b>" + vars.avg.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " average"
-    //console.log(vars, hass.states['sensor.zonneplan_current_electricity_tariff']?.attributes?.forecast);
   }
 layout:
   margin:

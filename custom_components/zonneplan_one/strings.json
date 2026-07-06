@@ -47,6 +47,12 @@
       "current_electricity_tariff": {
         "name": "Current electricity tariff"
       },
+      "current_quarter_hourly_electricity_tariff": {
+        "name": "Current quarter hourly electricity tariff"
+      },
+      "current_hourly_electricity_tariff": {
+        "name": "Current hourly electricity tariff"
+      },
       "current_gas_tariff": {
         "name": "Current gas tariff"
       },
