@@ -34,7 +34,9 @@ if TYPE_CHECKING:
 DOMAIN = "zonneplan_one"
 
 GAS = "gas"
+GAS_PRICES = "gas_prices"
 ELECTRICITY = "electricity"
+ELECTRICITY_PRICES = "electricity_prices"
 PV_INSTALL = "pv_installation"
 P1_INSTALL = "p1_installation"
 P1_ELECTRICITY = "p1_electricity"
@@ -125,6 +127,21 @@ SENSOR_TYPES: dict[
             device_class=SensorDeviceClass.TIMESTAMP,
             icon="mdi:calendar-clock",
         ),
+        "status_message": ZonneplanSensorEntityDescription(
+            key="usage.status_message",
+            name="Status message",
+            translation_key="status_message",
+            icon="mdi:message-text-outline",
+        ),
+        "status_tip": ZonneplanSensorEntityDescription(
+            key="usage.status_tip",
+            name="Status tip",
+            translation_key="status_tip",
+            icon="mdi:message-text-outline",
+            entity_registry_enabled_default=True,
+        ),
+    },
+    ELECTRICITY_PRICES: {
         "sustainability_score": ZonneplanSensorEntityDescription(
             key="usage.sustainability_score",
             key_lambda=lambda: (
@@ -205,19 +222,6 @@ SENSOR_TYPES: dict[
                     label="forecast",
                 )
             ],
-        ),
-        "status_message": ZonneplanSensorEntityDescription(
-            key="usage.status_message",
-            name="Status message",
-            translation_key="status_message",
-            icon="mdi:message-text-outline",
-        ),
-        "status_tip": ZonneplanSensorEntityDescription(
-            key="usage.status_tip",
-            name="Status tip",
-            translation_key="status_tip",
-            icon="mdi:message-text-outline",
-            entity_registry_enabled_default=True,
         ),
         "forecast_tariff_1": ZonneplanSensorEntityDescription(
             key="forecast_tariff_1",
@@ -365,7 +369,7 @@ SENSOR_TYPES: dict[
             translation_key="forecast_tariff_group_hour_8",
         ),
     },
-    GAS: {
+    GAS_PRICES: {
         "current_tariff_gas": ZonneplanSensorEntityDescription(
             key="gas_price",
             name="Current gas tariff",
