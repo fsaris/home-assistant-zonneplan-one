@@ -31,7 +31,7 @@ class ZonneplanApi:
                 session.post(
                     LOGIN_REQUEST_URI,
                     json={"email": email},
-                    headers=self._request_headers,
+                    headers=dict(self._request_headers),
                 ) as response,
             ):
                 response.raise_for_status()
@@ -73,7 +73,7 @@ class ZonneplanApi:
             timeout = aiohttp.ClientTimeout(total=10)
             async with (
                 aiohttp.ClientSession(timeout=timeout) as session,
-                session.get(LOGIN_REQUEST_URI + "/" + uuid, headers=self._request_headers) as response,
+                session.get(LOGIN_REQUEST_URI + "/" + uuid, headers=dict(self._request_headers)) as response,
             ):
                 response.raise_for_status()
                 _LOGGER.debug(
@@ -83,7 +83,7 @@ class ZonneplanApi:
                 )
 
                 response_json = await response.json()
-                _LOGGER.debug("Temporary password response body json: %s", response_json)
+                _LOGGER.debug("Temporary password response received")
 
         except TimeoutError:
             _LOGGER.exception("Timeout calling ZonneplanAPI to request temporary password")
@@ -129,14 +129,14 @@ class ZonneplanApi:
         return await self._async_request_new_token(grant_params)
 
     async def _async_request_new_token(self, grant_params: dict[str, str]) -> dict:
-        _LOGGER.info("_async_request_new_token: %s", grant_params)
+        _LOGGER.debug("Requesting new OAuth token using grant type %s", grant_params.get("grant_type"))
 
         timeout = aiohttp.ClientTimeout(total=30)
         async with (
             aiohttp.ClientSession(timeout=timeout) as session,
             session.post(
                 OAUTH2_TOKEN_URI,
-                headers=self._request_headers,
+                headers=dict(self._request_headers),
                 json=grant_params,
                 allow_redirects=True,
             ) as response,
@@ -147,6 +147,6 @@ class ZonneplanApi:
             response.raise_for_status()
             _LOGGER.info("ZonneplanAPI oAuth Token get json from response")
             response_json = await response.json()
-            _LOGGER.debug("ZonneplanAPI oAuth Token response body: %s", response_json)
+            _LOGGER.debug("ZonneplanAPI oAuth Token response body received")
 
         return response_json

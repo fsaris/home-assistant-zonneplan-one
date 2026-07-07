@@ -22,7 +22,6 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.const import (
     CURRENCY_EURO,
-    PERCENTAGE,
     UnitOfEnergy,
     UnitOfLength,
     UnitOfPower,
@@ -50,7 +49,7 @@ BATTERY_CHARTS = "battery_charts"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 
-VERSION = "2026.6.0"
+VERSION = "2026.7.0"
 
 
 @dataclass
@@ -138,20 +137,26 @@ SENSOR_TYPES: dict[
         ),
         "sustainability_score": ZonneplanSensorEntityDescription(
             key="usage.sustainability_score",
+            key_lambda=lambda: (
+                f"price_per_date_and_quarter_hour.{
+                    datetime.now(UTC)
+                    .replace(minute=(datetime.now(UTC).minute // 15) * 15, second=0, microsecond=0)
+                    .strftime('%Y-%m-%d %H:%M')
+                }.sustainability_score.permille"
+            ),
             name="Sustainability score",
             translation_key="sustainability_score",
             icon="mdi:leaf-circle-outline",
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             value_factor=0.1,
-            native_unit_of_measurement=PERCENTAGE,
+            native_unit_of_measurement=UnitOfRatio.PERCENTAGE,
         ),
         "current_tariff_group": ZonneplanSensorEntityDescription(
             key="current_tariff_group",
             key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Current tariff group",
             translation_key="current_tariff_group",
-            entity_registry_enabled_default=True,
         ),
         "current_electricity_tariff": ZonneplanSensorEntityDescription(
             key="current_tariff",
@@ -163,7 +168,47 @@ SENSOR_TYPES: dict[
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
             suggested_display_precision=2,
             state_class=SensorStateClass.MEASUREMENT,
+            attributes=[
+                Attribute(
+                    key="legacy_price_per_hour",
+                    label="forecast",
+                )
+            ],
+        ),
+        "current_quarter_hourly_electricity_tariff": ZonneplanSensorEntityDescription(
+            key="quarter_hourly_electricity_price",
+            key_lambda=lambda: (
+                f"price_per_date_and_quarter_hour.{
+                    datetime.now(UTC)
+                    .replace(minute=(datetime.now(UTC).minute // 15) * 15, second=0, microsecond=0)
+                    .strftime('%Y-%m-%d %H:%M')
+                }.price_tax_included.amount"
+            ),
+            name="Current quarter hourly electricity tariff",
+            translation_key="current_quarter_hourly_electricity_tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=2,
+            state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    key="price_per_quarter_hour",
+                    label="forecast",
+                )
+            ],
+        ),
+        "current_hourly_electricity_tariff": ZonneplanSensorEntityDescription(
+            key="hourly_electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
+            name="Current hourly electricity tariff",
+            translation_key="current_hourly_electricity_tariff",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=2,
+            state_class=SensorStateClass.MEASUREMENT,
             attributes=[
                 Attribute(
                     key="price_per_hour",
@@ -899,7 +944,7 @@ SENSOR_TYPES: dict[
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             value_factor=0.1,
-            native_unit_of_measurement=PERCENTAGE,
+            native_unit_of_measurement=UnitOfRatio.PERCENTAGE,
         ),
         "power_ac": ZonneplanSensorEntityDescription(
             key="contracts.{install_index}.meta.power_ac",
