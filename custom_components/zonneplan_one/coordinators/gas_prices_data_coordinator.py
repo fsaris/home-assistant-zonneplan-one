@@ -35,29 +35,6 @@ def get_price_series_from_chart_data(data: dict) -> list[dict]:
     return data.get("chart", {}).get("series", {}).get("prices", [])
 
 
-def prepare_prices(data: dict) -> list[dict]:
-    prices = []
-    price_series = get_price_series_from_chart_data(data)
-    for price_data in price_series:
-        start_datetime = dt_util.parse_datetime(price_data["start_date"])
-        price = price_data["price_tax_included"]["amount"]
-        price_excl_tax = price_data["price_tax_excluded"]["amount"]
-
-        price_info = {
-            "datetime": start_datetime,
-            "electricity_price": price,
-            "electricity_price_excl_tax": price_excl_tax,
-        }
-        sustainability_score = price_data.get("sustainability_score", {}).get("permille", 0)
-        tariff_group = price_data.get("tariff_group", "")
-        price_info["sustainability_score"] = sustainability_score
-        price_info["tariff_group"] = tariff_group
-
-        prices.append(price_info)
-
-    return prices
-
-
 class GasPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     """Zonneplan gas prices data update coordinator."""
 
