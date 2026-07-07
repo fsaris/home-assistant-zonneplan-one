@@ -23,7 +23,9 @@ from .electricity_data_coordinator import ElectricityDataUpdateCoordinator
 from .electricity_home_consumption_data_coordinator import (
     ElectricityHomeConsumptionDataUpdateCoordinator,
 )
+from .electricity_prices_data_coordinator import ElectricityPricesDataUpdateCoordinator
 from .gas_data_coordinator import GasDataUpdateCoordinator
+from .gas_prices_data_coordinator import GasPricesDataUpdateCoordinator
 from .pv_data_coordinator import PvDataUpdateCoordinator
 from .summary_data_coordinator import SummaryDataUpdateCoordinator
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -36,7 +38,9 @@ type ZonneplanConfigEntry = ConfigEntry[AccountDataUpdateCoordinator]
 @dataclass
 class ConnectionCoordinators:
     gas: SummaryDataUpdateCoordinator | None = None
+    gas_prices: GasPricesDataUpdateCoordinator | None = None
     electricity: SummaryDataUpdateCoordinator | None = None
+    electricity_prices: ElectricityPricesDataUpdateCoordinator | None = None
     pv_installation: PvDataUpdateCoordinator | None = None
     p1_electricity: ElectricityDataUpdateCoordinator | None = None
     p1_gas: GasDataUpdateCoordinator | None = None

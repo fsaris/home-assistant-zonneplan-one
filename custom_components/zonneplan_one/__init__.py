@@ -21,7 +21,9 @@ from .const import (
     DOMAIN,
     ELECTRICITY,
     ELECTRICITY_HOME_CONSUMPTION,
+    ELECTRICITY_PRICES,
     GAS,
+    GAS_PRICES,
     P1_ELECTRICITY,
     P1_GAS,
     P1_INSTALL,
@@ -43,7 +45,9 @@ from .coordinators.electricity_data_coordinator import ElectricityDataUpdateCoor
 from .coordinators.electricity_home_consumption_data_coordinator import (
     ElectricityHomeConsumptionDataUpdateCoordinator,
 )
+from .coordinators.electricity_prices_data_coordinator import ElectricityPricesDataUpdateCoordinator
 from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
+from .coordinators.gas_prices_data_coordinator import GasPricesDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
 from .services import async_setup_fetch_statistics_service
@@ -79,7 +83,7 @@ async def async_setup(
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) -> bool:  # noqa: PLR0912
+async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) -> bool:  # noqa: PLR0912 PLR0915
     """Set up Zonneplan from a config entry."""
     implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(hass, entry)
 
@@ -114,6 +118,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
             if ELECTRICITY in contracts:
                 account_coordinator.add_coordinator(
                     connection["uuid"],
+                    ELECTRICITY_PRICES,
+                    ElectricityPricesDataUpdateCoordinator(
+                        hass,
+                        zonneplan_api,
+                        address_group["uuid"],
+                        connection["uuid"],
+                        contracts[ELECTRICITY][0],
+                    ),
+                )
+                account_coordinator.add_coordinator(
+                    connection["uuid"],
                     ELECTRICITY,
                     SummaryDataUpdateCoordinator(
                         hass,
@@ -127,8 +142,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
             if GAS in contracts:
                 account_coordinator.add_coordinator(
                     connection["uuid"],
-                    GAS,
-                    SummaryDataUpdateCoordinator(
+                    GAS_PRICES,
+                    GasPricesDataUpdateCoordinator(
                         hass,
                         zonneplan_api,
                         address_group["uuid"],

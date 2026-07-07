@@ -29,7 +29,8 @@ from .const import (
     DOMAIN,
     ELECTRICITY,
     ELECTRICITY_HOME_CONSUMPTION,
-    GAS,
+    ELECTRICITY_PRICES,
+    GAS_PRICES,
     NONE_IS_ZERO,
     NONE_USE_PREVIOUS,
     P1_ELECTRICITY,
@@ -54,7 +55,9 @@ from .coordinators.electricity_data_coordinator import ElectricityDataUpdateCoor
 from .coordinators.electricity_home_consumption_data_coordinator import (
     ElectricityHomeConsumptionDataUpdateCoordinator,
 )
+from .coordinators.electricity_prices_data_coordinator import ElectricityPricesDataUpdateCoordinator
 from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
+from .coordinators.gas_prices_data_coordinator import GasPricesDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
 from .coordinators.zonneplan_data_update_coordinator import (
@@ -165,7 +168,7 @@ async def async_setup_entry(
 async def add_electricity_sensors(
     entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]
 ) -> None:
-    if not connection.electricity:
+    if not connection.electricity or not connection.electricity_prices:
         return
 
     entities.extend(
@@ -179,14 +182,25 @@ async def add_electricity_sensors(
         for sensor_key in SENSOR_TYPES[ELECTRICITY]
     )
 
+    entities.extend(
+        ZonneplanElectricitySensor(
+            uuid,
+            sensor_key,
+            connection.electricity_prices,
+            -1,
+            SENSOR_TYPES[ELECTRICITY_PRICES][sensor_key],
+        )
+        for sensor_key in SENSOR_TYPES[ELECTRICITY_PRICES]
+    )
+
     """Migrate typo in forecast_ sensor keys."""
-    for sensor_key in SENSOR_TYPES[ELECTRICITY]:
+    for sensor_key in SENSOR_TYPES[ELECTRICITY_PRICES]:
         if sensor_key.startswith("forecast_"):
             _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{uuid}_{sensor_key.replace('forecast_', 'forcast_')}")
 
     """Migrate old unique ids to new unique ids."""
     for other_connection_uud in other_connection_uuids:
-        for sensor_key in SENSOR_TYPES[ELECTRICITY]:
+        for sensor_key in SENSOR_TYPES[ELECTRICITY_PRICES]:
             _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{other_connection_uud}_{sensor_key}")
 
     """Migrate current_tariff to current_electricity_tariff"""
@@ -196,23 +210,23 @@ async def add_electricity_sensors(
 async def add_gas_sensors(
     entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]
 ) -> None:
-    if not connection.gas:
+    if not connection.gas_prices:
         return
 
     entities.extend(
         ZonneplanGasSensor(
             uuid,
             sensor_key,
-            connection.gas,
+            connection.gas_prices,
             -1,
-            SENSOR_TYPES[GAS][sensor_key],
+            SENSOR_TYPES[GAS_PRICES][sensor_key],
         )
-        for sensor_key in SENSOR_TYPES[GAS]
+        for sensor_key in SENSOR_TYPES[GAS_PRICES]
     )
 
     """Migrate old unique ids to new unique ids."""
     for other_connection_uud in other_connection_uuids:
-        for sensor_key in SENSOR_TYPES[GAS]:
+        for sensor_key in SENSOR_TYPES[GAS_PRICES]:
             _migrate_to_new_unique_id(hass, f"{uuid}_{sensor_key}", f"{other_connection_uud}_{sensor_key}")
 
 
@@ -488,13 +502,13 @@ class ZonneplanSensor(CoordinatorEntity, RestoreSensor, ABC):
 
 
 class ZonneplanElectricitySensor(ZonneplanSensor):
-    coordinator: SummaryDataUpdateCoordinator
+    coordinator: SummaryDataUpdateCoordinator | ElectricityPricesDataUpdateCoordinator
 
     def __init__(
         self,
         connection_uuid: str,
         sensor_key: str,
-        coordinator: ZonneplanDataUpdateCoordinator,
+        coordinator: ZonneplanDataUpdateCoordinator | ElectricityPricesDataUpdateCoordinator,
         install_index: int,
         description: ZonneplanSensorEntityDescription,
     ) -> None:
@@ -519,7 +533,7 @@ class ZonneplanElectricitySensor(ZonneplanSensor):
 
 
 class ZonneplanGasSensor(ZonneplanSensor):
-    coordinator: SummaryDataUpdateCoordinator
+    coordinator: GasPricesDataUpdateCoordinator
 
     def __init__(
         self,
