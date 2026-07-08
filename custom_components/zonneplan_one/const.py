@@ -66,7 +66,6 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     entity_registry_enabled_default: bool = False
     value_factor: float | None = None
     none_value_behaviour: str = ""
-    daily_update_hour: int | None = None
     attributes: None | list[Attribute] = None
     last_reset_key: None | str = None
     has_entity_name: bool = True
