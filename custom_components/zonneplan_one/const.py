@@ -380,7 +380,6 @@ SENSOR_TYPES: dict[
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             none_value_behaviour=NONE_USE_PREVIOUS,
-            daily_update_hour=6,
             suggested_display_precision=2,
         ),
         "next_tariff_gas": ZonneplanSensorEntityDescription(
@@ -393,7 +392,6 @@ SENSOR_TYPES: dict[
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             none_value_behaviour=NONE_USE_PREVIOUS,
-            daily_update_hour=6,
             suggested_display_precision=2,
         ),
     },

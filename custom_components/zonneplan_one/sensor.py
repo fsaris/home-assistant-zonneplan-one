@@ -402,59 +402,10 @@ class ZonneplanSensor(CoordinatorEntity, RestoreSensor, ABC):
         if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
             return
 
-        if self._attr_native_value is not None and self.skip_update_based_on_daily_update_hour():
-            _LOGGER.info(
-                "Skip update %s until %sh",
-                self.unique_id,
-                self.entity_description.daily_update_hour,
-            )
-            return
-
         _LOGGER.debug("Update %s: %s", self.unique_id, value)
 
         self._attr_native_value = value
         self.async_write_ha_state()
-
-    def skip_update_based_on_daily_update_hour(self) -> bool:
-        if self.entity_description.daily_update_hour is None:
-            return False
-
-        # No state? then we update
-        if not (state := self.hass.states.get(self.entity_id)):
-            return False
-
-        # No last update value? then we update
-        if not state.last_updated or not self.native_value:
-            return False
-
-        update_today = dt_util.now().replace(
-            hour=self.entity_description.daily_update_hour,
-            minute=0,
-            second=0,
-            microsecond=0,
-        )
-
-        # Is it time already to update the value today? No then we skip
-        if update_today > dt_util.now():
-            _LOGGER.debug(
-                "Skipped update %s: %s (update today) > %s (now)",
-                self.unique_id,
-                update_today,
-                dt_util.now(),
-            )
-            return True
-
-        # Already updated today after daily_update_hour? Then skip
-        if dt_util.as_local(state.last_updated) >= update_today:
-            _LOGGER.debug(
-                "Skipped update %s: %s (last update) >= %s (update today)",
-                self.unique_id,
-                dt_util.as_local(state.last_updated),
-                update_today,
-            )
-            return True
-
-        return False
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
