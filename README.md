@@ -284,10 +284,9 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 
 {{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
 ```
+</details>
 
 ![Setup template sensor helper](./images/sensor_cheapest_hour.png)
-
-</details>
 
 
 ### Forecast table
@@ -339,14 +338,318 @@ sort(attribute='start_date') %}
 {%- endfor %}
 ```
 
+</details>
+
 _Example:_
 
 ![Forecast](./images/forecast.png)
-</details>
 
 ### Forecast graph
 
-![Graph example](./images/plotly-graph-example.png)
+
+
+![Graph example - quarter hourly prices](./images/forecast_quarter_hour.png)
+
+<details>
+<summary>Setup graph card</summary>
+
+From [HomeAssistant community](https://community.home-assistant.io/t/zonneplan-one-custom-component/283435/213)
+
+Install the [ApexCharts Card](https://github.com/RomRider/apexcharts-card) and setup a card with next config:
+
+```
+type: custom:apexcharts-card
+graph_span: 32h
+span:
+  start: hour
+  offset: "-2h"
+header:
+  show: true
+  show_states: true
+  colorize_states: false
+apex_config:
+  chart:
+    height: 200
+    fontFamily: inherit
+    stacked: true
+  legend:
+    show: false
+  tooltip:
+    shared: false
+    x:
+      format: d MMM, HH:mm
+    "y":
+      formatter: |
+        EVAL:function(value) {
+          if (value === null || typeof value === 'undefined') return "";
+          return value.toFixed(2).replace('.', ',') + " ct";
+        }
+  plotOptions:
+    bar:
+      borderRadius: 1
+      columnWidth: 60%
+  grid:
+    borderColor: rgba(255,255,255,0.06)
+    strokeDashArray: 0
+    xaxis:
+      lines:
+        show: false
+    yaxis:
+      lines:
+        show: false
+  dataLabels:
+    background:
+      enabled: true
+      borderWidth: 0
+      borderRadius: 6
+      dropShadow:
+        enabled: false
+    formatter: |
+      EVAL:function(value) {
+        if (value === null || typeof value === 'undefined') return "";
+        return value.toFixed(2).replace('.', ',') + " ct";
+      }
+  xaxis:
+    labels:
+      format: HH
+      style:
+        colors: "#a0a0a0"
+    axisBorder:
+      show: false
+    axisTicks:
+      show: false
+    tooltip:
+      enabled: false
+  yaxis:
+    min: -10
+    decimals: 2
+    labels:
+      formatter: |
+        EVAL:function(value) {
+          return value;
+        }
+      style:
+        colors: "#a0a0a0"
+  annotations:
+    xaxis:
+      - x: EVAL:new Date().setHours(24,0,0,0)
+        strokeDashArray: 0
+        borderColor: "#e0e0e0"
+        borderWidth: 1
+        label:
+          text: morgen
+          borderWidth: 0
+          orientation: horizontal
+          offsetY: -9
+          style:
+            color: "#a0a0a0"
+            background: transparent
+            fontSize: 12px
+    yaxis:
+      - "y": -10
+        borderColor: rgba(255,255,255,0.10)
+        borderWidth: 1
+        strokeDashArray: 0
+      - "y": 0
+        borderColor: rgba(255,255,255,0.15)
+        borderWidth: 1
+        strokeDashArray: 0
+      - "y": 10
+        borderColor: rgba(255,255,255,0.10)
+        borderWidth: 1
+        strokeDashArray: 0
+      - "y": 20
+        borderColor: rgba(255,255,255,0.10)
+        borderWidth: 1
+        strokeDashArray: 0
+      - "y": 30
+        borderColor: rgba(255,255,255,0.10)
+        borderWidth: 1
+        strokeDashArray: 0
+      - "y": 40
+        borderColor: rgba(255,255,255,0.10)
+        borderWidth: 1
+        strokeDashArray: 0
+    points:
+      - x: EVAL:new Date().setMinutes(0,0,0)
+        "y": |
+          EVAL:(parseFloat(
+            document.querySelector('home-assistant')?.hass?.states['sensor.zonneplan_current_quarter_hourly_electricity_tariff']?.state || 0
+          ) * 100).toFixed(2).replace('.', ',')
+        marker:
+          size: 0
+        label:
+          text: ▼
+          borderWidth: 0
+          offsetY: 5
+          style:
+            color: "#888888"
+            background: transparent
+            fontSize: 16px
+series:
+  - entity: sensor.zonneplan_current_quarter_hourly_electricity_tariff
+    name: Nu ⚡
+    unit: ct
+    show:
+      in_chart: false
+      in_header: true
+    transform: |
+      return Number(x) * 100;
+  - entity: sensor.zonneplan_current_quarter_hourly_electricity_tariff
+    name: Volgend ⚡
+    unit: ct
+    show:
+      in_chart: false
+      in_header: true
+    data_generator: >
+      const now = new Date(); now.setMinutes(0,0,0); const forecast =
+      entity.attributes.forecast || [];
+
+      const next = forecast.find(e => new Date(e.start_date).getTime() >
+      now.getTime());
+
+      if (!next) return [];
+
+      const t = new Date(next.start_date).getTime(); const p =
+      (next.price_tax_included.amount / 100000); return [[t, p]];
+  - entity: sensor.zonneplan_current_gas_tariff
+    name: 🔥
+    unit: €/m³
+    show:
+      in_chart: false
+      in_header: true
+
+  - entity: sensor.zonneplan_current_quarter_hourly_electricity_tariff
+    name: Tarief verleden
+    type: column
+    color: "#e0e0e0"
+    show:
+      datalabels: false
+      in_header: false
+    data_generator: |
+      const currentHourStart = new Date().setMinutes(0,0,0);
+      const forecast = (entity.attributes.forecast || []).slice()
+        .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+      return forecast.map(e => {
+        const t = new Date(e.start_date).getTime();
+        const p = (e.price_tax_included.amount / 10000000) * 100;
+        return t < currentHourStart ? [t, p] : [t, null];
+      });
+  - entity: sensor.zonneplan_current_quarter_hourly_electricity_tariff
+    name: Tarief laag
+    type: column
+    color: "#3de385"
+    show:
+      datalabels: false
+      in_header: false
+    data_generator: |
+      const currentHourStart = new Date().setMinutes(0,0,0);
+      const forecast = (entity.attributes.forecast || []).slice()
+        .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+      return forecast.map(e => {
+        const t = new Date(e.start_date).getTime();
+        const p = (e.price_tax_included.amount / 10000000) * 100;
+        const low = p < 29;
+        return (t >= currentHourStart && low) ? [t, p] : [t, null];
+      });
+  - entity: sensor.zonneplan_current_quarter_hourly_electricity_tariff
+    name: Tarief normaal
+    type: column
+    color: "#00a964"
+    show:
+      datalabels: false
+      in_header: false
+    data_generator: |
+      const currentHourStart = new Date().setMinutes(0,0,0);
+      const forecast = (entity.attributes.forecast || []).slice()
+        .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+      return forecast.map(e => {
+        const t = new Date(e.start_date).getTime();
+        const p = (e.price_tax_included.amount / 100000);
+        const low = p < 29;
+        return (t >= currentHourStart && !low) ? [t, p] : [t, null];
+      });
+  - entity: sensor.zonneplan_current_quarter_hourly_electricity_tariff
+    name: Max
+    type: line
+    color: "#00a964"
+    stroke_width: 0
+    show:
+      datalabels: true
+      in_header: false
+    data_generator: |
+      const forecast = entity.attributes.forecast || [];
+      const today = new Date().toDateString();
+      const useNextDay = new Date().getHours() > 18;
+
+      let max = { p: -999, t: null };
+
+      forecast.forEach(e => {
+        const t = new Date(e.start_date).getTime();
+        const d = new Date(e.start_date).toDateString();
+        const p = (e.price_tax_included.amount / 100000);
+
+        if ((useNextDay || d === today) && p > max.p) {
+          max = { p, t };
+        }
+      });
+
+      let placed = false;
+      return forecast.map(e => {
+        const t = new Date(e.start_date).getTime();
+        const d = new Date(e.start_date).toDateString();
+        const p = (e.price_tax_included.amount / 100000);
+
+        if (!placed && (useNextDay || d === today) && Math.abs(p - max.p) < 0.01) {
+          placed = true;
+          return [t, p];
+        }
+        return [t, null];
+      });
+  - entity: sensor.zonneplan_current_quarter_hourly_electricity_tariff
+    name: Min
+    type: line
+    color: "#3de385"
+    stroke_width: 0
+    show:
+      datalabels: true
+      in_header: false
+    data_generator: |
+      const forecast = entity.attributes.forecast || [];
+
+
+      let min = { p: 999, t: null };
+
+      forecast.forEach(e => {
+        const t = new Date(e.start_date).getTime();
+
+        const p = (e.price_tax_included.amount / 100000);
+
+        if (p < min.p) {
+          min = { p, t };
+        }
+      });
+
+      let placed = false;
+      return forecast.map(e => {
+        const t = new Date(e.start_date).getTime();
+
+        const p = (e.price_tax_included.amount / 100000);
+
+        if (!placed && Math.abs(p - min.p) < 0.01) {
+          placed = true;
+          return [t, p];
+        }
+        return [t, null];
+      });
+
+```
+</details>
+
+![Graph example - hourly prices](./images/plotly-graph-example.png)
 
 <details>
 <summary>Setup graph card</summary>
