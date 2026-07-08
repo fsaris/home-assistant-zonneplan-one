@@ -66,7 +66,6 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     entity_registry_enabled_default: bool = False
     value_factor: float | None = None
     none_value_behaviour: str = ""
-    daily_update_hour: int | None = None
     attributes: None | list[Attribute] = None
     last_reset_key: None | str = None
     has_entity_name: bool = True
@@ -196,7 +195,7 @@ SENSOR_TYPES: dict[
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
-            suggested_display_precision=2,
+            suggested_display_precision=4,
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             attributes=[
@@ -214,7 +213,7 @@ SENSOR_TYPES: dict[
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
-            suggested_display_precision=2,
+            suggested_display_precision=4,
             state_class=SensorStateClass.MEASUREMENT,
             attributes=[
                 Attribute(
@@ -380,8 +379,7 @@ SENSOR_TYPES: dict[
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             none_value_behaviour=NONE_USE_PREVIOUS,
-            daily_update_hour=6,
-            suggested_display_precision=2,
+            suggested_display_precision=4,
         ),
         "next_tariff_gas": ZonneplanSensorEntityDescription(
             key="gas_price_next",
@@ -393,8 +391,7 @@ SENSOR_TYPES: dict[
             state_class=SensorStateClass.MEASUREMENT,
             entity_registry_enabled_default=True,
             none_value_behaviour=NONE_USE_PREVIOUS,
-            daily_update_hour=6,
-            suggested_display_precision=2,
+            suggested_display_precision=4,
         ),
     },
     PV_INSTALL: {
