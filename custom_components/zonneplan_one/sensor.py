@@ -454,6 +454,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreSensor, ABC):
 
 class ZonneplanElectricitySensor(ZonneplanSensor):
     coordinator: SummaryDataUpdateCoordinator | ElectricityPricesDataUpdateCoordinator
+    _unrecorded_attributes = frozenset({"forecast"})
 
     def __init__(
         self,
