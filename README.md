@@ -112,7 +112,7 @@ _Sensors available if you have a Zonneplan Electricity contract._
 _Sensors available if you have a Zonneplan Gas contract_
 
 - Current Zonneplan Gas tariff: `€/m³`
-- Next Zonneplan Gas tariff: `€/m³`
+- Next Zonneplan Gas tariff: `€/m³` _(default disabled)_
 
 ### Zonneplan Solar inverter
 _Sensors available if you have a Zonneplan solar inverter_

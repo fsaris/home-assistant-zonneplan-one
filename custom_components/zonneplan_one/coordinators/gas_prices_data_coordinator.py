@@ -1,5 +1,5 @@
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
 import homeassistant.util.dt as dt_util
@@ -17,18 +17,15 @@ from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_energy_price(data: dict, dt: datetime | None = None) -> int | None:
-    if dt is None:
-        dt = datetime.now(UTC)
-    price = None
-    price_series = get_price_series_from_chart_data(data)
-    for price_data in price_series:
-        start_datetime = dt_util.parse_datetime(price_data["start_date"])
-        end_datetime = dt_util.parse_datetime(price_data["end_date"])
-        if start_datetime <= dt < end_datetime:
-            price = price_data["price_tax_included"]["amount"]
-            break
-    return price
+def get_prices_by_date_and_hour(prices: dict) -> dict:
+    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
+
+    price_by_hour = {}
+    for price_data in get_price_series_from_chart_data(prices):
+        start_datetime = dt_util.parse_datetime(price_data["start_date"]).astimezone(zonneplan_api_time_zone)
+        if start_datetime:
+            price_by_hour[start_datetime.strftime("%Y-%m-%d %H")] = price_data
+    return price_by_hour
 
 
 def get_price_series_from_chart_data(data: dict) -> list[dict]:
@@ -73,9 +70,8 @@ class GasPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             data = {}
             gas_daily = await self.api.async_get_consumer_prices("gas-daily")
             if gas_daily:
-                data["gas_daily"] = gas_daily
-                data["gas_price"] = get_energy_price(gas_daily)
-                data["gas_price_next"] = get_energy_price(gas_daily, datetime.now(UTC) + timedelta(days=1))
+                data["gas_prices"] = get_prices_by_date_and_hour(gas_daily)
+                data["forecast"] = get_price_series_from_chart_data(gas_daily)
 
                 if not self._unsub_hour_update:
                     self._schedule_hourly_listener_update()
