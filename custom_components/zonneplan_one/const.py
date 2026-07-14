@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 
+import homeassistant.util.dt as dt_util
 from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
@@ -49,7 +50,7 @@ BATTERY_CHARTS = "battery_charts"
 
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
-
+GAS_NEXT_PRICE_HOUR = 6
 VERSION = "2026.7.0"
 
 
@@ -103,6 +104,20 @@ class ZonneplanSelectEntityDescription(SelectEntityDescription):
 
     entity_registry_enabled_default: bool = True
     has_entity_name: bool = True
+
+
+def get_gas_hour(param: str) -> str:
+    """Get gas date_hour key."""
+    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
+    now = dt_util.now(zonneplan_api_time_zone)
+    start = (
+        now.replace(hour=GAS_NEXT_PRICE_HOUR)
+        if now.hour > GAS_NEXT_PRICE_HOUR
+        else (now - timedelta(days=1)).replace(hour=GAS_NEXT_PRICE_HOUR)
+    )
+    if param == "next":
+        return (start + timedelta(days=1)).strftime("%Y-%m-%d %H")
+    return start.strftime("%Y-%m-%d %H")
 
 
 """Available sensors"""
@@ -371,6 +386,7 @@ SENSOR_TYPES: dict[
     GAS_PRICES: {
         "current_tariff_gas": ZonneplanSensorEntityDescription(
             key="gas_price",
+            key_lambda=lambda: f"gas_prices.{get_gas_hour('current')}.price_tax_included.amount",
             name="Current gas tariff",
             translation_key="current_gas_tariff",
             icon="mdi:cash",
@@ -380,16 +396,22 @@ SENSOR_TYPES: dict[
             entity_registry_enabled_default=True,
             none_value_behaviour=NONE_USE_PREVIOUS,
             suggested_display_precision=4,
+            attributes=[
+                Attribute(
+                    key="forecast",
+                    label="forecast",
+                )
+            ],
         ),
         "next_tariff_gas": ZonneplanSensorEntityDescription(
             key="gas_price_next",
+            key_lambda=lambda: f"gas_prices.{get_gas_hour('next')}.price_tax_included.amount",
             name="Next gas tariff",
             translation_key="next_gas_tariff",
             icon="mdi:cash",
             value_factor=0.0000001,
             native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfVolume.CUBIC_METERS}",
             state_class=SensorStateClass.MEASUREMENT,
-            entity_registry_enabled_default=True,
             none_value_behaviour=NONE_USE_PREVIOUS,
             suggested_display_precision=4,
         ),

@@ -486,6 +486,7 @@ class ZonneplanElectricitySensor(ZonneplanSensor):
 
 class ZonneplanGasSensor(ZonneplanSensor):
     coordinator: GasPricesDataUpdateCoordinator
+    _unrecorded_attributes = frozenset({"forecast"})
 
     def __init__(
         self,
