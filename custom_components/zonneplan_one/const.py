@@ -112,7 +112,7 @@ def get_gas_hour(param: str) -> str:
     now = dt_util.now(zonneplan_api_time_zone)
     start = (
         now.replace(hour=GAS_NEXT_PRICE_HOUR)
-        if now.hour > GAS_NEXT_PRICE_HOUR
+        if now.hour >= GAS_NEXT_PRICE_HOUR
         else (now - timedelta(days=1)).replace(hour=GAS_NEXT_PRICE_HOUR)
     )
     if param == "next":
