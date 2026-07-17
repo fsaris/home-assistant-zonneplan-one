@@ -52,7 +52,7 @@ BATTERY_CHARTS = "battery_charts"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 GAS_NEXT_PRICE_HOUR = 6
-VERSION = "2026.7.0"
+VERSION = "2026.8.0"
 
 
 @dataclass
