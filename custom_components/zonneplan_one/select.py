@@ -5,18 +5,22 @@ import logging
 from homeassistant.components.select import SelectEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
     BATTERY_CONTROL,
+    CHARGE_POINT,
     SELECT_TYPES,
     ZonneplanNumberEntityDescription,
+    ZonneplanSelectEntityDescription,
 )
 from .coordinators.account_data_coordinator import ZonneplanConfigEntry
 from .coordinators.battery_control_data_coordinator import (
     BatteryControlDataUpdateCoordinator,
 )
-from .entity import BatteryEntity
+from .coordinators.charge_point_data_coordinator import ChargePointDataUpdateCoordinator
+from .entity import BatteryEntity, ChargePointEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +46,20 @@ async def async_setup_entry(
                     SELECT_TYPES[BATTERY_CONTROL][_key],
                 )
                 for _key in SELECT_TYPES[BATTERY_CONTROL]
+            )
+
+        if connection.charge_point_installation:
+            _LOGGER.debug("Setup charge point select entities for connection %s", uuid)
+
+            entities.extend(
+                ZonneplanChargePointVehicleSelect(
+                    uuid,
+                    _key,
+                    connection.charge_point_installation,
+                    0,
+                    SELECT_TYPES[CHARGE_POINT][_key],
+                )
+                for _key in SELECT_TYPES[CHARGE_POINT]
             )
 
     async_add_entities(entities)
@@ -100,3 +118,71 @@ class ZonneplanBatteryControlModeSelect(BatteryEntity, CoordinatorEntity, Select
             await self.coordinator.async_enable_home_optimization()
         else:
             _LOGGER.warning("Unknown action for %s", option)
+
+
+class ZonneplanChargePointVehicleSelect(ChargePointEntity, CoordinatorEntity, RestoreEntity, SelectEntity):
+    """Select which vehicle's specs (battery capacity / consumption) are used to size the desired-kilometers number."""
+
+    coordinator: ChargePointDataUpdateCoordinator
+    _connection_uuid: str
+    _install_index: int
+    _key: str
+    entity_description: ZonneplanSelectEntityDescription
+
+    def __init__(
+        self,
+        connection_uuid: str,
+        _key: str,
+        coordinator: ChargePointDataUpdateCoordinator,
+        install_index: int,
+        description: ZonneplanSelectEntityDescription,
+    ) -> None:
+        """Initialize the select."""
+        super().__init__(coordinator)
+        self._connection_uuid = connection_uuid
+        self._install_index = install_index
+        self._key = _key
+        self.entity_description = description
+
+    @property
+    def unique_id(self) -> str | None:
+        """Return a unique ID."""
+        return self.install_uuid + "_" + self._key
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity and coordinator.vehicles is available."""
+        return super().available and bool(self.coordinator.vehicles)
+
+    @property
+    def options(self) -> list[str]:
+        return [vehicle["label"] for vehicle in self.coordinator.vehicles]
+
+    @property
+    def current_option(self) -> str | None:
+        vehicle = self.coordinator.get_vehicle(self.coordinator.selected_vehicle_uuid)
+        return vehicle["label"] if vehicle else None
+
+    async def async_added_to_hass(self) -> None:
+        """Restore the previously selected vehicle after a restart."""
+        await super().async_added_to_hass()
+
+        if self.coordinator.selected_vehicle_uuid is not None:
+            return
+
+        last_state = await self.async_get_last_state()
+        if last_state is None:
+            return
+
+        vehicle = next((v for v in self.coordinator.vehicles if v.get("label") == last_state.state), None)
+        if vehicle:
+            self.coordinator.selected_vehicle_uuid = vehicle["uuid"]
+
+    async def async_select_option(self, option: str) -> None:
+        vehicle = next((v for v in self.coordinator.vehicles if v.get("label") == option), None)
+        if not vehicle:
+            _LOGGER.warning("Unknown vehicle for %s", option)
+            return
+
+        self.coordinator.selected_vehicle_uuid = vehicle["uuid"]
+        self.coordinator.async_update_listeners()

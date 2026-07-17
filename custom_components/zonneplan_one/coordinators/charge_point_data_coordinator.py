@@ -54,13 +54,19 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         self._delayed_fetch_charge_point: Callable[[], None] | None = None
         self._last_edited_dynamic_charge_unit: str | None = None
+        self.vehicles: list[dict] = []
+        self.selected_vehicle_uuid: str | None = None
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
         try:
             charge_point = await self._async_get_charge_point_data(self.connection_uuid, self.contract.get("uuid"))
 
-            return charge_point["contracts"][0] if charge_point else self.data
+            if not charge_point:
+                return self.data
+
+            self.vehicles = charge_point.get("vehicles") or []
+            return charge_point["contracts"][0]
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
@@ -73,8 +79,24 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     async def async_update_charge_point_data(self) -> None:
         charge_point = await self._async_get_charge_point_data(self.connection_uuid, self.contract["uuid"])
         if charge_point:
+            self.vehicles = charge_point.get("vehicles") or []
             self.data = charge_point["contracts"][0]
             self.async_update_listeners()
+
+    def get_vehicle(self, vehicle_uuid: str | None) -> dict | None:
+        return next((vehicle for vehicle in self.vehicles if vehicle.get("uuid") == vehicle_uuid), None)
+
+    def get_max_desired_kilometers(self) -> float | None:
+        vehicle = self.get_vehicle(self.selected_vehicle_uuid)
+        if not vehicle:
+            return None
+
+        consumption_wh_per_km = vehicle.get("consumption_wh_per_km")
+        battery_capacity_useable_wh = vehicle.get("battery_capacity_useable_wh")
+        if not consumption_wh_per_km or not battery_capacity_useable_wh:
+            return None
+
+        return battery_capacity_useable_wh / consumption_wh_per_km
 
     async def async_start_charge(self) -> None:
         await self.api.async_post(
@@ -113,25 +135,29 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         if desired_end_datetime < dt_util.now() + timedelta(minutes=15):
             return  # do nothing when the desired end time already passed (or is too soon)
 
-        params = {"desired_end_time": desired_end_datetime.strftime("%Y-%m-%d %H:%M:00")}
+        user_constraints = {"desired_end_time": desired_end_datetime.strftime("%Y-%m-%d %H:%M:00")}
 
         if self._last_edited_dynamic_charge_unit == "kilometers" and desired_kilometers:
-            params["unit"] = "kilometers"
-            params["value"] = desired_kilometers
+            user_constraints["unit"] = "kilometers"
+            user_constraints["value"] = desired_kilometers
         elif self._last_edited_dynamic_charge_unit == "percentage" and desired_percentage:
-            params["unit"] = "percentage"
-            params["value"] = desired_percentage
+            user_constraints["unit"] = "percentage"
+            user_constraints["value"] = desired_percentage
         elif desired_kilometers:
-            params["unit"] = "kilometers"
-            params["value"] = desired_kilometers
+            user_constraints["unit"] = "kilometers"
+            user_constraints["value"] = desired_kilometers
         elif desired_percentage:
-            params["unit"] = "percentage"
-            params["value"] = desired_percentage
+            user_constraints["unit"] = "percentage"
+            user_constraints["value"] = desired_percentage
+
+        params = {"user_constraints": user_constraints}
+        if self.selected_vehicle_uuid:
+            params["vehicle"] =  {"vehicle_uuid": self.selected_vehicle_uuid}
 
         await self.api.async_post(
             self.connection_uuid,
             "/charge-points/" + self.contract["uuid"] + "/actions/start_dynamic_charging_session",
-            {"user_constraints": params},
+            {"user_constraints": user_constraints},
         )
 
         self.data["state"]["processing"] = True

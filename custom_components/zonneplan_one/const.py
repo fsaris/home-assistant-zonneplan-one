@@ -1692,6 +1692,7 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
             mode=NumberMode.BOX,
             native_unit_of_measurement=UnitOfLength.KILOMETERS,
             entity_registry_enabled_default=True,
+            native_max_value=500,  # will be updated later to match the vehicle
         ),
     },
 }
@@ -1704,7 +1705,15 @@ SELECT_TYPES = {
             translation_key="battery_control_mode",
             icon="mdi:battery-sync-outline",
         )
-    }
+    },
+    CHARGE_POINT: {
+        "selected_vehicle": ZonneplanSelectEntityDescription(
+            key="vehicles",
+            name="Charge point vehicle",
+            translation_key="charge_point_vehicle",
+            icon="mdi:car-electric",
+        )
+    },
 }
 
 DATETIME_TYPE = {

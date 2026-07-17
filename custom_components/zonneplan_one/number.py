@@ -64,7 +64,7 @@ async def async_setup_entry(
             _LOGGER.debug("Setup charge point number entities for connection %s", uuid)
 
             entities.extend(
-                ZonneplanDynamicChargeDesiredPercentageNumber(
+                CHARGE_POINT_NUMBER_ENTITY_CLASSES[sensor_key](
                     uuid,
                     sensor_key,
                     connection.charge_point_installation,
@@ -318,6 +318,10 @@ class ZonneplanDynamicChargeDesiredKilometers(ChargePointEntity, CoordinatorEnti
         return True
 
     @property
+    def native_max_value(self) -> float:
+        return self.coordinator.get_max_desired_kilometers() or self.entity_description.native_max_value
+
+    @property
     def native_value(self) -> float:
         value = self.coordinator.get_data_value(
             self.entity_description.key.format(install_index=self._install_index),
@@ -334,3 +338,9 @@ class ZonneplanDynamicChargeDesiredKilometers(ChargePointEntity, CoordinatorEnti
         )
 
         await self.coordinator.async_dynamic_charge(edited_unit="kilometers")
+
+
+CHARGE_POINT_NUMBER_ENTITY_CLASSES = {
+    "dynamic_charging_user_constraints.desired_additional_battery_percentage": ZonneplanDynamicChargeDesiredPercentageNumber,
+    "dynamic_charging_user_constraints.desired_distance_in_kilometers": ZonneplanDynamicChargeDesiredKilometers,
+}
