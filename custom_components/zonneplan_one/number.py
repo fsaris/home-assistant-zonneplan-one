@@ -271,7 +271,7 @@ class ZonneplanDynamicChargeDesiredPercentageNumber(ChargePointEntity, Coordinat
             int(value / (self.entity_description.value_factor or 1)),
         )
 
-        self.coordinator.async_dynamic_charge()
+        await self.coordinator.async_dynamic_charge()
 
 
 class ZonneplanDynamicChargeDesiredKilometers(ChargePointEntity, CoordinatorEntity, NumberEntity):
@@ -333,4 +333,4 @@ class ZonneplanDynamicChargeDesiredKilometers(ChargePointEntity, CoordinatorEnti
             int(value / (self.entity_description.value_factor or 1)),
         )
 
-        self.coordinator.async_dynamic_charge()
+        await self.coordinator.async_dynamic_charge()
