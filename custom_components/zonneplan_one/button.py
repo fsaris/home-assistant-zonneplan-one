@@ -95,7 +95,7 @@ class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEnt
         if self._button_key == "stop" and state["state"] == "Charging":
             return True
 
-        return bool((self._button_key in {"start", "dynamic_charge"}) and state["state"] == "VehicleDetected")
+        return bool(self._button_key == "start" and state["state"] == "VehicleDetected")
 
     async def async_press(self) -> None:
         """Handle the button press."""
@@ -103,7 +103,5 @@ class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEnt
             await self.coordinator.async_start_charge()
         elif self._button_key == "stop":
             await self.coordinator.async_stop_charge()
-        elif self._button_key == "dynamic_charge":
-            await self.coordinator.async_dynamic_charge()
         else:
             _LOGGER.warning("Unknown button action for %s", self._button_key)

@@ -91,7 +91,7 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
         if "processing" in state:
             return False
 
-        return state["state"] == "VehicleDetected"
+        return True
 
     @property
     def native_value(self) -> datetime:
@@ -104,4 +104,4 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
             value.strftime("%Y-%m-%d %H:%M:00"),
         )
 
-        self.coordinator.async_update_listeners()
+        self.coordinator.async_dynamic_charge()

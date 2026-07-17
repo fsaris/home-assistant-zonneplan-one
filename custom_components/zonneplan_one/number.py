@@ -253,7 +253,7 @@ class ZonneplanDynamicChargeDesiredPercentageNumber(ChargePointEntity, Coordinat
         if "processing" in state:
             return False
 
-        return state["state"] == "VehicleDetected"
+        return True
 
     @property
     def native_value(self) -> float:
@@ -271,4 +271,66 @@ class ZonneplanDynamicChargeDesiredPercentageNumber(ChargePointEntity, Coordinat
             int(value / (self.entity_description.value_factor or 1)),
         )
 
-        self.coordinator.async_update_listeners()
+        self.coordinator.async_dynamic_charge()
+
+
+class ZonneplanDynamicChargeDesiredKilometers(ChargePointEntity, CoordinatorEntity, NumberEntity):
+    coordinator: ChargePointDataUpdateCoordinator
+    _connection_uuid: str
+    _install_index: int
+    _key: str
+    entity_description: ZonneplanNumberEntityDescription
+
+    def __init__(
+        self,
+        connection_uuid: str,
+        _key: str,
+        coordinator: ChargePointDataUpdateCoordinator,
+        install_index: int,
+        description: ZonneplanNumberEntityDescription,
+    ) -> None:
+        """Initialize the button."""
+        super().__init__(coordinator)
+        self._connection_uuid = connection_uuid
+        self._install_index = install_index
+        self._key = _key
+        self.entity_description = description
+
+    @property
+    def unique_id(self) -> str | None:
+        """Return a unique ID."""
+        return self.install_uuid + "_" + self._key
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        if not self.coordinator.data or not self.coordinator.last_update_success:
+            return False
+
+        state = self.coordinator.get_data_value("state")
+
+        if not state or not state["connectivity_state"]:
+            return False
+
+        if "processing" in state:
+            return False
+
+        return True
+
+    @property
+    def native_value(self) -> float:
+        value = self.coordinator.get_data_value(
+            self.entity_description.key.format(install_index=self._install_index),
+        )
+        if not value or not isinstance(value, int):
+            value = 0
+
+        return value * (self.entity_description.value_factor or 1)
+
+    async def async_set_native_value(self, value: float) -> None:
+        self.coordinator.set_data_value(
+            self.entity_description.key.format(install_index=self._install_index),
+            int(value / (self.entity_description.value_factor or 1)),
+        )
+
+        self.coordinator.async_dynamic_charge()

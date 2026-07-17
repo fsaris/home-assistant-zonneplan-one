@@ -1,9 +1,10 @@
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Any
 
 from aiohttp.client_exceptions import ClientResponseError
+import homeassistant.util.dt as dt_util
 from homeassistant.core import HassJob, HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
@@ -98,14 +99,26 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         await self.async_fetch_charge_point_data()
 
     async def async_dynamic_charge(self) -> None:
+        desired_end_time = self.get_data_value("state.dynamic_charging_user_constraints.desired_end_time")
+        desired_percentage = self.get_data_value("state.dynamic_charging_user_constraints.desired_additional_battery_percentage")
+        desired_kilometers = self.get_data_value("state.dynamic_charging_user_constraints.desired_distance_in_kilometers")
+
+        desired_end_datetime = dt_util.parse_datetime(desired_end_time) if isinstance(desired_end_time, str) else None
+        if desired_end_datetime < datetime.now() + timedelta(minutes=15):  # naively leave timezones out of this.
+            return  # do nothing when the desired end time already passed (or is too soon)
+
+        params = {"desired_end_time": self.get_data_value("state.dynamic_charging_user_constraints.desired_end_time")}
+        if desired_kilometers:
+            params["unit"] = "kilometers"
+            params["value"] = desired_kilometers
+        elif desired_percentage:
+            params["unit"] = "percentage"
+            params["value"] = desired_percentage
+
         await self.api.async_post(
             self.connection_uuid,
             "/charge-points/" + self.contract["uuid"] + "/actions/start_dynamic_charging_session",
-            {
-                "desired_end_time": self.get_data_value("state.dynamic_charging_user_constraints.desired_end_time"),
-                "unit": "percentage",
-                "value": self.get_data_value("state.dynamic_charging_user_constraints.desired_additional_battery_percentage"),
-            },
+            params,
         )
 
         self.data["state"]["processing"] = True
