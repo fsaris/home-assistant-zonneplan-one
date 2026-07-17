@@ -143,6 +143,7 @@ class ZonneplanChargePointVehicleSelect(ChargePointEntity, CoordinatorEntity, Re
         self._install_index = install_index
         self._key = _key
         self.entity_description = description
+        self._restored_option: str | None = None
 
     @property
     def unique_id(self) -> str | None:
@@ -160,23 +161,30 @@ class ZonneplanChargePointVehicleSelect(ChargePointEntity, CoordinatorEntity, Re
 
     @property
     def current_option(self) -> str | None:
+        self._ensure_default_selection()
         vehicle = self.coordinator.get_vehicle(self.coordinator.selected_vehicle_uuid)
         return vehicle["label"] if vehicle else None
 
+    def _ensure_default_selection(self) -> None:
+        """Pick a vehicle when nothing is selected yet: the restored one if it still exists, else the first available."""
+        if self.coordinator.selected_vehicle_uuid is not None or not self.coordinator.vehicles:
+            return
+
+        vehicle = next(
+            (v for v in self.coordinator.vehicles if v.get("label") == self._restored_option),
+            self.coordinator.vehicles[0],
+        )
+        self.coordinator.selected_vehicle_uuid = vehicle["uuid"]
+
     async def async_added_to_hass(self) -> None:
-        """Restore the previously selected vehicle after a restart."""
+        """Remember the previously selected vehicle, resolved once the coordinator's vehicle list is loaded."""
         await super().async_added_to_hass()
 
-        if self.coordinator.selected_vehicle_uuid is not None:
-            return
-
         last_state = await self.async_get_last_state()
-        if last_state is None:
-            return
+        if last_state is not None:
+            self._restored_option = last_state.state
 
-        vehicle = next((v for v in self.coordinator.vehicles if v.get("label") == last_state.state), None)
-        if vehicle:
-            self.coordinator.selected_vehicle_uuid = vehicle["uuid"]
+        self._ensure_default_selection()
 
     async def async_select_option(self, option: str) -> None:
         vehicle = next((v for v in self.coordinator.vehicles if v.get("label") == option), None)
