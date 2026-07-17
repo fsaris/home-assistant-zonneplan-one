@@ -113,7 +113,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         if desired_end_datetime < dt_util.now() + timedelta(minutes=15):
             return  # do nothing when the desired end time already passed (or is too soon)
 
-        params = {"desired_end_time": self.get_data_value("state.dynamic_charging_user_constraints.desired_end_time")}
+        params = {"desired_end_time": desired_end_datetime.strftime("%Y-%m-%d %H:%M:00")}
 
         if self._last_edited_dynamic_charge_unit == "kilometers" and desired_kilometers:
             params["unit"] = "kilometers"
