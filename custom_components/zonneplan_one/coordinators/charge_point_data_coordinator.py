@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Any
 
@@ -53,6 +53,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self.contract = contract
 
         self._delayed_fetch_charge_point: Callable[[], None] | None = None
+        self._last_edited_dynamic_charge_unit: str | None = None
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
@@ -98,17 +99,29 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         await self.async_fetch_charge_point_data()
 
-    async def async_dynamic_charge(self) -> None:
+    async def async_dynamic_charge(self, edited_unit: str | None = None) -> None:
+        if edited_unit:
+            self._last_edited_dynamic_charge_unit = edited_unit
+
         desired_end_time = self.get_data_value("state.dynamic_charging_user_constraints.desired_end_time")
         desired_percentage = self.get_data_value("state.dynamic_charging_user_constraints.desired_additional_battery_percentage")
         desired_kilometers = self.get_data_value("state.dynamic_charging_user_constraints.desired_distance_in_kilometers")
 
         desired_end_datetime = dt_util.parse_datetime(desired_end_time) if isinstance(desired_end_time, str) else None
-        if desired_end_datetime < datetime.now() + timedelta(minutes=15):  # naively leave timezones out of this.
+        if desired_end_datetime is None:
+            return  # do nothing when there is no desired end time
+        if desired_end_datetime < dt_util.now() + timedelta(minutes=15):
             return  # do nothing when the desired end time already passed (or is too soon)
 
         params = {"desired_end_time": self.get_data_value("state.dynamic_charging_user_constraints.desired_end_time")}
-        if desired_kilometers:
+
+        if self._last_edited_dynamic_charge_unit == "kilometers" and desired_kilometers:
+            params["unit"] = "kilometers"
+            params["value"] = desired_kilometers
+        elif self._last_edited_dynamic_charge_unit == "percentage" and desired_percentage:
+            params["unit"] = "percentage"
+            params["value"] = desired_percentage
+        elif desired_kilometers:
             params["unit"] = "kilometers"
             params["value"] = desired_kilometers
         elif desired_percentage:
