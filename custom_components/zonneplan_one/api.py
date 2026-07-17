@@ -175,6 +175,9 @@ class AsyncConfigEntryAuth(ZonneplanApi):
                 retry_after=_parse_retry_after(response.headers.get("Retry-After")),
             )
 
+        if response.status >= HTTPStatus.BAD_REQUEST:
+            _LOGGER.error("ZonneplanAPI error response for POST %s?%s: %s", path, params, await response.text())
+
         response.raise_for_status()
 
         # 204 No Content successful response
