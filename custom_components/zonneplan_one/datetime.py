@@ -101,7 +101,7 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
     async def async_set_value(self, value: datetime) -> None:
         self.coordinator.set_data_value(
             self.entity_description.key.format(install_index=self._install_index),
-            value.strftime("%Y-%m-%d %H:%M:00"),
+            dt_util.as_local(value).isoformat() ,
         )
 
         await self.coordinator.async_dynamic_charge()
