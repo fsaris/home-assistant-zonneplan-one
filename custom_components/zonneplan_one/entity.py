@@ -1,4 +1,4 @@
-"""Zonneplan Battery Entity."""
+"""Zonneplan Base Entity."""
 
 from typing import Protocol
 

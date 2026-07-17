@@ -97,6 +97,23 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         await self.async_fetch_charge_point_data()
 
+    async def async_dynamic_charge(self) -> None:
+        await self.api.async_post(
+            self.connection_uuid,
+            "/charge-points/" + self.contract["uuid"] + "/actions/start_dynamic_charging_session",
+            {
+                "desired_end_time": self.get_data_value("state.dynamic_charging_user_constraints.desired_end_time"),
+                "unit": "percentage",
+                "value": self.get_data_value("state.dynamic_charging_user_constraints.desired_additional_battery_percentage"),
+            },
+        )
+
+        self.data["state"]["processing"] = True
+
+        self.async_update_listeners()
+
+        await self.async_fetch_charge_point_data()
+
     def _processing_charge_point_update(self) -> bool:
         processing = self.data.get("state", {}).get("processing")
 

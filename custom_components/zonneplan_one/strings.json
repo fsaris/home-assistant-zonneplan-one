@@ -398,6 +398,9 @@
       },
       "stop_charge": {
         "name": "Stop charge"
+      },
+      "dynamic_charge": {
+        "name": "Dynamic charge (percentage)"
       }
     },
     "number": {
@@ -406,6 +409,17 @@
       },
       "max_charge_power": {
         "name": "Max charge power (Home optimization)"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Desired distance"
+      },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Desired percentage"
+      }
+    },
+    "datetime": {
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Desired end time"
       }
     },
     "select": {
