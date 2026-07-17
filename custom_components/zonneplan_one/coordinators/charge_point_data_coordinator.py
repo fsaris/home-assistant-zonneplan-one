@@ -86,7 +86,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     def get_vehicle(self, vehicle_uuid: str | None) -> dict | None:
         return next((vehicle for vehicle in self.vehicles if vehicle.get("uuid") == vehicle_uuid), None)
 
-    def get_max_desired_kilometers(self) -> float | None:
+    def get_max_desired_kilometers(self) -> int | None:
         vehicle = self.get_vehicle(self.selected_vehicle_uuid)
         if not vehicle:
             return None
@@ -96,7 +96,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         if not consumption_wh_per_km or not battery_capacity_useable_wh:
             return None
 
-        return battery_capacity_useable_wh / consumption_wh_per_km
+        return int(battery_capacity_useable_wh / consumption_wh_per_km)
 
     async def async_start_charge(self) -> None:
         await self.api.async_post(
