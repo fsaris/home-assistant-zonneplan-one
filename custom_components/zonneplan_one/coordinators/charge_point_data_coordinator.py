@@ -131,7 +131,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         await self.api.async_post(
             self.connection_uuid,
             "/charge-points/" + self.contract["uuid"] + "/actions/start_dynamic_charging_session",
-            params,
+            {"user_constraints": params},
         )
 
         self.data["state"]["processing"] = True
