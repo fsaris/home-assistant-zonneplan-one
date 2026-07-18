@@ -131,8 +131,10 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         desired_end_datetime = dt_util.parse_datetime(desired_end_time) if isinstance(desired_end_time, str) else None
         if desired_end_datetime is None:
+            _LOGGER.warning("Can not start a dynamic charge session, the end date is not set.")
             return  # do nothing when there is no desired end time
         if desired_end_datetime < dt_util.now() + timedelta(minutes=15):
+            _LOGGER.warning("Can not set the dynamic charge session to end in the past or the next 15 minutes.")
             return  # do nothing when the desired end time already passed (or is too soon)
 
         user_constraints = {"desired_end_time": desired_end_datetime.strftime("%Y-%m-%d %H:%M:00")}
@@ -149,6 +151,9 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         elif desired_percentage:
             user_constraints["unit"] = "percentage"
             user_constraints["value"] = desired_percentage
+        else:
+            _LOGGER.warning("Can not set the dynamic charge session, no amount to charge set.")
+            return  # both the percentage and
 
         params = {"user_constraints": user_constraints}
         if self.selected_vehicle_uuid:
