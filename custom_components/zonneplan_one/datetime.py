@@ -91,17 +91,17 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
         if "processing" in state:
             return False
 
-        return state["state"] == "VehicleDetected"
+        return True
 
     @property
     def native_value(self) -> datetime:
         value = self.coordinator.get_data_value(self.entity_description.key.format(install_index=self._install_index))
         return dt_util.parse_datetime(value) if isinstance(value, str) else None
 
-    def set_value(self, value: datetime) -> None:
+    async def async_set_value(self, value: datetime) -> None:
         self.coordinator.set_data_value(
             self.entity_description.key.format(install_index=self._install_index),
-            value.strftime("%Y-%m-%d %H:%M:00"),
+            dt_util.as_local(value).isoformat() ,
         )
 
-        self.coordinator.async_update_listeners()
+        await self.coordinator.async_dynamic_charge()

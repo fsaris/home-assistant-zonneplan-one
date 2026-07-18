@@ -580,6 +580,9 @@
           "home_optimization": "Huisoptimalisatie",
           "self_consumption": "Zelfconsumptie"
         }
+      },
+      "charge_point_vehicle": {
+        "name": "Auto"
       }
     }
   }
