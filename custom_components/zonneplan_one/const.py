@@ -1671,7 +1671,7 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
     CHARGE_POINT: {
         "dynamic_charging_user_constraints.desired_additional_battery_percentage": ZonneplanNumberEntityDescription(
             key="state.dynamic_charging_user_constraints.desired_additional_battery_percentage",
-            name="Charge point dynamic load desired distance (%)",
+            name="Desired percentage",
             translation_key="charge_point_dynamic_desired_additional_battery_percentage",
             mode=NumberMode.SLIDER,
             native_unit_of_measurement=UnitOfRatio.PERCENTAGE,
@@ -1682,7 +1682,7 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
         ),
         "dynamic_charging_user_constraints.desired_distance_in_kilometers": ZonneplanNumberEntityDescription(
             key="state.dynamic_charging_user_constraints.desired_distance_in_kilometers",
-            name="Charge point dynamic load desired distance (km)",
+            name="Desired kilometers",
             translation_key="charge_point_dynamic_load_desired_distance",
             mode=NumberMode.BOX,
             native_unit_of_measurement=UnitOfLength.KILOMETERS,
