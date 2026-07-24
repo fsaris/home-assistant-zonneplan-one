@@ -250,10 +250,7 @@ class ZonneplanDynamicChargeDesiredPercentageNumber(ChargePointEntity, Coordinat
         if not state or not state["connectivity_state"]:
             return False
 
-        if "processing" in state:
-            return False
-
-        return True
+        return "processing" not in state
 
     @property
     def native_value(self) -> float:
@@ -312,10 +309,7 @@ class ZonneplanDynamicChargeDesiredKilometers(ChargePointEntity, CoordinatorEnti
         if not state or not state["connectivity_state"]:
             return False
 
-        if "processing" in state:
-            return False
-
-        return True
+        return "processing" not in state
 
     @property
     def native_max_value(self) -> float:

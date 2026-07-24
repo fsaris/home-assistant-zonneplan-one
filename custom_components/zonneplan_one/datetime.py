@@ -88,10 +88,7 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
         if not state or not state["connectivity_state"]:
             return False
 
-        if "processing" in state:
-            return False
-
-        return True
+        return "processing" not in state
 
     @property
     def native_value(self) -> datetime:
