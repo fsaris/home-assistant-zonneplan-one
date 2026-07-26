@@ -564,7 +564,7 @@
         "name": "Gewenste afstand"
       },
       "charge_point_dynamic_desired_additional_battery_percentage": {
-        "name": "Gewenste pecentage"
+        "name": "Gewenst pecentage"
       }
     },
     "datetime": {
@@ -580,6 +580,9 @@
           "home_optimization": "Huisoptimalisatie",
           "self_consumption": "Zelfconsumptie"
         }
+      },
+      "charge_point_vehicle": {
+        "name": "Auto"
       }
     }
   }

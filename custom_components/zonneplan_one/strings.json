@@ -430,6 +430,9 @@
           "home_optimization": "Home optimization",
           "self_consumption": "Self consumption"
         }
+      },
+      "charge_point_vehicle": {
+        "name": "Car"
       }
     }
   },
