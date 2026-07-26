@@ -66,6 +66,22 @@ class AsyncConfigEntryAuth(ZonneplanApi):
     async def async_get(self, connection_uuid: str, path: str, *, ignore_etag: bool = False) -> dict | None:
         return await self._async_get("connections/" + connection_uuid + path, ignore_etag=ignore_etag)
 
+    async def async_get_energy_supply_costs(
+        self,
+        organization_uuid: str,
+        address_uuid: str,
+        start_date: date,
+        end_date: date,
+        *,
+        ignore_etag: bool = False,
+    ) -> dict | None:
+        """Get energy supply costs for the given address and date range."""
+        return await self._async_get(
+            f"api/organizations/{organization_uuid}/addresses/{address_uuid}/energy-supply/costs"
+            f"?start_date={start_date.isoformat()}&end_date={end_date.isoformat()}",
+            ignore_etag=ignore_etag,
+        )
+
     async def async_get_battery_chart(self, contract_uuid: str, chart: str, chart_date: date) -> dict | None:
         """Get battery chart data for the given contract and date."""
         chart_date_str = chart_date.isoformat()
