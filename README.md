@@ -163,6 +163,11 @@ _Sensors available if you have a Zonneplan charge point/laadpaal_
 - Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
 - Charge on solar enabled `on/off`
 - Buttons to start/stop charge
+- Button to continue auto charging
+  - Equivalent of _Automatisch laden voortzetten_ in the app. Stopping a manual charge suppresses
+    automatic (Powerplay flex) charging until this is pressed, so the charge point will not pick up
+    cheap/solar charging again on its own.
+  - Only available while `Charge point dynamic charging flex suppressed` is on, mirroring the app.
 
 ### Zonneplan Battery
 _Sensors available if you have a Zonneplan Nexus battery_
