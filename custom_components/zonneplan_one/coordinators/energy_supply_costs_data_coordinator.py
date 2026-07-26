@@ -17,7 +17,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
-    """Zonneplan energy supply costs data update coordinator.
+    """
+    Zonneplan energy supply costs data update coordinator.
 
     Unlike the other coordinators this one is address scoped instead of connection
     scoped, and it asks for a single explicit day (today in the Zonneplan API time
