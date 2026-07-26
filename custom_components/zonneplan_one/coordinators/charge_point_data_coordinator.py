@@ -56,6 +56,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self._last_edited_dynamic_charge_unit: str | None = None
         self.vehicles: list[dict] = []
         self.selected_vehicle_uuid: str | None = None
+        self.zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
@@ -137,7 +138,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             _LOGGER.warning("Can not set the dynamic charge session to end in the past or the next 15 minutes.")
             return  # do nothing when the desired end time already passed (or is too soon)
 
-        user_constraints = {"desired_end_time": desired_end_datetime.strftime("%Y-%m-%d %H:%M:00")}
+        user_constraints = {"desired_end_time": desired_end_datetime.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M:00")}
 
         if self._last_edited_dynamic_charge_unit == "kilometers" and desired_kilometers:
             user_constraints["unit"] = "kilometers"
@@ -162,7 +163,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         await self.api.async_post(
             self.connection_uuid,
             "/charge-points/" + self.contract["uuid"] + "/actions/start_dynamic_charging_session",
-            {"user_constraints": user_constraints},
+            params,
         )
 
         self.data["state"]["processing"] = True
