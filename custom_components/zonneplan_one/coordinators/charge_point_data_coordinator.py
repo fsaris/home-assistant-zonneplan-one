@@ -157,7 +157,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         params = {"user_constraints": user_constraints}
         if self.selected_vehicle_uuid:
-            params["vehicle"] =  {"vehicle_uuid": self.selected_vehicle_uuid}
+            params["vehicle"] = {"vehicle_uuid": self.selected_vehicle_uuid}
 
         await self.api.async_post(
             self.connection_uuid,

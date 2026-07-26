@@ -1634,7 +1634,7 @@ BUTTON_TYPES: dict[str, dict[str, ZonneplanButtonEntityDescription]] = {
             key="charge_point.stop",
             name="Stop charge",
             translation_key="stop_charge",
-        )
+        ),
     },
 }
 
