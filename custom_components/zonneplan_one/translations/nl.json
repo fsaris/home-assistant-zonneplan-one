@@ -443,7 +443,7 @@
       "production_costs_this_month": {
         "name": "Netto teruggeleverd deze maand"
       },
-      "production_costs__this_monthexcl_tax": {
+      "production_costs_this_month_excl_tax": {
         "name": "Netto teruggeleverd deze maand (excl. btw)"
       },
       "production_costs_this_year": {
@@ -469,6 +469,9 @@
       },
       "energy_produced_sum_this_year": {
         "name": "Netto teruggeleverd dit jaar"
+      },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Laadpaal dynamic load gewenst percentage"
       }
     },
     "binary_sensor": {
@@ -546,8 +549,14 @@
       "stop_charge": {
         "name": "Stop laden"
       },
-      "dynamic_charge": {
-        "name": "Start laden (percentage)"
+      "apply_dynamic_charge": {
+        "name": "Wijzigingen toepassen"
+      },
+      "discard_dynamic_charge": {
+        "name": "Wijzigingen verwerpen"
+      },
+      "reset_dynamic_charge": {
+        "name": "Laadplan verwijderen"
       }
     },
     "number": {
@@ -561,15 +570,15 @@
         "name": "Minimum noodstroom reserve"
       },
       "charge_point_dynamic_load_desired_distance": {
-        "name": "Gewenste afstand"
+        "name": "Gewenst aantal kilometers"
       },
       "charge_point_dynamic_desired_additional_battery_percentage": {
-        "name": "Gewenst pecentage"
+        "name": "Gewenst percentage"
       }
     },
     "datetime": {
       "charge_point_dynamic_load_desired_end_time": {
-        "name": "Gewenste eindtijd"
+        "name": "Gewenste vertrektijd"
       }
     },
     "select": {
@@ -582,7 +591,7 @@
         }
       },
       "charge_point_vehicle": {
-        "name": "Auto"
+        "name": "Geselecteerde auto"
       }
     }
   }

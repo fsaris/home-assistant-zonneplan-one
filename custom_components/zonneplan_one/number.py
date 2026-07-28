@@ -212,11 +212,14 @@ class ZonneplanReserveDischargeNumber(BatteryEntity, CoordinatorEntity, NumberEn
         await self.coordinator.async_set_reserve_discharge(int(value))
 
 
-class ZonneplanDynamicChargeDesiredPercentageNumber(ChargePointEntity, CoordinatorEntity, NumberEntity):
+class ZonneplanDynamicChargeAmountNumber(ChargePointEntity, CoordinatorEntity, NumberEntity):
+    """Desired charge amount, staged locally until the apply button is pressed."""
+
     coordinator: ChargePointDataUpdateCoordinator
     _connection_uuid: str
     _install_index: int
     _key: str
+    _unit: str
     entity_description: ZonneplanNumberEntityDescription
 
     def __init__(
@@ -250,88 +253,43 @@ class ZonneplanDynamicChargeDesiredPercentageNumber(ChargePointEntity, Coordinat
         if not state or not state["connectivity_state"]:
             return False
 
-        return "processing" not in state
+        if "processing" in state:
+            return False
+
+        # Only one amount can be sent, so staging one unit locks the other until it is applied or discarded.
+        pending_unit = self.coordinator.pending_amount_unit()
+
+        return pending_unit is None or pending_unit == self._unit
 
     @property
-    def native_value(self) -> float:
-        value = self.coordinator.get_data_value(
-            self.entity_description.key.format(install_index=self._install_index),
-        )
-        if not value or not isinstance(value, int):
-            value = 0
+    def _value_path(self) -> str:
+        return self.entity_description.key.format(install_index=self._install_index)
+
+    @property
+    def native_value(self) -> float | None:
+        value = self.coordinator.get_dynamic_charge_value(self._value_path)
+        if not isinstance(value, (int, float)) or not value:
+            return None
 
         return value * (self.entity_description.value_factor or 1)
 
     async def async_set_native_value(self, value: float) -> None:
-        self.coordinator.set_data_value(
-            self.entity_description.key.format(install_index=self._install_index),
+        self.coordinator.stage_dynamic_charge_value(
+            self._value_path,
             int(value / (self.entity_description.value_factor or 1)),
         )
 
-        await self.coordinator.async_dynamic_charge(edited_unit="percentage")
+
+class ZonneplanDynamicChargeDesiredPercentageNumber(ZonneplanDynamicChargeAmountNumber):
+    _unit = "percentage"
 
 
-class ZonneplanDynamicChargeDesiredKilometers(ChargePointEntity, CoordinatorEntity, NumberEntity):
-    coordinator: ChargePointDataUpdateCoordinator
-    _connection_uuid: str
-    _install_index: int
-    _key: str
-    entity_description: ZonneplanNumberEntityDescription
-
-    def __init__(
-        self,
-        connection_uuid: str,
-        _key: str,
-        coordinator: ChargePointDataUpdateCoordinator,
-        install_index: int,
-        description: ZonneplanNumberEntityDescription,
-    ) -> None:
-        """Initialize the button."""
-        super().__init__(coordinator)
-        self._connection_uuid = connection_uuid
-        self._install_index = install_index
-        self._key = _key
-        self.entity_description = description
-
-    @property
-    def unique_id(self) -> str | None:
-        """Return a unique ID."""
-        return self.install_uuid + "_" + self._key
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        if not self.coordinator.data or not self.coordinator.last_update_success:
-            return False
-
-        state = self.coordinator.get_data_value("state")
-
-        if not state or not state["connectivity_state"]:
-            return False
-
-        return "processing" not in state
+class ZonneplanDynamicChargeDesiredKilometers(ZonneplanDynamicChargeAmountNumber):
+    _unit = "kilometers"
 
     @property
     def native_max_value(self) -> float:
         return self.coordinator.get_max_desired_kilometers() or self.entity_description.native_max_value
-
-    @property
-    def native_value(self) -> float:
-        value = self.coordinator.get_data_value(
-            self.entity_description.key.format(install_index=self._install_index),
-        )
-        if not value or not isinstance(value, int):
-            value = 0
-
-        return value * (self.entity_description.value_factor or 1)
-
-    async def async_set_native_value(self, value: float) -> None:
-        self.coordinator.set_data_value(
-            self.entity_description.key.format(install_index=self._install_index),
-            int(value / (self.entity_description.value_factor or 1)),
-        )
-
-        await self.coordinator.async_dynamic_charge(edited_unit="kilometers")
 
 
 CHARGE_POINT_NUMBER_ENTITY_CLASSES = {

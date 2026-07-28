@@ -31,12 +31,523 @@
     }
   },
   "entity": {
+    "sensor": {
+      "usage": {
+        "name": "Current usage"
+      },
+      "usage_measured_at": {
+        "name": "Current usage measured at"
+      },
+      "sustainability_score": {
+        "name": "Sustainability score"
+      },
+      "current_tariff_group": {
+        "name": "Current tariff group"
+      },
+      "current_electricity_tariff": {
+        "name": "Current electricity tariff"
+      },
+      "current_quarter_hourly_electricity_tariff": {
+        "name": "Current quarter hourly electricity tariff"
+      },
+      "current_hourly_electricity_tariff": {
+        "name": "Current hourly electricity tariff"
+      },
+      "current_gas_tariff": {
+        "name": "Current gas tariff"
+      },
+      "next_gas_tariff": {
+        "name": "Next gas tariff"
+      },
+      "status_message": {
+        "name": "Status message"
+      },
+      "status_tip": {
+        "name": "Status tip"
+      },
+      "forecast_tariff_hour_1": {
+        "name": "Forecast tariff hour 1"
+      },
+      "forecast_tariff_hour_2": {
+        "name": "Forecast tariff hour 2"
+      },
+      "forecast_tariff_hour_3": {
+        "name": "Forecast tariff hour 3"
+      },
+      "forecast_tariff_hour_4": {
+        "name": "Forecast tariff hour 4"
+      },
+      "forecast_tariff_hour_5": {
+        "name": "Forecast tariff hour 5"
+      },
+      "forecast_tariff_hour_6": {
+        "name": "Forecast tariff hour 6"
+      },
+      "forecast_tariff_hour_7": {
+        "name": "Forecast tariff hour 7"
+      },
+      "forecast_tariff_hour_8": {
+        "name": "Forecast tariff hour 8"
+      },
+      "forecast_tariff_group_hour_1": {
+        "name": "Forecast tariff group hour 1"
+      },
+      "forecast_tariff_group_hour_2": {
+        "name": "Forecast tariff group hour 2"
+      },
+      "forecast_tariff_group_hour_3": {
+        "name": "Forecast tariff group hour 3"
+      },
+      "forecast_tariff_group_hour_4": {
+        "name": "Forecast tariff group hour 4"
+      },
+      "forecast_tariff_group_hour_5": {
+        "name": "Forecast tariff group hour 5"
+      },
+      "forecast_tariff_group_hour_6": {
+        "name": "Forecast tariff group hour 6"
+      },
+      "forecast_tariff_group_hour_7": {
+        "name": "Forecast tariff group hour 7"
+      },
+      "forecast_tariff_group_hour_8": {
+        "name": "Forecast tariff group hour 8"
+      },
+      "yield_total": {
+        "name": "Yield total"
+      },
+      "last_measured_value": {
+        "name": "Last measured value"
+      },
+      "first_measured": {
+        "name": "First measured"
+      },
+      "last_measured": {
+        "name": "Last measured"
+      },
+      "powerplay_total": {
+        "name": "Powerplay total"
+      },
+      "powerplay_today": {
+        "name": "Powerplay today"
+      },
+      "yield_today": {
+        "name": "Yield today"
+      },
+      "electricity_consumption_today": {
+        "name": "Electricity consumption today"
+      },
+      "electricity_returned_today": {
+        "name": "Electricity returned today"
+      },
+      "electricity_delivery_costs_today": {
+        "name": "Electricity delivery costs today"
+      },
+      "electricity_delivery_costs_this_month": {
+        "name": "Electricity delivery costs this month"
+      },
+      "electricity_delivery_costs_this_year": {
+        "name": "Electricity delivery costs this year"
+      },
+      "electricity_production_costs_today": {
+        "name": "Electricity production costs today"
+      },
+      "electricity_production_costs_this_month": {
+        "name": "Electricity production costs this month"
+      },
+      "electricity_production_costs_this_year": {
+        "name": "Electricity production costs this year"
+      },
+      "electricity_delivery_price_per_unit_today": {
+        "name": "Electricity delivery price per unit today"
+      },
+      "electricity_delivery_price_per_unit_this_month": {
+        "name": "Electricity delivery price per unit this month"
+      },
+      "electricity_delivery_price_per_unit_this_year": {
+        "name": "Electricity delivery price per unit this year"
+      },
+      "electricity_production_price_per_unit_today": {
+        "name": "Electricity production price per unit today"
+      },
+      "electricity_production_price_per_unit_this_month": {
+        "name": "Electricity production price per unit this month"
+      },
+      "electricity_production_price_per_unit_this_year": {
+        "name": "Electricity production price per unit this year"
+      },
+      "gas_consumption_today": {
+        "name": "Gas consumption today"
+      },
+      "gas_delivery_costs_today": {
+        "name": "Gas delivery costs today"
+      },
+      "electricity_consumption": {
+        "name": "Electricity consumption"
+      },
+      "electricity_production": {
+        "name": "Electricity production"
+      },
+      "electricity_average": {
+        "name": "Electricity average"
+      },
+      "electricity_first_measured": {
+        "name": "Electricity first measured"
+      },
+      "electricity_last_measured": {
+        "name": "Electricity last measured"
+      },
+      "electricity_last_measured_production": {
+        "name": "Electricity last measured production"
+      },
+      "gas_first_measured": {
+        "name": "Gas first measured"
+      },
+      "gas_last_measured": {
+        "name": "Gas last measured"
+      },
+      "dsmr_version": {
+        "name": "Dsmr version"
+      },
+      "battery_state": {
+        "name": "Battery state"
+      },
+      "battery_control_mode": {
+        "name": "Battery control mode"
+      },
+      "state_of_charge": {
+        "name": "Percentage"
+      },
+      "power": {
+        "name": "Power"
+      },
+      "inverter_state": {
+        "name": "Inverter state"
+      },
+      "total_earned": {
+        "name": "Total"
+      },
+      "result_this_year": {
+        "name": "Result this year"
+      },
+      "result_last_year": {
+        "name": "Result last year"
+      },
+      "total_day": {
+        "name": "Today"
+      },
+      "average_day": {
+        "name": "Average day"
+      },
+      "result_this_month": {
+        "name": "Result this month"
+      },
+      "result_last_month": {
+        "name": "Result last month"
+      },
+      "delivery_today": {
+        "name": "Delivery today"
+      },
+      "production_today": {
+        "name": "Production today"
+      },
+      "battery_cycles": {
+        "name": "Battery cycles"
+      },
+      "charge_point_state": {
+        "name": "Charge point state"
+      },
+      "charge_point_power": {
+        "name": "Charge point power"
+      },
+      "charge_point_energy_delivered_session": {
+        "name": "Charge point energy delivered session"
+      },
+      "charge_point_session_cost": {
+        "name": "Charge point session cost"
+      },
+      "charge_point_cost_total": {
+        "name": "Charge point cost total"
+      },
+      "charge_point_session_flex_result": {
+        "name": "Charge point session flex result"
+      },
+      "charge_point_session_average_costs": {
+        "name": "Charge point session average costs"
+      },
+      "charge_point_next_schedule_start": {
+        "name": "Charge point next schedule start"
+      },
+      "charge_point_next_schedule_end": {
+        "name": "Charge point next schedule end"
+      },
+      "charge_point_dynamic_load_balancing_health": {
+        "name": "Charge point dynamic load balancing health"
+      },
+      "charge_point_start_mode": {
+        "name": "Charge point start mode"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Charge point dynamic load desired distance"
+      },
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Charge point dynamic load desired end time"
+      },
+      "charge_point_session_start_time": {
+        "name": "Charge point session start time"
+      },
+      "charge_point_session_charged_distance": {
+        "name": "Charge point session charged distance"
+      },
+      "delivery_costs_this_month": {
+        "name": "Net delivery costs this month"
+      },
+      "delivery_costs_this_year": {
+        "name": "Net delivery costs this year"
+      },
+      "production_costs_this_month": {
+        "name": "Net production costs this month"
+      },
+      "production_costs_this_year": {
+        "name": "Net production costs this year"
+      },
+      "energy_delivered_sum_today": {
+        "name": "Net delivery today"
+      },
+      "energy_delivered_sum_this_month": {
+        "name": "Net delivery this month"
+      },
+      "energy_delivered_sum_this_year": {
+        "name": "Net delivery this year"
+      },
+      "energy_produced_sum_today": {
+        "name": "Net production today"
+      },
+      "energy_produced_sum_this_month": {
+        "name": "Net production this month"
+      },
+      "energy_produced_sum_this_year": {
+        "name": "Net production this year"
+      },
+      "installation_wp": {
+        "name": "Installation Wp"
+      },
+      "panel_wp": {
+        "name": "Panel Wp"
+      },
+      "panel_count": {
+        "name": "Panel count"
+      },
+      "inverter_model_name": {
+        "name": "Inverter model name"
+      },
+      "inverter_firmware_version": {
+        "name": "Inverter firmware version"
+      },
+      "module_firmware_version": {
+        "name": "Module firmware version"
+      },
+      "electricity_delivery_costs_today_excl_tax": {
+        "name": "Electricity delivery costs today (excl. tax)"
+      },
+      "electricity_delivery_costs_this_month_excl_tax": {
+        "name": "Electricity delivery costs this month (excl. tax)"
+      },
+      "electricity_delivery_costs_this_year_excl_tax": {
+        "name": "Electricity delivery costs this year (excl. tax)"
+      },
+      "electricity_production_costs_today_excl_tax": {
+        "name": "Electricity production costs today (excl. tax)"
+      },
+      "electricity_production_costs_this_month_excl_tax": {
+        "name": "Electricity production costs this month (excl. tax)"
+      },
+      "electricity_production_costs_this_year_excl_tax": {
+        "name": "Electricity production costs this year (excl. tax)"
+      },
+      "electricity_delivery_price_per_unit_today_excl_tax": {
+        "name": "Electricity delivery price per unit today (excl. tax)"
+      },
+      "electricity_delivery_price_per_unit_this_month_excl_tax": {
+        "name": "Electricity delivery price per unit this month (excl. tax)"
+      },
+      "electricity_delivery_price_per_unit_this_year_excl_tax": {
+        "name": "Electricity delivery price per unit this year (excl. tax)"
+      },
+      "electricity_production_price_per_unit_today_excl_tax": {
+        "name": "Electricity production price per unit today (excl. tax)"
+      },
+      "electricity_production_price_per_unit_this_month_excl_tax": {
+        "name": "Electricity production price per unit this month (excl. tax)"
+      },
+      "electricity_production_price_per_unit_this_year_excl_tax": {
+        "name": "Electricity production price per unit this year (excl. tax)"
+      },
+      "gas_delivery_costs_today_excl_tax": {
+        "name": "Gas delivery costs today (excl. tax)"
+      },
+      "host_device_model_name": {
+        "name": "Host device model name"
+      },
+      "charge_point_model_name": {
+        "name": "Charge point model name"
+      },
+      "delivery_costs_this_month_excl_tax": {
+        "name": "Net delivery costs this month (excl. tax)"
+      },
+      "delivery_costs_this_year_excl_tax": {
+        "name": "Net delivery costs this year (excl. tax)"
+      },
+      "production_costs_this_year_excl_tax": {
+        "name": "Net production costs this year (excl. tax)"
+      },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Charge point dynamic load desired percentage"
+      },
+      "production_costs_this_month_excl_tax": {
+        "name": "Net production costs this month (excl. tax)"
+      },
+      "backup_power_usable_capacity_wh": {
+        "name": "Backup power usable capacity"
+      }
+    },
+    "binary_sensor": {
+      "dynamic_charging_enabled": {
+        "name": "Powerplay"
+      },
+      "dynamic_load_balancing_enabled": {
+        "name": "Dynamic load balancing enabled"
+      },
+      "dynamic_load_balancing_overload_active": {
+        "name": "Dynamic load balancing overload active"
+      },
+      "manual_control_enabled": {
+        "name": "Manual control enabled"
+      },
+      "self_consumption_enabled": {
+        "name": "Self consumption enabled"
+      },
+      "home_optimization_enabled": {
+        "name": "Home optimization enabled"
+      },
+      "home_optimization_active": {
+        "name": "Home optimization active"
+      },
+      "grid_congestion_active": {
+        "name": "Grid congestion active"
+      },
+      "powerplay_enabled": {
+        "name": "Powerplay enabled"
+      },
+      "power_limit_active": {
+        "name": "Power limit active"
+      },
+      "charge_point_connectivity_state": {
+        "name": "Charge point connectivity state"
+      },
+      "charge_point_can_charge": {
+        "name": "Charge point can charge"
+      },
+      "charge_point_can_schedule": {
+        "name": "Charge point can schedule"
+      },
+      "charge_point_charging_manually": {
+        "name": "Charge point charging manually"
+      },
+      "charge_point_charging_automatically": {
+        "name": "Charge point charging automatically"
+      },
+      "charge_point_plug_and_charge": {
+        "name": "Charge point plug and charge"
+      },
+      "charge_point_overload_protection_active": {
+        "name": "Charge point overload protection active"
+      },
+      "charge_point_dynamic_charging_enabled": {
+        "name": "Charge point dynamic charging enabled"
+      },
+      "charge_point_dynamic_charging_flex_enabled": {
+        "name": "Charge point dynamic charging flex enabled"
+      },
+      "charge_point_dynamic_charging_flex_suppressed": {
+        "name": "Charge point dynamic charging flex suppressed"
+      },
+      "charge_on_solar_enabled": {
+        "name": "Charge on solar enabled"
+      },
+      "backup_power_active": {
+        "name": "Backup power active"
+      }
+    },
+    "button": {
+      "start_charge": {
+        "name": "Start charge"
+      },
+      "stop_charge": {
+        "name": "Stop charge"
+      },
+      "apply_dynamic_charge": {
+        "name": "Apply changes"
+      },
+      "discard_dynamic_charge": {
+        "name": "Cancel changes"
+      },
+      "reset_dynamic_charge": {
+        "name": "Delete planning"
+      }
+    },
+    "number": {
+      "max_discharge_power": {
+        "name": "Max discharge power (Home optimization)"
+      },
+      "max_charge_power": {
+        "name": "Max charge power (Home optimization)"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Desired distance"
+      },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Desired percentage"
+      },
+      "reserve_discharge_cutoff_wh": {
+        "name": "Reserve discharge cutoff"
+      }
+    },
+    "datetime": {
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Departure time"
+      }
+    },
     "select": {
       "battery_control_mode": {
+        "name": "Battery control mode",
         "state": {
           "dynamic_charging": "Dynamic charging",
           "home_optimization": "Home optimization",
           "self_consumption": "Self consumption"
+        }
+      },
+      "charge_point_vehicle": {
+        "name": "Selected car"
+      }
+    }
+  },
+  "services": {
+    "fetch_statistics": {
+      "name": "Fetch history from Zonneplan API",
+      "description": "Refetch statistics from a given date until now, repairing any gaps or incorrect historical values.",
+      "fields": {
+        "endpoint": {
+          "name": "Endpoint",
+          "description": "The data endpoint to refetch statistics for (electricity or gas)."
+        },
+        "start_date": {
+          "name": "Start date",
+          "description": "The date to start refetching from. Accepted formats: YYYYMMDD or YYYY-MM-DD."
+        },
+        "connection_uuid": {
+          "name": "Connection UUID",
+          "description": "Optionally limit the refetch to a specific connection UUID. If omitted, all matching connections are updated (see last part of statistics_id: `zonneplan_one:electricity_delivered_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)."
         }
       }
     }

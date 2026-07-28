@@ -91,14 +91,12 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
         return "processing" not in state
 
     @property
-    def native_value(self) -> datetime:
-        value = self.coordinator.get_data_value(self.entity_description.key.format(install_index=self._install_index))
-        return dt_util.parse_datetime(value) if isinstance(value, str) else None
+    def _value_path(self) -> str:
+        return self.entity_description.key.format(install_index=self._install_index)
+
+    @property
+    def native_value(self) -> datetime | None:
+        return self.coordinator.parse_dynamic_charge_datetime(self.coordinator.get_dynamic_charge_value(self._value_path))
 
     async def async_set_value(self, value: datetime) -> None:
-        self.coordinator.set_data_value(
-            self.entity_description.key.format(install_index=self._install_index),
-            dt_util.as_local(value).isoformat(),
-        )
-
-        await self.coordinator.async_dynamic_charge()
+        self.coordinator.stage_dynamic_charge_value(self._value_path, dt_util.as_local(value).isoformat())
