@@ -28,7 +28,10 @@ def get_price_per_quarter_hour(data: dict) -> dict:
     price_by_quarter_hour = {}
     price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
+        dt = dt_util.parse_datetime(price_data["end_date"])
+        price_data["end_date"] = dt
         dt = dt_util.parse_datetime(price_data["start_date"])
+        price_data["start_date"] = dt
         quarter_dt = dt.replace(minute=(dt.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
         price_by_quarter_hour[quarter_dt] = price_data
     return price_by_quarter_hour
