@@ -22,7 +22,16 @@ def get_prices_by_date_and_hour(prices: dict) -> dict:
 
     price_by_hour = {}
     for price_data in get_price_series_from_chart_data(prices):
-        start_datetime = dt_util.parse_datetime(price_data["start_date"]).astimezone(zonneplan_api_time_zone)
+        if isinstance(price_data["start_date"], str):
+            start_datetime = dt_util.parse_datetime(price_data["start_date"]).astimezone(zonneplan_api_time_zone)
+            price_data["start_date"] = start_datetime
+        else:
+            start_datetime = price_data["start_date"]
+
+        if isinstance(price_data["end_date"], str):
+            end_datetime = dt_util.parse_datetime(price_data["end_date"]).astimezone(zonneplan_api_time_zone)
+            price_data["end_date"] = end_datetime
+
         if start_datetime:
             price_by_hour[start_datetime.strftime("%Y-%m-%d %H")] = price_data
     return price_by_hour
