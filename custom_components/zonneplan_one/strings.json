@@ -398,6 +398,9 @@
       },
       "stop_charge": {
         "name": "Stop charge"
+      },
+      "continue_auto_charging": {
+        "name": "Continue auto charging"
       }
     },
     "number": {
