@@ -29,16 +29,16 @@ def get_price_per_quarter_hour(data: dict) -> dict:
     price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
         if isinstance(price_data["end_date"], str):
-            dtEnd = dt_util.parse_datetime(price_data["end_date"])
-            price_data["end_date"] = dtEnd
+            dt_end = dt_util.parse_datetime(price_data["end_date"])
+            price_data["end_date"] = dt_end
 
         if isinstance(price_data["start_date"], str):
-            dtStart = dt_util.parse_datetime(price_data["start_date"])
-            price_data["start_date"] = dtStart
+            dt_start = dt_util.parse_datetime(price_data["start_date"])
+            price_data["start_date"] = dt_start
         else:
-            dtStart = price_data["start_date"]
+            dt_start = price_data["start_date"]
 
-        quarter_dt = dtStart.replace(minute=(dtStart.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
+        quarter_dt = dt_start.replace(minute=(dt_start.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
         price_by_quarter_hour[quarter_dt] = price_data
     return price_by_quarter_hour
 
