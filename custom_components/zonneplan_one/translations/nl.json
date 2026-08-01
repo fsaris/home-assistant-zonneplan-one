@@ -545,6 +545,9 @@
       },
       "stop_charge": {
         "name": "Stop laden"
+      },
+      "continue_auto_charging": {
+        "name": "Automatisch laden voortzetten"
       }
     },
     "number": {
