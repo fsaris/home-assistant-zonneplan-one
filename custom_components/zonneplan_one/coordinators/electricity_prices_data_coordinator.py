@@ -25,15 +25,17 @@ def get_price_per_hour_by_date(prices: list[dict]) -> dict:
 
 
 def get_price_per_quarter_hour(data: dict) -> dict:
+    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
+
     price_by_quarter_hour = {}
     price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
         if isinstance(price_data["end_date"], str):
-            dt_end = dt_util.parse_datetime(price_data["end_date"])
+            dt_end = dt_util.parse_datetime(price_data["end_date"]).astimezone(zonneplan_api_time_zone)
             price_data["end_date"] = dt_end
 
         if isinstance(price_data["start_date"], str):
-            dt_start = dt_util.parse_datetime(price_data["start_date"])
+            dt_start = dt_util.parse_datetime(price_data["start_date"]).astimezone(zonneplan_api_time_zone)
             price_data["start_date"] = dt_start
         else:
             dt_start = price_data["start_date"]
