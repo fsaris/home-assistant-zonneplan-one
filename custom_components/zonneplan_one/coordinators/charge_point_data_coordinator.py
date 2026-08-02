@@ -172,6 +172,18 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         await self.async_fetch_charge_point_data()
 
+    async def async_continue_auto_charging(self) -> None:
+        await self.api.async_post(
+            self.connection_uuid,
+            "/charge-points/" + self.contract["uuid"] + "/actions/unsuppress_always_flex",
+        )
+
+        self.data["state"]["processing"] = True
+
+        self.async_update_listeners()
+
+        await self.async_fetch_charge_point_data()
+
     def _processing_charge_point_update(self) -> bool:
         processing = self.data.get("state", {}).get("processing")
 

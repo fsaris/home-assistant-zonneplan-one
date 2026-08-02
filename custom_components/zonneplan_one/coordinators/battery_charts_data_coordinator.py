@@ -10,7 +10,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 
 from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
+from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 from ..zonneplan_api.types import ZonneplanContract
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
@@ -27,14 +27,13 @@ def _parse_day_chart(chart_data: Any, month_date: date) -> dict | None:
     meta = group.get("meta") or {}
 
     days: dict[str, Any] = {}
-    tz_ams = dt_util.get_time_zone("Europe/Amsterdam")
     for measurement in measurements:
         measured_at = measurement.get("measured_at")
         dt_value = dt_util.parse_datetime(measured_at) if measured_at else None
         if not dt_value:
             continue
 
-        dt_value = dt_util.as_utc(dt_value).astimezone(tz_ams)
+        dt_value = dt_util.as_utc(dt_value).astimezone(ZONNEPLAN_API_TIME_ZONE)
 
         day_key = dt_value.date().isoformat()
         days[day_key] = {
@@ -62,14 +61,13 @@ def _parse_month_chart(chart_data: Any, year: int) -> dict | None:
     meta = group.get("meta") or {}
 
     months: dict[str, Any] = {}
-    tz_ams = dt_util.get_time_zone("Europe/Amsterdam")
     for measurement in measurements:
         measured_at = measurement.get("measured_at")
         dt_value = dt_util.parse_datetime(measured_at) if measured_at else None
         if not dt_value:
             continue
 
-        dt_value = dt_util.as_utc(dt_value).astimezone(tz_ams)
+        dt_value = dt_util.as_utc(dt_value).astimezone(ZONNEPLAN_API_TIME_ZONE)
 
         month_key = dt_value.date().strftime("%Y-%m")
         months[month_key] = {

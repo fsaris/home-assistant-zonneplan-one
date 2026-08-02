@@ -19,7 +19,6 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
-from pytz import timezone
 
 from .const import (
     BATTERY,
@@ -37,6 +36,7 @@ from .const import (
     P1_GAS,
     PV_INSTALL,
     SENSOR_TYPES,
+    ZONNEPLAN_API_TIME_ZONE,
     ZonneplanSensorEntityDescription,
 )
 from .coordinators.account_data_coordinator import (
@@ -207,9 +207,7 @@ async def add_electricity_sensors(
     _migrate_to_new_unique_id(hass, f"{uuid}_current_electricity_tariff", f"{uuid}_current_tariff")
 
 
-async def add_gas_sensors(
-    entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]
-) -> None:
+async def add_gas_sensors(entities: list[Any], connection: ConnectionCoordinators, uuid: str, hass: HomeAssistant, other_connection_uuids: list[str]) -> None:
     if not connection.gas_prices:
         return
 
@@ -440,9 +438,9 @@ class ZonneplanSensor(CoordinatorEntity, RestoreSensor, ABC):
                 if isinstance(value, str):
                     value = dt_util.parse_datetime(value)
                 elif value > 100000000000000:  # noqa: PLR2004
-                    value = datetime.fromtimestamp(value / 1000000, timezone("Europe/Amsterdam"))
+                    value = datetime.fromtimestamp(value / 1000000, ZONNEPLAN_API_TIME_ZONE)
                 else:
-                    value = datetime.fromtimestamp(value / 1000, timezone("Europe/Amsterdam"))
+                    value = datetime.fromtimestamp(value / 1000, ZONNEPLAN_API_TIME_ZONE)
 
             if self.entity_description.value_factor:
                 value = value * self.entity_description.value_factor

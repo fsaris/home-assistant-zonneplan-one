@@ -1,5 +1,4 @@
 import logging
-import zoneinfo
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
@@ -25,7 +24,6 @@ class ElectricityDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     address_uuid: str
     connection_uuid: str
     contracts: list[ZonneplanContract]
-    _zonneplan_api_time_zone: zoneinfo.ZoneInfo
     _statistics_service: ElectricityStatisticsService
 
     def __init__(

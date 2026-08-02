@@ -55,9 +55,7 @@ class BatteryControlDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             # instead of a 304, which would return None and leave the data empty.
             # Subsequent fetches use etags normally for efficiency.
             has_cached_battery_control = "battery_control_mode" in data
-            battery_control_mode = await self.api.async_get_battery_control_mode(
-                self.contract["uuid"], ignore_etag=not has_cached_battery_control
-            )
+            battery_control_mode = await self.api.async_get_battery_control_mode(self.contract["uuid"], ignore_etag=not has_cached_battery_control)
             if battery_control_mode:
                 data["battery_control_mode"] = battery_control_mode
 

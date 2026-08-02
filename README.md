@@ -163,6 +163,11 @@ _Sensors available if you have a Zonneplan charge point/laadpaal_
 - Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
 - Charge on solar enabled `on/off`
 - Buttons to start/stop charge
+- Button to continue auto charging
+  - Equivalent of _Automatisch laden voortzetten_ in the app. Stopping a manual charge suppresses
+    automatic (Powerplay flex) charging until this is pressed, so the charge point will not pick up
+    cheap/solar charging again on its own.
+  - Only available while `Charge point dynamic charging flex suppressed` is on, mirroring the app.
 
 ### Zonneplan Battery
 _Sensors available if you have a Zonneplan Nexus battery_
@@ -277,12 +282,12 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 
 ```
 {% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
-  | selectattr('start_date', '>', utcnow().isoformat())
-  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
+  | selectattr('start_date', '>', now())
+  | selectattr('start_date', '<', (now() + timedelta(hours = 11)))
   | sort(attribute='price_tax_included.amount')
   | first %}
 
-{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
+{{ cheapest_hour_next_twelve_hours.start_date }}
 ```
 </details>
 
@@ -295,46 +300,34 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41)
 
 ```
-{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
-  | selectattr('start_date', '>', utcnow().isoformat())
-  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
-  | sort(attribute='price_tax_included.amount')
-  | first %}
-
-{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
-
-{%- set timezone_offset = 2 %} {# Verander 2 naar je gewenste offset in uren #}
 {%- set cheapest_hour_next_fifteen_hours =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) |
-selectattr('start_date', '<', (utcnow() + timedelta(hours = 15)).isoformat())
+selectattr('start_date', '>', now() - timedelta(hours = 1)) |
+selectattr('start_date', '<', (now() + timedelta(hours = 15)))
 | sort(attribute='price_tax_included.amount') %}
 {%- if cheapest_hour_next_fifteen_hours | length > 0 %}
   {%- set cheapest_hour = cheapest_hour_next_fifteen_hours | first %}
-  {%- set cheapest_hour_local_time = as_timestamp(as_datetime(cheapest_hour.start_date)) + timezone_offset * 3600 %}
-De goedkoopste tijd is {{ 'vandaag' if as_timestamp(utcnow())|timestamp_custom('%Y-%m-%d') == cheapest_hour_local_time|timestamp_custom('%Y-%m-%d') else 'morgen' }} om {{ (cheapest_hour_local_time)|timestamp_custom('%H') }} uur en kost €{{"{:.3f}".format(cheapest_hour.price_tax_excluded.amount|float/10000000) }}/kWh.
+  De goedkoopste tijd is {{ 'vandaag' if now().strftime('%Y-%m-%d') == cheapest_hour.start_date.strftime('%Y-%m-%d') else 'morgen' }} om {{ cheapest_hour.start_date.strftime('%H') }} uur en kost €{{"{:.3f}".format(cheapest_hour.price_tax_excluded.amount|float/10000000) }}/kWh.
 {% endif %}
 
 {%- set cheapest_forecast =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now()) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='price_tax_excluded.amount') | first %}
 
 {%- set expensive_forecast =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now()) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='price_tax_excluded.amount') | last %}
 
 {%- for forecast in
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now() - timedelta(hours = 1)) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='start_date') %}
-
-{%- set forecast_local_time = as_timestamp(as_datetime(forecast.start_date)) + timezone_offset * 3600 %}
-• {{ (forecast_local_time)|timestamp_custom('%H:%M') }}    €{{ "{:.3f}".format(forecast.price_tax_included.amount / 10000000) }} (€{{ "{:.3f}".format(forecast.price_tax_excluded.amount / 10000000) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
+• {{ forecast.start_date.strftime('%H:%M') }}    €{{ "{:.3f}".format(forecast.price_tax_included.amount / 10000000) }} (€{{ "{:.3f}".format(forecast.price_tax_excluded.amount / 10000000) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
 {%- endfor %}
 ```
 
@@ -346,7 +339,7 @@ _Example:_
 
 ### Forecast graph
 
-
+#### ApexCharts Quarterly Prices
 
 ![Graph example - quarter hourly prices](./images/forecast_quarter_hour.png)
 
@@ -649,6 +642,8 @@ series:
 ```
 </details>
 
+#### Plotly Hourly Prices
+
 ![Graph example - hourly prices](./images/plotly-graph-example.png)
 
 <details>
@@ -791,6 +786,171 @@ entities:
       - 0
       - 1
 
+```
+
+</details>
+
+#### Plotly Quarterly Prices
+
+![Graph example - quarterly prices](./images/forecast_quarter_hour_plotly.png)
+
+<details>
+<summary>Setup graph card</summary>
+
+From [HomeAssistant community](https://community.home-assistant.io/t/zonneplan-one-custom-component/283435/109)
+
+Install the [PlotlyGraph custom component](https://github.com/dbuezas/lovelace-plotly-graph-card) and setup a card with next config:
+
+```
+type: custom:plotly-graph
+hours_to_show: 18h
+refresh_interval: 600
+time_offset: 16h
+disable_pinch_to_zoom: true
+fn: |
+  $fn ({ hass, vars, getFromConfig }) => {
+    const hours_to_show = getFromConfig('hours_to_show');
+    const time_offset = parseInt(getFromConfig('time_offset'));
+    vars.x = []; vars.y = []; vars.color = []; vars.hover = []
+    vars.min = {p: 999,t: null};
+    vars.max = {p:-999,t:null};
+    vars.unit_of_measurement = hass.states['sensor.zonneplan_current_quarter_hourly_electricity_tariff'].attributes.unit_of_measurement
+    vars.now = {t: Date.now(), p: parseFloat(hass.states['sensor.zonneplan_current_quarter_hourly_electricity_tariff'].state)}
+    vars.now.h = "<b>" + vars.now.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @now "
+    vars.avg = { p: 0, c: 0 }
+    let start = new Date();
+    start.setHours(start.getHours() - (hours_to_show - time_offset));
+    let end = new Date();
+    end.setHours(start.getHours() + hours_to_show - 1);
+    hass.states['sensor.zonneplan_current_quarter_hourly_electricity_tariff']?.attributes?.forecast?.map(e => {
+      if (start >= new Date(e.start_date) || end <  new Date(e.end_date)) return;
+      var t = new Date(e.start_date).getTime()
+      var p = e.price_tax_included.amount/10000000
+      vars.avg.p += p
+      vars.avg.c++
+
+      var c = 'rgb(183, 28, 28)';
+      if (p < -0.25) {
+          c = "rgb(0, 135, 189)";
+      } else if (p < 0) {
+          c = "rgb(28, 123, 173)";
+      } else if (p < 0.10) {
+          c = "rgb(56, 142, 60)";
+      } else if (p < 0.15) {
+          c = "rgb(105, 178, 63)";
+      } else if (p < 0.20) {
+          c = "rgb(255, 193, 7)";
+      } else if (p < 0.25) {
+          c = "rgb(255, 160, 0)";
+      } else if (p < 0.30) {
+          c = "rgb(255, 112, 67)";
+      } else if (p < 0.35) {
+          c = "rgb(255, 87, 34)";
+      } else if (p < 0.40) {
+          c = "rgb(211, 47, 47)";
+      }
+
+      if (t>=Date.now()-900000) {
+        if (p<vars.min.p) vars.min = {p,t,c}
+        if (p>vars.max.p) vars.max = {p,t,c}
+      }
+
+      vars.x.push(t)
+      vars.y.push(p)
+      vars.color.push(c)
+      vars.hover.push(String(new Date(t).getHours() + ":" + new Date(t).getMinutes()).padStart(2,"0") + ": " +
+        p.toFixed(3) + "</b> " + vars.unit_of_measurement)
+    })
+    vars.min.h = "<b>" + vars.min.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @ " + new Date(vars.min.t).getHours() + ":" + new Date(vars.min.t).getMinutes();
+    vars.max.h = "<b>" + vars.max.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @ " +  new Date(vars.max.t).getHours() + ":" +  + new Date(vars.min.t).getMinutes();
+    vars.avg.p = vars.avg.p / vars.avg.c
+    vars.avg.h = "<b>" + vars.avg.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " average"
+  }
+layout:
+  margin:
+    l: 40
+    r: 20
+    b: 40
+  dragmode: false
+  clickmode: none
+  legend:
+    itemclick: false
+    itemdoubleclick: false
+  yaxis:
+    fixedrange: false
+    nticks: 10
+    tickformat: .2f
+    range: $fn ({vars}) => [ vars.ymin, vars.ymax ]
+    showgrid: true
+    visible: true
+    showticklabels: true
+    showline: false
+    title: null
+  xaxis:
+    tickformat: "%H"
+    showgrid: false
+    visible: true
+    showticklabels: true
+    showline: false
+    dtick: 3600000
+  bargap: 0.02
+config:
+  displayModeBar: false
+  scrollZoom: false
+  doubleClick: false
+entities:
+  - entity: ""
+    unit_of_measurement: $ex vars.unit_of_measurement
+    showlegend: false
+    x: $ex vars.x
+    "y": $ex vars.y
+    marker:
+      color: $ex vars.color
+    type: bar
+    hovertemplate: $ex vars.hover
+  - entity: ""
+    mode: markers
+    textposition: top
+    showlegend: true
+    name: $ex vars.min.h
+    hovertemplate: $ex vars.min.h
+    yaxis: y0
+    marker:
+      symbol: diamond
+      color: $ex vars.min.c
+      opacity: 0.7
+    x:
+      - $ex vars.min.t
+    "y":
+      - $ex vars.min.p
+  - entity: ""
+    mode: markers
+    textposition: top
+    showlegend: true
+    name: $ex vars.max.h
+    hovertemplate: $ex vars.max.h
+    yaxis: y0
+    marker:
+      symbol: diamond
+      color: $ex vars.max.c
+      opacity: 0.7
+    x:
+      - $ex vars.max.t
+    "y":
+      - $ex vars.max.p
+  - entity: ""
+    name: Now
+    hovertemplate: Now
+    yaxis: y9
+    showlegend: false
+    line:
+      width: 0.5
+      color: gray
+      opacity: 1
+    x: $ex [vars.now.t, vars.now.t]
+    "y":
+      - 0
+      - 1
 ```
 
 </details>
