@@ -69,8 +69,8 @@ class ZonneplanSensorEntityDescription(SensorEntityDescription):
     entity_registry_enabled_default: bool = False
     value_factor: float | None = None
     none_value_behaviour: str = ""
-    attributes: None | list[Attribute] = None
-    last_reset_key: None | str = None
+    attributes: list[Attribute] | None = None
+    last_reset_key: str | None = None
     has_entity_name: bool = True
     key_lambda: Callable[[], str] | None = None
 
@@ -80,7 +80,7 @@ class ZonneplanBinarySensorEntityDescription(BinarySensorEntityDescription):
     """A class that describes Zonneplan binary sensor entities."""
 
     entity_registry_enabled_default: bool = False
-    attributes: None | list[Attribute] = None
+    attributes: list[Attribute] | None = None
     has_entity_name: bool = True
 
 
