@@ -836,7 +836,7 @@ fn: |
     end.setHours(start.getHours() + hours_to_show - 1);
     hass.states['sensor.zonneplan_current_quarter_hourly_electricity_tariff']?.attributes?.forecast?.map(e => {
       if (start >= new Date(e.start_date) || end <  new Date(e.end_date)) return;
-      var t = new Date(e.start_date).getTime()+1800000
+      var t = new Date(e.start_date).getTime()
       var p = e.price_tax_included.amount/10000000
       vars.avg.p += p
       vars.avg.c++
@@ -862,7 +862,7 @@ fn: |
           c = "rgb(211, 47, 47)";
       }
 
-      if (t>=Date.now()-1800000) {
+      if (t>=Date.now()-900000) {
         if (p<vars.min.p) vars.min = {p,t,c}
         if (p>vars.max.p) vars.max = {p,t,c}
       }
