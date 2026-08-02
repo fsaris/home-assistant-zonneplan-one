@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 import homeassistant.util.dt as dt_util
@@ -52,6 +52,8 @@ NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 GAS_NEXT_PRICE_HOUR = 6
 VERSION = "2026.7.2"
+
+ZONNEPLAN_API_TIME_ZONE = dt_util.get_time_zone("Europe/Amsterdam")
 
 
 @dataclass
@@ -108,13 +110,8 @@ class ZonneplanSelectEntityDescription(SelectEntityDescription):
 
 def get_gas_hour(param: str) -> str:
     """Get gas date_hour key."""
-    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
-    now = dt_util.now(zonneplan_api_time_zone)
-    start = (
-        now.replace(hour=GAS_NEXT_PRICE_HOUR)
-        if now.hour >= GAS_NEXT_PRICE_HOUR
-        else (now - timedelta(days=1)).replace(hour=GAS_NEXT_PRICE_HOUR)
-    )
+    now = dt_util.now(ZONNEPLAN_API_TIME_ZONE)
+    start = now.replace(hour=GAS_NEXT_PRICE_HOUR) if now.hour >= GAS_NEXT_PRICE_HOUR else (now - timedelta(days=1)).replace(hour=GAS_NEXT_PRICE_HOUR)
     if param == "next":
         return (start + timedelta(days=1)).strftime("%Y-%m-%d %H")
     return start.strftime("%Y-%m-%d %H")
@@ -160,8 +157,8 @@ SENSOR_TYPES: dict[
             key="usage.sustainability_score",
             key_lambda=lambda: (
                 f"price_per_date_and_quarter_hour.{
-                    datetime.now(UTC)
-                    .replace(minute=(datetime.now(UTC).minute // 15) * 15, second=0, microsecond=0)
+                    datetime.now(ZONNEPLAN_API_TIME_ZONE)
+                    .replace(minute=(datetime.now(ZONNEPLAN_API_TIME_ZONE).minute // 15) * 15, second=0, microsecond=0)
                     .strftime('%Y-%m-%d %H:%M')
                 }.sustainability_score.permille"
             ),
@@ -175,13 +172,13 @@ SENSOR_TYPES: dict[
         ),
         "current_tariff_group": ZonneplanSensorEntityDescription(
             key="current_tariff_group",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Current tariff group",
             translation_key="current_tariff_group",
         ),
         "current_electricity_tariff": ZonneplanSensorEntityDescription(
             key="current_tariff",
-            key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(ZONNEPLAN_API_TIME_ZONE).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Current electricity tariff",
             translation_key="current_electricity_tariff",
             icon="mdi:cash",
@@ -200,8 +197,8 @@ SENSOR_TYPES: dict[
             key="quarter_hourly_electricity_price",
             key_lambda=lambda: (
                 f"price_per_date_and_quarter_hour.{
-                    datetime.now(UTC)
-                    .replace(minute=(datetime.now(UTC).minute // 15) * 15, second=0, microsecond=0)
+                    datetime.now(ZONNEPLAN_API_TIME_ZONE)
+                    .replace(minute=(datetime.now(ZONNEPLAN_API_TIME_ZONE).minute // 15) * 15, second=0, microsecond=0)
                     .strftime('%Y-%m-%d %H:%M')
                 }.price_tax_included.amount"
             ),
@@ -222,7 +219,7 @@ SENSOR_TYPES: dict[
         ),
         "current_hourly_electricity_tariff": ZonneplanSensorEntityDescription(
             key="hourly_electricity_price",
-            key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(UTC).strftime('%Y-%m-%d %H')}.electricity_price",
+            key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(ZONNEPLAN_API_TIME_ZONE).strftime('%Y-%m-%d %H')}.electricity_price",
             name="Current hourly electricity tariff",
             translation_key="current_hourly_electricity_tariff",
             icon="mdi:cash",
@@ -240,7 +237,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_1": ZonneplanSensorEntityDescription(
             key="forecast_tariff_1",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 1",
             translation_key="forecast_tariff_hour_1",
@@ -252,7 +249,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_2": ZonneplanSensorEntityDescription(
             key="forecast_tariff_2",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 2",
             translation_key="forecast_tariff_hour_2",
@@ -264,7 +261,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_3": ZonneplanSensorEntityDescription(
             key="forecast_tariff_3",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 3",
             translation_key="forecast_tariff_hour_3",
@@ -276,7 +273,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_4": ZonneplanSensorEntityDescription(
             key="forecast_tariff_4",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 4",
             translation_key="forecast_tariff_hour_4",
@@ -288,7 +285,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_5": ZonneplanSensorEntityDescription(
             key="forecast_tariff_5",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 5",
             translation_key="forecast_tariff_hour_5",
@@ -300,7 +297,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_6": ZonneplanSensorEntityDescription(
             key="forecast_tariff_6",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 6",
             translation_key="forecast_tariff_hour_6",
@@ -312,7 +309,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_7": ZonneplanSensorEntityDescription(
             key="forecast_tariff_7",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 7",
             translation_key="forecast_tariff_hour_7",
@@ -324,7 +321,7 @@ SENSOR_TYPES: dict[
         "forecast_tariff_8": ZonneplanSensorEntityDescription(
             key="forecast_tariff_8",
             key_lambda=lambda: (
-                f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.electricity_price"
+                f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.electricity_price"
             ),
             name="Forecast tariff hour 8",
             translation_key="forecast_tariff_hour_8",
@@ -335,50 +332,50 @@ SENSOR_TYPES: dict[
         ),
         "forecast_tariff_group_1": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_1",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=1)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 1",
             translation_key="forecast_tariff_group_hour_1",
             icon="mdi:cash",
         ),
         "forecast_tariff_group_2": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_2",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=2)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 2",
             translation_key="forecast_tariff_group_hour_2",
         ),
         "forecast_tariff_group_3": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_3",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=3)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 3",
             translation_key="forecast_tariff_group_hour_3",
         ),
         "forecast_tariff_group_4": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_4",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=4)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 4",
             translation_key="forecast_tariff_group_hour_4",
         ),
         "forecast_tariff_group_5": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_5",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=5)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 5",
             translation_key="forecast_tariff_group_hour_5",
         ),
         "forecast_tariff_group_6": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_6",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=6)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 6",
             translation_key="forecast_tariff_group_hour_6",
         ),
         "forecast_tariff_group_7": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_7",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=7)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 7",
             translation_key="forecast_tariff_group_hour_7",
         ),
         "forecast_tariff_group_8": ZonneplanSensorEntityDescription(
             key="forecast_tariff_group_8",
-            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(UTC) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.tariff_group",
+            key_lambda=lambda: f"price_per_date_and_hour.{(datetime.now(ZONNEPLAN_API_TIME_ZONE) + timedelta(hours=8)).strftime('%Y-%m-%d %H')}.tariff_group",
             name="Forecast tariff group hour 8",
             translation_key="forecast_tariff_group_hour_8",
         ),

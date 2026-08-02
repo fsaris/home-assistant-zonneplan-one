@@ -1,5 +1,5 @@
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
 import homeassistant.util.dt as dt_util
@@ -10,7 +10,7 @@ from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_track_point_in_utc_time
 
 from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
+from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 from ..zonneplan_api.types import ZonneplanContract
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
@@ -22,23 +22,18 @@ def get_prices_by_date_and_hour(prices: list[dict]) -> dict:
     for price_data in prices:
         start_datetime = price_data["start_date"]
         if start_datetime:
-            price_by_hour[start_datetime.astimezone(UTC).strftime("%Y-%m-%d %H")] = price_data
+            price_by_hour[start_datetime.strftime("%Y-%m-%d %H")] = price_data
     return price_by_hour
 
 
 def get_price_series_from_chart_data(data: dict) -> list[dict]:
-    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
     prices = data.get("chart", {}).get("series", {}).get("prices", [])
     date_fields = ["start_date", "end_date"]
 
     return [
         {
             **price_data,
-            **{
-                field: dt_util.parse_datetime(price_data[field]).astimezone(zonneplan_api_time_zone)
-                for field in date_fields
-                if price_data.get(field)
-            },
+            **{field: dt_util.parse_datetime(price_data[field]).astimezone(ZONNEPLAN_API_TIME_ZONE) for field in date_fields if price_data.get(field)},
         }
         for price_data in prices
     ]
