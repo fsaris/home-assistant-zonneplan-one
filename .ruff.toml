@@ -22,6 +22,7 @@ ignore = [
     "D107", # Missing docstring in `__init__`
     "TID252", # Prefer absolute imports over relative imports from parent modules
     "FBT003", # Boolean positional value in function call
+    "CPY001", # Ignore copyright header check
 ]
 
 [lint.pylint]
