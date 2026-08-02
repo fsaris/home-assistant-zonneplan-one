@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 
 import homeassistant.util.dt as dt_util
@@ -17,28 +17,31 @@ from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_prices_by_date_and_hour(prices: dict) -> dict:
-    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
-
+def get_prices_by_date_and_hour(prices: list[dict]) -> dict:
     price_by_hour = {}
-    for price_data in get_price_series_from_chart_data(prices):
-        if isinstance(price_data["start_date"], str):
-            start_datetime = dt_util.parse_datetime(price_data["start_date"]).astimezone(zonneplan_api_time_zone)
-            price_data["start_date"] = start_datetime
-        else:
-            start_datetime = price_data["start_date"]
-
-        if isinstance(price_data["end_date"], str):
-            end_datetime = dt_util.parse_datetime(price_data["end_date"]).astimezone(zonneplan_api_time_zone)
-            price_data["end_date"] = end_datetime
-
+    for price_data in prices:
+        start_datetime = price_data["start_date"]
         if start_datetime:
-            price_by_hour[start_datetime.strftime("%Y-%m-%d %H")] = price_data
+            price_by_hour[start_datetime.astimezone(UTC).strftime("%Y-%m-%d %H")] = price_data
     return price_by_hour
 
 
 def get_price_series_from_chart_data(data: dict) -> list[dict]:
-    return data.get("chart", {}).get("series", {}).get("prices", [])
+    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
+    prices = data.get("chart", {}).get("series", {}).get("prices", [])
+    date_fields = ["start_date", "end_date"]
+
+    return [
+        {
+            **price_data,
+            **{
+                field: dt_util.parse_datetime(price_data[field]).astimezone(zonneplan_api_time_zone)
+                for field in date_fields
+                if price_data.get(field)
+            },
+        }
+        for price_data in prices
+    ]
 
 
 class GasPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
@@ -79,8 +82,9 @@ class GasPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             data = {}
             gas_daily = await self.api.async_get_consumer_prices("gas-daily")
             if gas_daily:
-                data["gas_prices"] = get_prices_by_date_and_hour(gas_daily)
-                data["forecast"] = get_price_series_from_chart_data(gas_daily)
+                prices = get_price_series_from_chart_data(gas_daily)
+                data["gas_prices"] = get_prices_by_date_and_hour(prices)
+                data["forecast"] = prices
 
                 if not self._unsub_hour_update:
                     self._schedule_hourly_listener_update()

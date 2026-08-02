@@ -282,12 +282,12 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 
 ```
 {% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
-  | selectattr('start_date', '>', utcnow().isoformat())
-  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
+  | selectattr('start_date', '>', now())
+  | selectattr('start_date', '<', (now() + timedelta(hours = 11)))
   | sort(attribute='price_tax_included.amount')
   | first %}
 
-{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
+{{ cheapest_hour_next_twelve_hours.start_date }}
 ```
 </details>
 
@@ -300,46 +300,34 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41)
 
 ```
-{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
-  | selectattr('start_date', '>', utcnow().isoformat())
-  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
-  | sort(attribute='price_tax_included.amount')
-  | first %}
-
-{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
-
-{%- set timezone_offset = 2 %} {# Verander 2 naar je gewenste offset in uren #}
 {%- set cheapest_hour_next_fifteen_hours =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) |
-selectattr('start_date', '<', (utcnow() + timedelta(hours = 15)).isoformat())
+selectattr('start_date', '>', now() - timedelta(hours = 1)) |
+selectattr('start_date', '<', (now() + timedelta(hours = 15)))
 | sort(attribute='price_tax_included.amount') %}
 {%- if cheapest_hour_next_fifteen_hours | length > 0 %}
   {%- set cheapest_hour = cheapest_hour_next_fifteen_hours | first %}
-  {%- set cheapest_hour_local_time = as_timestamp(as_datetime(cheapest_hour.start_date)) + timezone_offset * 3600 %}
-De goedkoopste tijd is {{ 'vandaag' if as_timestamp(utcnow())|timestamp_custom('%Y-%m-%d') == cheapest_hour_local_time|timestamp_custom('%Y-%m-%d') else 'morgen' }} om {{ (cheapest_hour_local_time)|timestamp_custom('%H') }} uur en kost €{{"{:.3f}".format(cheapest_hour.price_tax_excluded.amount|float/10000000) }}/kWh.
+  De goedkoopste tijd is {{ 'vandaag' if now().strftime('%Y-%m-%d') == cheapest_hour.start_date.strftime('%Y-%m-%d') else 'morgen' }} om {{ cheapest_hour.start_date.strftime('%H') }} uur en kost €{{"{:.3f}".format(cheapest_hour.price_tax_excluded.amount|float/10000000) }}/kWh.
 {% endif %}
 
 {%- set cheapest_forecast =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now()) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='price_tax_excluded.amount') | first %}
 
 {%- set expensive_forecast =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now()) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='price_tax_excluded.amount') | last %}
 
 {%- for forecast in
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now() - timedelta(hours = 1)) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='start_date') %}
-
-{%- set forecast_local_time = as_timestamp(as_datetime(forecast.start_date)) + timezone_offset * 3600 %}
-• {{ (forecast_local_time)|timestamp_custom('%H:%M') }}    €{{ "{:.3f}".format(forecast.price_tax_included.amount / 10000000) }} (€{{ "{:.3f}".format(forecast.price_tax_excluded.amount / 10000000) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
+• {{ forecast.start_date.strftime('%H:%M') }}    €{{ "{:.3f}".format(forecast.price_tax_included.amount / 10000000) }} (€{{ "{:.3f}".format(forecast.price_tax_excluded.amount / 10000000) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
 {%- endfor %}
 ```
 

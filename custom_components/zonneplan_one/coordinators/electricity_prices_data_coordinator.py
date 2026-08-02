@@ -25,22 +25,11 @@ def get_price_per_hour_by_date(prices: list[dict]) -> dict:
 
 
 def get_price_per_quarter_hour(data: dict) -> dict:
-    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
-
     price_by_quarter_hour = {}
     price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
-        if isinstance(price_data["end_date"], str):
-            dt_end = dt_util.parse_datetime(price_data["end_date"]).astimezone(zonneplan_api_time_zone)
-            price_data["end_date"] = dt_end
-
-        if isinstance(price_data["start_date"], str):
-            dt_start = dt_util.parse_datetime(price_data["start_date"]).astimezone(zonneplan_api_time_zone)
-            price_data["start_date"] = dt_start
-        else:
-            dt_start = price_data["start_date"]
-
-        quarter_dt = dt_start.replace(minute=(dt_start.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
+        dt = price_data["start_date"]
+        quarter_dt = dt.replace(minute=(dt.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
         price_by_quarter_hour[quarter_dt] = price_data
     return price_by_quarter_hour
 
@@ -51,8 +40,8 @@ def get_energy_price(data: dict, dt: datetime | None = None) -> int | None:
     price = None
     price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
-        start_datetime = dt_util.parse_datetime(price_data["start_date"])
-        end_datetime = dt_util.parse_datetime(price_data["end_date"])
+        start_datetime = price_data["start_date"]
+        end_datetime = price_data["end_date"]
         if start_datetime <= dt < end_datetime:
             price = price_data["price_tax_included"]["amount"]
             break
@@ -60,14 +49,28 @@ def get_energy_price(data: dict, dt: datetime | None = None) -> int | None:
 
 
 def get_price_series_from_chart_data(data: dict) -> list[dict]:
-    return data.get("chart", {}).get("series", {}).get("prices", [])
+    zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
+    prices = data.get("chart", {}).get("series", {}).get("prices", [])
+    date_fields = ["start_date", "end_date"]
+
+    return [
+        {
+            **price_data,
+            **{
+                field: dt_util.parse_datetime(price_data[field]).astimezone(zonneplan_api_time_zone)
+                for field in date_fields
+                if price_data.get(field)
+            },
+        }
+        for price_data in prices
+    ]
 
 
-def prepare_prices(data: dict) -> list[dict]:
+def prepare_legacy_prices(data: dict) -> list[dict]:
     prices = []
     price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
-        start_datetime = dt_util.parse_datetime(price_data["start_date"])
+        start_date = price_data["start_date"]
         price = price_data["price_tax_included"]["amount"]
         price_excl_tax = price_data["price_tax_excluded"]["amount"]
 
@@ -128,7 +131,7 @@ class ElectricityPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             if hourly:
                 price_data["hourly"] = hourly
-                legacy_hourly_electricity_prices = prepare_prices(hourly)
+                legacy_hourly_electricity_prices = prepare_legacy_prices(hourly)
                 price_data["legacy_price_per_hour"] = legacy_hourly_electricity_prices
                 price_data["price_per_date_and_hour"] = get_price_per_hour_by_date(legacy_hourly_electricity_prices)
                 price_data["price_per_hour"] = get_price_series_from_chart_data(hourly)
