@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 def get_price_per_hour_by_date(prices: list[dict]) -> dict:
     price_by_hour = {}
     for price_info in prices:
-        price_by_hour[price_info["datetime"].strftime("%Y-%m-%d %H")] = price_info
+        price_by_hour[price_info["start_date"].astimezone(UTC).strftime("%Y-%m-%d %H")] = price_info
     return price_by_hour
 
 
@@ -75,7 +75,8 @@ def prepare_legacy_prices(data: dict) -> list[dict]:
         price_excl_tax = price_data["price_tax_excluded"]["amount"]
 
         price_info = {
-            "datetime": start_datetime,
+            "start_date": start_date,
+            "datetime": start_date.astimezone(UTC).isoformat(),
             "electricity_price": price,
             "electricity_price_excl_tax": price_excl_tax,
         }
