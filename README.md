@@ -168,6 +168,15 @@ _Sensors available if you have a Zonneplan charge point/laadpaal_
     automatic (Powerplay flex) charging until this is pressed, so the charge point will not pick up
     cheap/solar charging again on its own.
   - Only available while `Charge point dynamic charging flex suppressed` is on, mirroring the app.
+- Configuration options to set the dynamic charge plan
+
+  The plan will be set when a vehicle is selected, a desired distance or battery percentage is set and a desired end time is set.
+  - Select vehicle
+  - Desired distance `slider in: km`
+  - Desired battery percentage `slider in: %`
+  - Desired end time `datetime`
+  - Button to reset/delete the dynamic charge plan
+
 
 ### Zonneplan Battery
 _Sensors available if you have a Zonneplan Nexus battery_
