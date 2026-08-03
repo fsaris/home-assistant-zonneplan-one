@@ -10,7 +10,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_call_later
 
-from ..api import AsyncConfigEntryAuth
+from ..api import AsyncConfigEntryAuth, ZonneplanRateLimitError
 from ..const import DOMAIN
 from ..zonneplan_api.types import ZonneplanContract
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
@@ -176,6 +176,30 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         await self.api.async_post(
             self.connection_uuid,
             "/charge-points/" + self.contract["uuid"] + "/actions/unsuppress_always_flex",
+        )
+
+        self.data["state"]["processing"] = True
+
+        self.async_update_listeners()
+
+        await self.async_fetch_charge_point_data()
+
+    async def async_reset_dynamic_charge(self) -> None:
+        # The app stops a running dynamic session before clearing the planning; mirror that order.
+        # A planning scheduled for later has nothing to stop, so tolerate that rejection and still reset.
+        try:
+            await self.api.async_post(
+                self.connection_uuid,
+                "/charge-points/" + self.contract["uuid"] + "/actions/stop_dynamic_charging_session",
+            )
+        except ZonneplanRateLimitError:
+            raise
+        except ClientResponseError as e:
+            _LOGGER.debug("Could not stop the dynamic charge session before reset (%s); continuing", e.status)
+
+        await self.api.async_post(
+            self.connection_uuid,
+            "/charge-points/" + self.contract["uuid"] + "/actions/reset_schedule",
         )
 
         self.data["state"]["processing"] = True

@@ -423,6 +423,9 @@
       "charge_point_dynamic_load_desired_distance": {
         "name": "Laadpaal dynamic load gewenste afstand"
       },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Laadpaal dynamic load gewenst percentage"
+      },
       "charge_point_dynamic_load_desired_end_time": {
         "name": "Laadpaal dynamic load gewenste eindtijd"
       },
@@ -447,7 +450,7 @@
       "production_costs_this_month": {
         "name": "Netto teruggeleverd deze maand"
       },
-      "production_costs__this_monthexcl_tax": {
+      "production_costs_this_monthexcl_tax": {
         "name": "Netto teruggeleverd deze maand (excl. btw)"
       },
       "production_costs_this_year": {
@@ -553,8 +556,8 @@
       "continue_auto_charging": {
         "name": "Automatisch laden voortzetten"
       },
-      "dynamic_charge": {
-        "name": "Start laden (percentage)"
+      "reset_dynamic_charge": {
+        "name": "Laadplan verwijderen"
       }
     },
     "number": {

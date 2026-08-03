@@ -294,6 +294,9 @@
       "charge_point_dynamic_load_desired_distance": {
         "name": "Charge point dynamic load desired distance"
       },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Charge point dynamic load desired additional battery percentage"
+      },
       "charge_point_dynamic_load_desired_end_time": {
         "name": "Charge point dynamic load desired end time"
       },
@@ -406,8 +409,8 @@
       "continue_auto_charging": {
         "name": "Continue auto charging"
       },
-      "dynamic_charge": {
-        "name": "Dynamic charge (percentage)"
+      "reset_dynamic_charge": {
+        "name": "Reset dynamic charge plan"
       }
     },
     "number": {

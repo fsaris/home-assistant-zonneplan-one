@@ -23,6 +23,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.const import (
     CURRENCY_EURO,
+    EntityCategory,
     UnitOfEnergy,
     UnitOfLength,
     UnitOfPower,
@@ -1637,6 +1638,13 @@ BUTTON_TYPES: dict[str, dict[str, ZonneplanButtonEntityDescription]] = {
             name="Continue auto charging",
             translation_key="continue_auto_charging",
         ),
+        "reset_dynamic_charge": ZonneplanButtonEntityDescription(
+            key="charge_point.reset_dynamic_charge",
+            name="Reset dynamic charge plan",
+            translation_key="reset_dynamic_charge",
+            icon="mdi:calendar-remove-outline",
+            entity_category=EntityCategory.CONFIG,
+        ),
     },
 }
 
@@ -1681,6 +1689,7 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
             native_max_value=100,
             native_min_value=5,
             value_factor=0.1,
+            entity_category=EntityCategory.CONFIG,
         ),
         "dynamic_charging_user_constraints.desired_distance_in_kilometers": ZonneplanNumberEntityDescription(
             key="state.dynamic_charging_user_constraints.desired_distance_in_kilometers",
@@ -1690,6 +1699,7 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
             native_unit_of_measurement=UnitOfLength.KILOMETERS,
             entity_registry_enabled_default=True,
             native_max_value=500,  # will be updated later to match the vehicle
+            entity_category=EntityCategory.CONFIG,
         ),
     },
 }
@@ -1709,6 +1719,7 @@ SELECT_TYPES = {
             name="Charge point vehicle",
             translation_key="charge_point_vehicle",
             icon="mdi:car-electric",
+            entity_category=EntityCategory.CONFIG,
         )
     },
 }
@@ -1720,6 +1731,7 @@ DATETIME_TYPE = {
             name="Charge point dynamic load desired end time",
             translation_key="charge_point_dynamic_load_desired_end_time",
             entity_registry_enabled_default=True,
+            entity_category=EntityCategory.CONFIG,
         ),
     }
 }
