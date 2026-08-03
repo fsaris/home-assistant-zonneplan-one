@@ -209,14 +209,18 @@ class ZonneplanOAuth2Implementation(config_entry_oauth2_flow.AbstractOAuth2Imple
         return await self._api.async_request_temp_pass(email)
 
     async def async_resolve_external_data(self, external_data: Any) -> dict:
-        """Resolve external data to tokens."""
-        token = await self._api.async_get_temp_pass(external_data["email"], external_data["uuid"])
-        if not token:
-            _LOGGER.error("Could not get token")
-            msg = "Could not get token"
-            raise ZonneplanApiError(msg)
+        """
+        Not used.
 
-        return token
+        Token resolution happens via ZonneplanApi.async_get_temp_pass
+        polling in the config flow, not via the external callback.
+        """
+        msg = "ZonneplanOAuth2Implementation uses email + polling, not a redirect flow"
+        raise NotImplementedError(msg)
+
+    async def async_resolve_token_by_temp_pass(self, email: str, uuid: str) -> dict | None:
+        """Resolve external data to tokens."""
+        return await self._api.async_get_temp_pass(email, uuid)
 
     async def _async_refresh_token(self, token: dict) -> dict:
         """Refresh a token."""

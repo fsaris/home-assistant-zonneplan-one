@@ -12,7 +12,7 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
 - [Installation](#installation)
 - [Setup](#setup)
 - [Setup Energy Dashboard](#setup-energy-dashboard)
-- [Using full forecast in graphs, tables and/or automations](#using-full-forecast-in-graphs-tables-andor-automations)
+- [Using full forecast in graphs, tables and/or automations (blueprints)](#using-full-forecast-in-graphs-tables-andor-automations)
 - [Troubleshooting](#troubleshooting)
 
 ## Available devices/sensors
@@ -271,6 +271,11 @@ The full forecast is available as attributes of the `Current quarter hourly elec
 Zonneplan doesn't deliver a constant set of forecast values.
 
 Using a helper you can turn this data into a single "cheapest price at" sensor. Or with some template magic you can turn it in a nice table so shown on your dashboard. Or fill a graph like shown in the official app.
+
+### Automations/Blueprints
+
+For some ready to use automations see the blueprints in [blueprints](./blueprints) folder.
+
 
 ### Cheapest price sensor
 <details>
