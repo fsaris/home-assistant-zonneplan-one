@@ -103,6 +103,10 @@ _Sensors available if you have a Zonneplan Electricity contract._
 - Current usage: `W` _(default disabled)_
 - Current usage measured at: `date` _(default disabled)_
 - Current tariff group _(**deprecated**, default disabled)_
+- Cheapest hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
+- Most expensive hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
+- Cheapest quarter-hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
+- Most expensive quarter-hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
 - Sustainability score
 - Status message _(default disabled)_
 - Status tip

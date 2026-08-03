@@ -245,6 +245,70 @@ SENSOR_TYPES: dict[
                 )
             ],
         ),
+        "cheapest_hour_today": ZonneplanSensorEntityDescription(
+            key="todays_prices_per_hour_ordered.0.price_tax_included.amount",
+            name="Cheapest hourly electricity tariff today",
+            translation_key="cheapest_hour_today",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            attributes=[
+                Attribute(
+                    key="todays_prices_per_hour_ordered.0",
+                    label="details",
+                )
+            ],
+        ),
+        "most_expensive_hour_today": ZonneplanSensorEntityDescription(
+            key="todays_prices_per_hour_ordered.-1.price_tax_included.amount",
+            name="Most expensive hourly electricity tariff today",
+            translation_key="most_expensive_hour_today",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            attributes=[
+                Attribute(
+                    key="todays_prices_per_hour_ordered.-1",
+                    label="details",
+                )
+            ],
+        ),
+        "cheapest_quarter_hour_today": ZonneplanSensorEntityDescription(
+            key="todays_prices_per_quarter_hour_ordered.0.price_tax_included.amount",
+            name="Cheapest quarter-hourly electricity tariff today",
+            translation_key="cheapest_quarter_hour_today",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            attributes=[
+                Attribute(
+                    key="todays_prices_per_quarter_hour_ordered.0",
+                    label="details",
+                )
+            ],
+        ),
+        "most_expensive_quarter_hour_today": ZonneplanSensorEntityDescription(
+            key="todays_prices_per_quarter_hour_ordered.-1.price_tax_included.amount",
+            name="Most expensive quarter-hourly electricity tariff today",
+            translation_key="most_expensive_quarter_hour_today",
+            icon="mdi:cash",
+            value_factor=0.0000001,
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            attributes=[
+                Attribute(
+                    key="todays_prices_per_quarter_hour_ordered.-1",
+                    label="details",
+                )
+            ],
+        ),
         "forecast_tariff_1": ZonneplanSensorEntityDescription(
             key="forecast_tariff_1",
             key_lambda=lambda: (

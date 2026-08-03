@@ -57,6 +57,18 @@
       "current_hourly_electricity_tariff": {
         "name": "Current hourly electricity tariff"
       },
+      "cheapest_hour_today": {
+        "name": "Cheapest hour today"
+      },
+      "most_expensive_hour_today": {
+        "name": "Most expensive hour today"
+      },
+      "cheapest_quarter_hour_today": {
+        "name": "Cheapest quarter-hour today"
+      },
+      "most_expensive_quarter_hour_today": {
+        "name": "Most expensive quarter-hour today"
+      },
       "current_gas_tariff": {
         "name": "Current gas tariff"
       },

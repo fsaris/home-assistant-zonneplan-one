@@ -24,9 +24,8 @@ def get_price_per_hour_by_date(prices: list[dict]) -> dict:
     return price_by_hour
 
 
-def get_price_per_quarter_hour(data: dict) -> dict:
+def get_price_per_quarter_hour(price_series: list[dict]) -> dict:
     price_by_quarter_hour = {}
-    price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
         dt = price_data["start_date"]
         quarter_dt = dt.replace(minute=(dt.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
@@ -61,9 +60,16 @@ def get_price_series_from_chart_data(data: dict) -> list[dict]:
     ]
 
 
-def prepare_legacy_prices(data: dict) -> list[dict]:
+def filter_and_sort_today(data: list[dict]) -> list[dict]:
+    today = dt_util.now(ZONNEPLAN_API_TIME_ZONE).date()
+
+    todays_items = [item for item in data if item["start_date"].date() == today]
+
+    return sorted(todays_items, key=lambda item: item["price_tax_included"]["amount"])
+
+
+def prepare_legacy_prices(price_series: list[dict]) -> list[dict]:
     prices = []
-    price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
         start_date = price_data["start_date"]
         price = price_data["price_tax_included"]["amount"]
@@ -127,14 +133,18 @@ class ElectricityPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             if hourly:
                 price_data["hourly"] = hourly
-                legacy_hourly_electricity_prices = prepare_legacy_prices(hourly)
+                price_series = get_price_series_from_chart_data(hourly)
+                legacy_hourly_electricity_prices = prepare_legacy_prices(price_series)
                 price_data["legacy_price_per_hour"] = legacy_hourly_electricity_prices
                 price_data["price_per_date_and_hour"] = get_price_per_hour_by_date(legacy_hourly_electricity_prices)
-                price_data["price_per_hour"] = get_price_series_from_chart_data(hourly)
+                price_data["price_per_hour"] = price_series
+                price_data["todays_prices_per_hour_ordered"] = filter_and_sort_today(price_series)
             if quarter_hourly:
                 price_data["quarter_hourly"] = quarter_hourly
-                price_data["price_per_date_and_quarter_hour"] = get_price_per_quarter_hour(quarter_hourly)
-                price_data["price_per_quarter_hour"] = get_price_series_from_chart_data(quarter_hourly)
+                price_series = get_price_series_from_chart_data(quarter_hourly)
+                price_data["price_per_date_and_quarter_hour"] = get_price_per_quarter_hour(price_series)
+                price_data["price_per_quarter_hour"] = price_series
+                price_data["todays_prices_per_quarter_hour_ordered"] = filter_and_sort_today(price_series)
 
             if not self._unsub_quarter_hour_update:
                 self._schedule_quarter_hourly_listener_update()

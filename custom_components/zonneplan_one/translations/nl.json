@@ -62,6 +62,18 @@
       "current_hourly_electricity_tariff": {
         "name": "Huidig uur elektriciteitstarief"
       },
+      "cheapest_hour_today": {
+        "name": "Goedkoopste uur vandaag"
+      },
+      "most_expensive_hour_today": {
+        "name": "Duurste uur vandaag"
+      },
+      "cheapest_quarter_hour_today": {
+        "name": "Goedkoopste kwartier vandaag"
+      },
+      "most_expensive_quarter_hour_today": {
+        "name": "Duurste kwartier vandaag"
+      },
       "current_gas_tariff": {
         "name": "Huidig gastarief"
       },
