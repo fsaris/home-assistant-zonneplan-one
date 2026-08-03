@@ -8,6 +8,7 @@ insert_final_newline = true
 # Remove trailing whitespace (matches "files.trimTrailingWhitespace": true)
 trim_trailing_whitespace = true
 charset = utf-8
+max_line_length = 160
 
 [*.{py,pyi}]
 # Python specific settings (matches "editor.tabSize": 4)

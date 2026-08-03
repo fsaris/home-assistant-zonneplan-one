@@ -3,7 +3,6 @@
 import logging
 from datetime import datetime
 
-import homeassistant.util.dt as dt_util
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import (
@@ -19,6 +18,7 @@ from .const import (
     DOMAIN,
     ELECTRICITY,
     GAS,
+    ZONNEPLAN_API_TIME_ZONE,
 )
 
 SERVICE_FETCH_STATISTICS = "fetch_statistics"
@@ -50,11 +50,10 @@ def async_setup_fetch_statistics_service(hass: HomeAssistant) -> None:
         start_date_str: str = call.data[_ATTR_START_DATE]
         connection_uuid_filter: str | None = call.data.get(_ATTR_CONNECTION_UUID)
 
-        amsterdam_tz = dt_util.get_time_zone("Europe/Amsterdam")
         start_date: datetime | None = None
         for fmt in _DATE_FORMATS:
             try:
-                start_date = datetime.strptime(start_date_str, fmt).replace(tzinfo=amsterdam_tz)
+                start_date = datetime.strptime(start_date_str, fmt).replace(tzinfo=ZONNEPLAN_API_TIME_ZONE)
                 break
             except ValueError:
                 continue

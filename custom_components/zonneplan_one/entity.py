@@ -1,4 +1,4 @@
-"""Zonneplan Battery Entity."""
+"""Zonneplan Base Entity."""
 
 from typing import Protocol
 
@@ -132,12 +132,8 @@ class PvEntity:
                 + "Wp"
             )
             device_info["serial_number"] = self.coordinator.contracts[self._install_index]["meta"].get("sgn_serial_number", "")
-            device_info["sw_version"] = (
-                self.coordinator.contracts[self._install_index]["meta"].get("module_firmware_version", "") or "unknown"
-            )
-            device_info["hw_version"] = (
-                self.coordinator.contracts[self._install_index]["meta"].get("inverter_firmware_version", "") or "unknown"
-            )
+            device_info["sw_version"] = self.coordinator.contracts[self._install_index]["meta"].get("module_firmware_version", "") or "unknown"
+            device_info["hw_version"] = self.coordinator.contracts[self._install_index]["meta"].get("inverter_firmware_version", "") or "unknown"
 
         return device_info
 

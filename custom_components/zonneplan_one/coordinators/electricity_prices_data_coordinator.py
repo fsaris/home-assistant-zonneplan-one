@@ -10,7 +10,7 @@ from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_track_point_in_utc_time
 
 from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
+from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 from ..zonneplan_api.types import ZonneplanContract
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
@@ -20,15 +20,14 @@ _LOGGER = logging.getLogger(__name__)
 def get_price_per_hour_by_date(prices: list[dict]) -> dict:
     price_by_hour = {}
     for price_info in prices:
-        price_by_hour[price_info["datetime"].strftime("%Y-%m-%d %H")] = price_info
+        price_by_hour[price_info["start_date"].strftime("%Y-%m-%d %H")] = price_info
     return price_by_hour
 
 
-def get_price_per_quarter_hour(data: dict) -> dict:
+def get_price_per_quarter_hour(price_series: list[dict]) -> dict:
     price_by_quarter_hour = {}
-    price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
-        dt = dt_util.parse_datetime(price_data["start_date"])
+        dt = price_data["start_date"]
         quarter_dt = dt.replace(minute=(dt.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
         price_by_quarter_hour[quarter_dt] = price_data
     return price_by_quarter_hour
@@ -40,8 +39,8 @@ def get_energy_price(data: dict, dt: datetime | None = None) -> int | None:
     price = None
     price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
-        start_datetime = dt_util.parse_datetime(price_data["start_date"])
-        end_datetime = dt_util.parse_datetime(price_data["end_date"])
+        start_datetime = price_data["start_date"]
+        end_datetime = price_data["end_date"]
         if start_datetime <= dt < end_datetime:
             price = price_data["price_tax_included"]["amount"]
             break
@@ -49,19 +48,36 @@ def get_energy_price(data: dict, dt: datetime | None = None) -> int | None:
 
 
 def get_price_series_from_chart_data(data: dict) -> list[dict]:
-    return data.get("chart", {}).get("series", {}).get("prices", [])
+    prices = data.get("chart", {}).get("series", {}).get("prices", [])
+    date_fields = ["start_date", "end_date"]
+
+    return [
+        {
+            **price_data,
+            **{field: dt_util.parse_datetime(price_data[field]).astimezone(ZONNEPLAN_API_TIME_ZONE) for field in date_fields if price_data.get(field)},
+        }
+        for price_data in prices
+    ]
 
 
-def prepare_prices(data: dict) -> list[dict]:
+def filter_and_sort_today(data: list[dict]) -> list[dict]:
+    today = dt_util.now(ZONNEPLAN_API_TIME_ZONE).date()
+
+    todays_items = [item for item in data if item["start_date"].date() == today]
+
+    return sorted(todays_items, key=lambda item: item["price_tax_included"]["amount"])
+
+
+def prepare_legacy_prices(price_series: list[dict]) -> list[dict]:
     prices = []
-    price_series = get_price_series_from_chart_data(data)
     for price_data in price_series:
-        start_datetime = dt_util.parse_datetime(price_data["start_date"])
+        start_date = price_data["start_date"]
         price = price_data["price_tax_included"]["amount"]
         price_excl_tax = price_data["price_tax_excluded"]["amount"]
 
         price_info = {
-            "datetime": start_datetime,
+            "start_date": start_date,
+            "datetime": start_date.astimezone(UTC).isoformat(),
             "electricity_price": price,
             "electricity_price_excl_tax": price_excl_tax,
         }
@@ -117,14 +133,18 @@ class ElectricityPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
             if hourly:
                 price_data["hourly"] = hourly
-                legacy_hourly_electricity_prices = prepare_prices(hourly)
+                price_series = get_price_series_from_chart_data(hourly)
+                legacy_hourly_electricity_prices = prepare_legacy_prices(price_series)
                 price_data["legacy_price_per_hour"] = legacy_hourly_electricity_prices
                 price_data["price_per_date_and_hour"] = get_price_per_hour_by_date(legacy_hourly_electricity_prices)
-                price_data["price_per_hour"] = get_price_series_from_chart_data(hourly)
+                price_data["price_per_hour"] = price_series
+                price_data["todays_prices_per_hour_ordered"] = filter_and_sort_today(price_series)
             if quarter_hourly:
                 price_data["quarter_hourly"] = quarter_hourly
-                price_data["price_per_date_and_quarter_hour"] = get_price_per_quarter_hour(quarter_hourly)
-                price_data["price_per_quarter_hour"] = get_price_series_from_chart_data(quarter_hourly)
+                price_series = get_price_series_from_chart_data(quarter_hourly)
+                price_data["price_per_date_and_quarter_hour"] = get_price_per_quarter_hour(price_series)
+                price_data["price_per_quarter_hour"] = price_series
+                price_data["todays_prices_per_quarter_hour_ordered"] = filter_and_sort_today(price_series)
 
             if not self._unsub_quarter_hour_update:
                 self._schedule_quarter_hourly_listener_update()

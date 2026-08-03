@@ -2,7 +2,7 @@ import asyncio
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, time, timedelta, tzinfo
+from datetime import datetime, time, timedelta
 from typing import Any
 
 import homeassistant.util.dt as dt_util
@@ -25,7 +25,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.util.unit_conversion import EnergyConverter, VolumeConverter
 
 from ..api import AsyncConfigEntryAuth, ZonneplanApiError, ZonneplanRateLimitError
-from ..const import DOMAIN
+from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,7 +61,6 @@ class BaseZonneplanStatisticsService(ABC):
     """Base class for statistics services, providing common utilities."""
 
     hass: HomeAssistant
-    zonneplan_api_time_zone: tzinfo
     channel_configs: tuple[StatisticChannelConfig, ...]
 
     def __init__(
@@ -69,7 +68,6 @@ class BaseZonneplanStatisticsService(ABC):
         hass: HomeAssistant,
     ) -> None:
         self.hass = hass
-        self.zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
         self._refetched_statistics_yesterday: datetime | None = None
 
     @abstractmethod
@@ -86,7 +84,7 @@ class BaseZonneplanStatisticsService(ABC):
             return
 
         states = await self._load_current_states()
-        start_of_today = dt_util.now(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
+        start_of_today = dt_util.now(ZONNEPLAN_API_TIME_ZONE).replace(hour=0, minute=0, second=0, microsecond=0)
         backfill_failed = False
         if any(state.last_time < start_of_today for state in states.values()):
             try:
@@ -111,7 +109,7 @@ class BaseZonneplanStatisticsService(ABC):
 
     async def _refetch_and_process_yesterday(self, data_today: dict[str, Any]) -> bool:
         """Refetch yesterday once per day when the configured cutoff has passed."""
-        zonneplan_now = dt_util.now(self.zonneplan_api_time_zone)
+        zonneplan_now = dt_util.now(ZONNEPLAN_API_TIME_ZONE)
         start_of_today = zonneplan_now.replace(hour=0, minute=0, second=0, microsecond=0)
         cutoff_time = self.refetch_yesterday_cutoff_time()
         if zonneplan_now.time() < cutoff_time:
@@ -120,9 +118,7 @@ class BaseZonneplanStatisticsService(ABC):
         if self._refetched_statistics_yesterday and self._refetched_statistics_yesterday >= start_of_today:
             return False
 
-        _LOGGER.info(
-            "Refetching yesterday's for %s statistics to ensure data is up to date", [config.key for config in self.channel_configs]
-        )
+        _LOGGER.info("Refetching yesterday's for %s statistics to ensure data is up to date", [config.key for config in self.channel_configs])
         try:
             if await self._refetch_yesterday(start_of_today - timedelta(days=1), data_today):
                 self._refetched_statistics_yesterday = start_of_today
@@ -182,9 +178,9 @@ class BaseZonneplanStatisticsService(ABC):
 
             baseline_start = baseline.get("start")
             last_time = (
-                datetime.fromtimestamp(baseline_start, tz=dt_util.UTC).astimezone(self.zonneplan_api_time_zone)
+                datetime.fromtimestamp(baseline_start, tz=dt_util.UTC).astimezone(ZONNEPLAN_API_TIME_ZONE)
                 if baseline_start is not None
-                else start_of_day.astimezone(self.zonneplan_api_time_zone)
+                else start_of_day.astimezone(ZONNEPLAN_API_TIME_ZONE)
             )
             states[config.key] = StatisticChannelState(
                 config=config,
@@ -197,7 +193,7 @@ class BaseZonneplanStatisticsService(ABC):
             "Last state to work with: %s",
             {
                 key: {
-                    "last_time": state.last_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M"),
+                    "last_time": state.last_time.astimezone(ZONNEPLAN_API_TIME_ZONE).strftime("%Y-%m-%d %H:%M"),
                     "sum": state.total_sum,
                     "last_state": state.last_state_value,
                 }
@@ -213,7 +209,7 @@ class BaseZonneplanStatisticsService(ABC):
         for config in self.channel_configs:
             last_stat = await self._get_last_statistic(config.statistic_id)
             if last_stat:
-                last_time = datetime.fromtimestamp(last_stat["start"], tz=dt_util.UTC).astimezone(self.zonneplan_api_time_zone)
+                last_time = datetime.fromtimestamp(last_stat["start"], tz=dt_util.UTC).astimezone(ZONNEPLAN_API_TIME_ZONE)
                 total_sum = float(last_stat.get("sum", 0.0))
                 last_state_value = float(last_stat.get("state", 0.0))
                 _LOGGER.debug("Last stat for %s (%s): %s", config.statistic_id, last_time, last_stat)
@@ -233,8 +229,8 @@ class BaseZonneplanStatisticsService(ABC):
 
     def _fallback_last_stats_datetime(self) -> datetime:
         """Fallback datetime for last statistic to 1ste of the month."""
-        now = dt_util.now(self.zonneplan_api_time_zone)
-        return datetime(now.year, now.month, 1, tzinfo=self.zonneplan_api_time_zone)
+        now = dt_util.now(ZONNEPLAN_API_TIME_ZONE)
+        return datetime(now.year, now.month, 1, tzinfo=ZONNEPLAN_API_TIME_ZONE)
 
     async def _backfill_history(
         self,
@@ -328,12 +324,12 @@ class BaseZonneplanStatisticsService(ABC):
         for entry in measurements:
             for config in self.channel_configs:
                 entry_time = dt_util.parse_datetime(entry.get(config.date_key)).replace(minute=0, second=0, microsecond=0)
-                if (last_entry_time and entry_time < last_entry_time) or entry_time > datetime.now(tz=self.zonneplan_api_time_zone):
+                if (last_entry_time and entry_time < last_entry_time) or entry_time > datetime.now(tz=ZONNEPLAN_API_TIME_ZONE):
                     _LOGGER.debug(
                         "Skipping %s entry for %s last_entry_time=%s => %s",
                         config.key,
-                        entry_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M"),
-                        last_entry_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M") if last_entry_time else "None",
+                        entry_time.astimezone(ZONNEPLAN_API_TIME_ZONE).strftime("%Y-%m-%d %H:%M"),
+                        last_entry_time.astimezone(ZONNEPLAN_API_TIME_ZONE).strftime("%Y-%m-%d %H:%M") if last_entry_time else "None",
                         entry,
                     )
                     continue
@@ -386,7 +382,7 @@ class BaseZonneplanStatisticsService(ABC):
             "Finished processing stats: %s",
             {
                 key: {
-                    "last_time": state.last_time.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M"),
+                    "last_time": state.last_time.astimezone(ZONNEPLAN_API_TIME_ZONE).strftime("%Y-%m-%d %H:%M"),
                     "sum": state.total_sum,
                     "last_state": state.last_state_value,
                 }
@@ -415,8 +411,8 @@ class BaseZonneplanStatisticsService(ABC):
         then re-fetches and re-ingests all hourly data from start_date until now.
         """
         # Normalize to midnight of the requested date in the API timezone
-        start_of_day = start_date.astimezone(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
-        start_of_today = dt_util.now(self.zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
+        start_of_day = start_date.astimezone(ZONNEPLAN_API_TIME_ZONE).replace(hour=0, minute=0, second=0, microsecond=0)
+        start_of_today = dt_util.now(ZONNEPLAN_API_TIME_ZONE).replace(hour=0, minute=0, second=0, microsecond=0)
 
         notification_id = ",".join([config.statistic_id for config in self.channel_configs])
         msg = f"Starting manual backfill for {notification_id} from {start_of_day} to {start_of_today}"
@@ -477,7 +473,7 @@ class BaseZonneplanStatisticsService(ABC):
         persistent_notification.create(self.hass, msg, "Statistics backfill complete", notification_id)
 
     def _zonneplan_api_date_param(self, day: datetime) -> str:
-        return day.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d")
+        return day.astimezone(ZONNEPLAN_API_TIME_ZONE).strftime("%Y-%m-%d")
 
 
 class ElectricityStatisticsService(BaseZonneplanStatisticsService):
@@ -522,9 +518,7 @@ class ElectricityStatisticsService(BaseZonneplanStatisticsService):
 
     async def _fetch_day_payload(self, day: datetime, *, ignore_etag: bool = False) -> dict[str, Any] | None:
         date_str = self._zonneplan_api_date_param(day)
-        day_payload = await self.api.async_get(
-            self.connection_uuid, f"/electricity-delivered/charts/hours?date={date_str}", ignore_etag=ignore_etag
-        )
+        day_payload = await self.api.async_get(self.connection_uuid, f"/electricity-delivered/charts/hours?date={date_str}", ignore_etag=ignore_etag)
         _LOGGER.debug("Fetched Electricity day payload for %s: has_data=%s", date_str, bool(day_payload))
         return day_payload
 

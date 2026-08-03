@@ -12,7 +12,7 @@ Unofficial integration for Zonneplan. This integration uses the official Zonnepl
 - [Installation](#installation)
 - [Setup](#setup)
 - [Setup Energy Dashboard](#setup-energy-dashboard)
-- [Using full forecast in graphs, tables and/or automations](#using-full-forecast-in-graphs-tables-andor-automations)
+- [Using full forecast in graphs, tables and/or automations (blueprints)](#using-full-forecast-in-graphs-tables-andor-automations)
 - [Troubleshooting](#troubleshooting)
 
 ## Available devices/sensors
@@ -115,6 +115,10 @@ _Sensors available if you have a Zonneplan Electricity contract._
 - Current usage: `W` _(default disabled)_
 - Current usage measured at: `date` _(default disabled)_
 - Current tariff group _(**deprecated**, default disabled)_
+- Cheapest hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
+- Most expensive hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
+- Cheapest quarter-hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
+- Most expensive quarter-hour today: `€/kWh` _(default disabled, attribute `details` hold timestamp and excl tax amount)_
 - Sustainability score
 - Status message _(default disabled)_
 - Status tip
@@ -175,6 +179,20 @@ _Sensors available if you have a Zonneplan charge point/laadpaal_
 - Charge point dynamic charging flex suppressed `on/off` _(default disabled)_
 - Charge on solar enabled `on/off`
 - Buttons to start/stop charge
+- Button to continue auto charging
+  - Equivalent of _Automatisch laden voortzetten_ in the app. Stopping a manual charge suppresses
+    automatic (Powerplay flex) charging until this is pressed, so the charge point will not pick up
+    cheap/solar charging again on its own.
+  - Only available while `Charge point dynamic charging flex suppressed` is on, mirroring the app.
+- Configuration options to set the dynamic charge plan
+
+  The plan will be set when a vehicle is selected, a desired distance or battery percentage is set and a desired end time is set.
+  - Select vehicle
+  - Desired distance `slider in: km`
+  - Desired battery percentage `slider in: %`
+  - Desired end time `datetime`
+  - Button to reset/delete the dynamic charge plan
+
 
 ### Zonneplan Battery
 _Sensors available if you have a Zonneplan Nexus battery_
@@ -279,6 +297,11 @@ Zonneplan doesn't deliver a constant set of forecast values.
 
 Using a helper you can turn this data into a single "cheapest price at" sensor. Or with some template magic you can turn it in a nice table so shown on your dashboard. Or fill a graph like shown in the official app.
 
+### Automations/Blueprints
+
+For some ready to use automations see the blueprints in [blueprints](./blueprints) folder.
+
+
 ### Cheapest price sensor
 <details>
 <summary>Setup template sensor helper</summary>
@@ -289,12 +312,12 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 
 ```
 {% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
-  | selectattr('start_date', '>', utcnow().isoformat())
-  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
+  | selectattr('start_date', '>', now())
+  | selectattr('start_date', '<', (now() + timedelta(hours = 11)))
   | sort(attribute='price_tax_included.amount')
   | first %}
 
-{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
+{{ cheapest_hour_next_twelve_hours.start_date }}
 ```
 </details>
 
@@ -307,46 +330,34 @@ From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/dis
 From [discussions/41](https://github.com/fsaris/home-assistant-zonneplan-one/discussions/41)
 
 ```
-{% set cheapest_hour_next_twelve_hours = state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast')
-  | selectattr('start_date', '>', utcnow().isoformat())
-  | selectattr('start_date', '<', (utcnow() + timedelta(hours = 11)).isoformat())
-  | sort(attribute='price_tax_included.amount')
-  | first %}
-
-{{ as_local(as_datetime(cheapest_hour_next_twelve_hours.start_date)) }}
-
-{%- set timezone_offset = 2 %} {# Verander 2 naar je gewenste offset in uren #}
 {%- set cheapest_hour_next_fifteen_hours =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) |
-selectattr('start_date', '<', (utcnow() + timedelta(hours = 15)).isoformat())
+selectattr('start_date', '>', now() - timedelta(hours = 1)) |
+selectattr('start_date', '<', (now() + timedelta(hours = 15)))
 | sort(attribute='price_tax_included.amount') %}
 {%- if cheapest_hour_next_fifteen_hours | length > 0 %}
   {%- set cheapest_hour = cheapest_hour_next_fifteen_hours | first %}
-  {%- set cheapest_hour_local_time = as_timestamp(as_datetime(cheapest_hour.start_date)) + timezone_offset * 3600 %}
-De goedkoopste tijd is {{ 'vandaag' if as_timestamp(utcnow())|timestamp_custom('%Y-%m-%d') == cheapest_hour_local_time|timestamp_custom('%Y-%m-%d') else 'morgen' }} om {{ (cheapest_hour_local_time)|timestamp_custom('%H') }} uur en kost €{{"{:.3f}".format(cheapest_hour.price_tax_excluded.amount|float/10000000) }}/kWh.
+  De goedkoopste tijd is {{ 'vandaag' if now().strftime('%Y-%m-%d') == cheapest_hour.start_date.strftime('%Y-%m-%d') else 'morgen' }} om {{ cheapest_hour.start_date.strftime('%H') }} uur en kost €{{"{:.3f}".format(cheapest_hour.price_tax_excluded.amount|float/10000000) }}/kWh.
 {% endif %}
 
 {%- set cheapest_forecast =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now()) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='price_tax_excluded.amount') | first %}
 
 {%- set expensive_forecast =
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now()) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='price_tax_excluded.amount') | last %}
 
 {%- for forecast in
 state_attr('sensor.zonneplan_current_hourly_electricity_tariff', 'forecast') |
-selectattr('start_date', '>', utcnow().isoformat()) | selectattr('start_date',
-'<', (utcnow() + timedelta(hours = 15)).isoformat()) | list |
+selectattr('start_date', '>', now() - timedelta(hours = 1)) | selectattr('start_date',
+'<', (now() + timedelta(hours = 15))) | list |
 sort(attribute='start_date') %}
-
-{%- set forecast_local_time = as_timestamp(as_datetime(forecast.start_date)) + timezone_offset * 3600 %}
-• {{ (forecast_local_time)|timestamp_custom('%H:%M') }}    €{{ "{:.3f}".format(forecast.price_tax_included.amount / 10000000) }} (€{{ "{:.3f}".format(forecast.price_tax_excluded.amount / 10000000) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
+• {{ forecast.start_date.strftime('%H:%M') }}    €{{ "{:.3f}".format(forecast.price_tax_included.amount / 10000000) }} (€{{ "{:.3f}".format(forecast.price_tax_excluded.amount / 10000000) }} excl.) {% if forecast == cheapest_forecast %}⭐{% endif %}{% if forecast == expensive_forecast %}🔴{% endif %}
 {%- endfor %}
 ```
 
@@ -843,7 +854,7 @@ fn: |
     end.setHours(start.getHours() + hours_to_show - 1);
     hass.states['sensor.zonneplan_current_quarter_hourly_electricity_tariff']?.attributes?.forecast?.map(e => {
       if (start >= new Date(e.start_date) || end <  new Date(e.end_date)) return;
-      var t = new Date(e.start_date).getTime()+1800000
+      var t = new Date(e.start_date).getTime()
       var p = e.price_tax_included.amount/10000000
       vars.avg.p += p
       vars.avg.c++
@@ -869,7 +880,7 @@ fn: |
           c = "rgb(211, 47, 47)";
       }
 
-      if (t>=Date.now()-1800000) {
+      if (t>=Date.now()-900000) {
         if (p<vars.min.p) vars.min = {p,t,c}
         if (p>vars.max.p) vars.max = {p,t,c}
       }

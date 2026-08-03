@@ -1,0 +1,221 @@
+blueprint:
+  name: Zonneplan - Cheapest consecutive-hour price window
+  description: >
+    Turns a boolean helper ON while the current time is inside the cheapest
+    consecutive block of hours (length of your choosing) within a daily time
+    window, based on the Zonneplan tariff sensor's `forecast` attribute.
+
+
+    **Setup required before using this blueprint:**
+
+    1. Go to Settings > Devices & services > Helpers > Create helper > Toggle,
+       and create an `input_boolean` (e.g. "Cheapest hour dishwasher").
+    2. Create an automation from this blueprint and select that helper as the
+       "Target boolean helper".
+    3. In Developer Tools > States, check your Zonneplan tariff sensor's
+       `forecast` attribute to confirm the exact price field name to use
+       (this has changed across integration versions, e.g.
+       `electricity_price`, `electricity_price_excl_tax`) and fill that in
+       as "Price field".
+    4. Use the resulting helper's `on`/`off` state as a trigger/condition in
+       your own appliance automation.
+
+  domain: automation
+  source_url: https://github.com/fsaris/home-assistant-zonneplan-one
+  input:
+    price_sensor:
+      name: Zonneplan price sensor
+      description: >
+        The Zonneplan tariff sensor to read the forecast from (e.g. `Huidig kwartier elektriciteitstarief` or the `Huidig uur elektriciteitstarief` variant).
+
+        Only sensors with a `forecast` attribute are useful here.
+      selector:
+        entity:
+          filter:
+            domain: sensor
+            integration: zonneplan_one
+    price_attribute:
+      name: Price field name
+      description: >
+        The key inside each forecast entry that holds the price, e.g.
+        price_tax_included or price_tax_excluded.
+
+        Check Developer `Tools > States` on your price sensor to confirm the current name.
+
+        Note: this blueprint assumes the raw forecast value needs to be
+        multiplied by 0.0000001 to convert it to euros.
+      default: price_tax_included
+      selector:
+        text:
+    target_boolean:
+      name: Target boolean helper
+      description: >
+        The input_boolean you created for this automation to control. This
+        blueprint turns it on/off - use its state elsewhere.
+      selector:
+        entity:
+          filter:
+            domain: input_boolean
+    start_time_sensor:
+      name: Cheapest window start time helper (optional)
+      description: >
+        Optional input_datetime helper (create with "has date and time"
+        enabled). This blueprint sets it to the start time of the
+        cheapest window, so you can show "starts at" on a dashboard or
+        trigger something ahead of time.
+
+        Leave empty to skip this.
+
+        Note:
+        If no valid window is found (e.g. forecast doesn't reach far
+        enough yet), this helper keeps its last known value rather than
+        being cleared, since input_datetime has no "unknown" state.
+      default: null
+      selector:
+        entity:
+          filter:
+            domain: input_datetime
+    avg_price_sensor:
+      name: Average price sensor (optional)
+      description: >
+        Optional input_number helper. This blueprint sets it to the average price of the cheapest window.
+
+        Leave empty to skip this.
+
+        Note:
+        If no valid window is found (e.g. forecast doesn't reach far
+        enough yet), this helper keeps its last known value.
+      default: null
+      selector:
+        entity:
+          filter:
+            domain: input_number
+    window_start:
+      name: Window start time
+      description: Earliest time of day the appliance run may start.
+      default: "00:00:00"
+      selector:
+        time:
+    window_end:
+      name: Window end time
+      description: >
+        Time by which the appliance run must be finished.
+
+        If this is earlier than the start time, the window is treated as spanning midnight (e.g. 22:00 -> 06:00).
+      default: "23:59:59"
+      selector:
+        time:
+    duration:
+      name: Duration (hours)
+      description: How many consecutive hours the appliance needs.
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 12
+          step: .25
+          unit_of_measurement: hours
+          mode: box
+    max_price:
+      name: Max acceptable average price (optional)
+      description: >
+        Price in full euros per kWh (e.g. 0.25, not 25 cents). If set, the
+        helper only turns on if the cheapest window's average price is at
+        or below this value. Set to a high value like 99 to effectively
+        disable the cap and always pick the cheapest available window
+        regardless of price.
+      default: 2
+      selector:
+        number:
+          min: -1
+          max: 99
+          step: 0.001
+          unit_of_measurement: "€"
+          mode: box
+
+variables:
+  price_sensor: !input price_sensor
+  price_attribute: !input price_attribute
+  target_boolean: !input target_boolean
+  start_time_sensor: !input start_time_sensor
+  avg_price_sensor: !input avg_price_sensor
+  window_start: !input window_start
+  window_end: !input window_end
+  duration: !input duration
+  max_price: !input max_price
+
+trigger:
+  - trigger: time_pattern
+    minutes: "/15"
+  - trigger: state
+    entity_id: !input price_sensor
+  - trigger: homeassistant
+    event: start
+
+condition: []
+
+action:
+  - variables:
+      best_window: >-
+          {%- set win_start_dt = today_at(window_start) -%}
+          {%- set e = today_at(window_end) -%}
+          {%- set result = {'found': False, 'is_now': False, 'start': None, avg_price: None} -%}
+          {%- set win_end_dt = e if e > today_at(window_start) else e + timedelta(days=1) -%}
+          {%- set entries = state_attr(price_sensor, 'forecast') | default([], true) | selectattr('start_date', 'defined')
+                | sort(attribute='start_date') | list -%}
+          {%- set n = entries | length -%}
+          {# duration is given in full hours, when forcast isn't in full hours we multiply by 4 to get quarterly hours to process #}
+          {%- if entries[0].end_date.minute > 0 %}
+            {%- set duration = duration * 4 %}
+          {%- endif -%}
+          {%- set ns = namespace(best_i=-1, best_avg=none) -%}
+          {%- for i in range(0, n - duration + 1) -%}
+            {%- set start_dt = entries[i].start_date -%}
+            {%- set end_dt = entries[i + duration - 1].end_date -%}
+            {%- if start_dt >= win_start_dt and end_dt <= win_end_dt -%}
+              {%- set avg = (entries[i:i+duration] | map(attribute=price_attribute) | map(attribute='amount') | map('float') | sum) / duration * 0.0000001 -%}
+              {%- if ns.best_avg is none or avg < ns.best_avg -%}
+                {%- set ns.best_i = i -%}
+                {%- set ns.best_avg = avg -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if ns.best_i != -1 -%}
+            {%- set best_start = as_datetime(entries[ns.best_i].start_date) -%}
+            {%- set best_end = best_start + timedelta(hours=duration) -%}
+            {%- set price_ok = (max_price is none) or (ns.best_avg <= max_price) -%}
+            {%- set result = {'found': price_ok, 'is_now': price_ok and now() >= best_start and now() < best_end, 'start': best_start.isoformat(), 'avg_price': ns.best_avg} -%}
+          {%- endif -%}
+          {{ result | to_json }}
+  - if:
+      - condition: template
+        value_template: "{{ (best_window | from_json).is_now }}"
+    then:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: !input target_boolean
+    else:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: !input target_boolean
+  - if:
+      - condition: template
+        value_template: "{{ start_time_sensor is not none and (best_window | from_json).found }}"
+    then:
+      - action: input_datetime.set_datetime
+        target:
+          entity_id: !input start_time_sensor
+        data:
+          datetime: "{{ (best_window | from_json).start }}"
+  - if:
+      - condition: template
+        value_template: "{{ avg_price_sensor is not none and (best_window | from_json).found }}"
+    then:
+      - action: input_number.set_value
+        target:
+          entity_id: !input avg_price_sensor
+        data:
+          value: "{{ (best_window | from_json).avg_price }}"
+
+mode: single
+max_exceeded: silent

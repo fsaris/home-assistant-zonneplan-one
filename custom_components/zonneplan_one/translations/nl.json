@@ -8,22 +8,26 @@
           "email": "E-mailadres"
         }
       },
-      "fetch_password": {
-        "title": "Controleer login",
-        "description": "Controleer je mailbox op een mail van Zonneplan en klik op de link in die mail *(kan enkele minuten duren voordat de mail binnenkomt)*. Ga hier vervolgens verder door op **VOLGENDE** te klikken."
+      "timeout": {
+        "title": "Login link verlopen",
+        "description": "Je hebt niet snel genoeg op de login link geklikt. Dien een nieuw verzoek in om een nieuwe link te ontvangen."
+      },
+      "poll_failed": {
+        "title": "Er is iets mis gegaan",
+        "description": "We konden de login link niet verifiëren. Dien een nieuw verzoek in om opnieuw te proberen."
       },
       "reauth_confirm": {
         "title": "Verifieer opnieuw je Zonneplan login",
         "description": "Herauthenticatie van je account is nodig. Ga verder om Zonneplan om een nieuwe login mail op te vragen."
       }
     },
+    "progress": {
+      "wait_for_approval": "Controleer je mailbox op een mail van Zonneplan en klik op de link.\n\n**Kan enkele minuten duren voordat de mail binnenkomt.**\n\nGa hier vervolgens verder."
+    },
     "abort": {
       "failed_to_authenticate": "Inloggen is mislukt",
       "authorize_url_timeout": "Time-out tijdens genereren autorisatie url.",
       "reauth_successful": "Herauthenticatie was succesvol"
-    },
-    "create_entry": {
-      "default": "Inloggen gelukt"
     },
     "error": {
       "failed_to_request_login": "Het opvragen van een login link ging mis, probeer het later nog een keer. *(Blijft het mis gaan, controleer dan de logs)*",
@@ -57,6 +61,18 @@
       },
       "current_hourly_electricity_tariff": {
         "name": "Huidig uur elektriciteitstarief"
+      },
+      "cheapest_hour_today": {
+        "name": "Goedkoopste uur vandaag"
+      },
+      "most_expensive_hour_today": {
+        "name": "Duurste uur vandaag"
+      },
+      "cheapest_quarter_hour_today": {
+        "name": "Goedkoopste kwartier vandaag"
+      },
+      "most_expensive_quarter_hour_today": {
+        "name": "Duurste kwartier vandaag"
       },
       "current_gas_tariff": {
         "name": "Huidig gastarief"
@@ -419,6 +435,9 @@
       "charge_point_dynamic_load_desired_distance": {
         "name": "Laadpaal dynamic load gewenste afstand"
       },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Laadpaal dynamic load gewenst percentage"
+      },
       "charge_point_dynamic_load_desired_end_time": {
         "name": "Laadpaal dynamic load gewenste eindtijd"
       },
@@ -455,7 +474,7 @@
       "production_costs_this_month": {
         "name": "Netto teruggeleverd deze maand"
       },
-      "production_costs_this_month_excl_tax": {
+      "production_costs_this_monthexcl_tax": {
         "name": "Netto teruggeleverd deze maand (excl. btw)"
       },
       "production_costs_this_year": {
@@ -557,6 +576,12 @@
       },
       "stop_charge": {
         "name": "Stop laden"
+      },
+      "continue_auto_charging": {
+        "name": "Automatisch laden voortzetten"
+      },
+      "reset_dynamic_charge": {
+        "name": "Laadplan verwijderen"
       }
     },
     "number": {
@@ -568,6 +593,17 @@
       },
       "reserve_discharge_cutoff_wh": {
         "name": "Minimum noodstroom reserve"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Gewenste afstand"
+      },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Gewenst pecentage"
+      }
+    },
+    "datetime": {
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Gewenste eindtijd"
       }
     },
     "select": {
@@ -578,6 +614,9 @@
           "home_optimization": "Huisoptimalisatie",
           "self_consumption": "Zelfconsumptie"
         }
+      },
+      "charge_point_vehicle": {
+        "name": "Auto"
       }
     }
   }

@@ -8,22 +8,26 @@
           "email": "Email address"
         }
       },
-      "fetch_password": {
-        "title": "Validate login",
-        "description": "Check your mailbox and click on the link from Zonneplan. After that proceed here by clicking **NEXT**."
+      "timeout": {
+        "title": "Login link expired",
+        "description": "You didn't click the login link in time. Submit to request a new one."
+      },
+      "poll_failed": {
+        "title": "Something went wrong",
+        "description": "We couldn't verify the login link. Submit to try again."
       },
       "reauth_confirm": {
         "title": "[%key:common::config_flow::title::reauth%]",
         "description": "The Zonneplan integration needs to re-authenticate your account"
       }
     },
+    "progress": {
+      "wait_for_approval": "Check your mailbox and click on the link from Zonneplan."
+    },
     "abort": {
       "failed_to_authenticate": "Failed to successful authenticate",
       "authorize_url_timeout": "[%key:common::config_flow::abort::oauth2_authorize_url_timeout%]",
       "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]"
-    },
-    "create_entry": {
-      "default": "[%key:common::config_flow::create_entry::authenticated%]"
     },
     "error": {
       "failed_to_request_login": "Failed to request login link, try again at a later point. *(If keeps failing, check logs)*",
@@ -52,6 +56,18 @@
       },
       "current_hourly_electricity_tariff": {
         "name": "Current hourly electricity tariff"
+      },
+      "cheapest_hour_today": {
+        "name": "Cheapest hour today"
+      },
+      "most_expensive_hour_today": {
+        "name": "Most expensive hour today"
+      },
+      "cheapest_quarter_hour_today": {
+        "name": "Cheapest quarter-hour today"
+      },
+      "most_expensive_quarter_hour_today": {
+        "name": "Most expensive quarter-hour today"
       },
       "current_gas_tariff": {
         "name": "Current gas tariff"
@@ -290,6 +306,9 @@
       "charge_point_dynamic_load_desired_distance": {
         "name": "Charge point dynamic load desired distance"
       },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Charge point dynamic load desired additional battery percentage"
+      },
       "charge_point_dynamic_load_desired_end_time": {
         "name": "Charge point dynamic load desired end time"
       },
@@ -404,6 +423,12 @@
       },
       "stop_charge": {
         "name": "Stop charge"
+      },
+      "continue_auto_charging": {
+        "name": "Continue auto charging"
+      },
+      "reset_dynamic_charge": {
+        "name": "Reset dynamic charge plan"
       }
     },
     "number": {
@@ -412,6 +437,17 @@
       },
       "max_charge_power": {
         "name": "Max charge power (Home optimization)"
+      },
+      "charge_point_dynamic_load_desired_distance": {
+        "name": "Desired distance"
+      },
+      "charge_point_dynamic_desired_additional_battery_percentage": {
+        "name": "Desired percentage"
+      }
+    },
+    "datetime": {
+      "charge_point_dynamic_load_desired_end_time": {
+        "name": "Desired end time"
       }
     },
     "select": {
@@ -422,6 +458,9 @@
           "home_optimization": "Home optimization",
           "self_consumption": "Self consumption"
         }
+      },
+      "charge_point_vehicle": {
+        "name": "Car"
       }
     }
   },

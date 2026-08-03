@@ -106,4 +106,4 @@ class AccountDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         if hasattr(self.coordinators[uuid], coordinator_type):
             setattr(self.coordinators[uuid], coordinator_type, coordinator)
         else:
-            _LOGGER.exception("Unknown coordinator type %s", coordinator_type)
+            _LOGGER.error("Unknown coordinator type %s", coordinator_type)

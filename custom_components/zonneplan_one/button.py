@@ -86,16 +86,19 @@ class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEnt
 
         state = self.coordinator.get_data_value("state")
 
-        if not state or not state["connectivity_state"]:
+        if not state or not state["connectivity_state"] or "processing" in state:
             return False
 
-        if "processing" in state:
-            return False
+        available = {
+            "start": lambda: state["state"] == "VehicleDetected",
+            "stop": lambda: state["state"] == "Charging",
+            # Mirror the app, which only offers this while automatic charging is
+            # suppressed, which is what stopping a manual charge does.
+            "continue_auto_charging": lambda: bool(state.get("dynamic_charging_flex_suppressed")),
+            "reset_dynamic_charge": lambda: state.get("dynamic_charging_user_constraints", {}).get("desired_end_time") is not None,
+        }.get(self._button_key)
 
-        if self._button_key == "stop" and state["state"] == "Charging":
-            return True
-
-        return bool(self._button_key == "start" and state["state"] == "VehicleDetected")
+        return bool(available and available())
 
     async def async_press(self) -> None:
         """Handle the button press."""
@@ -103,5 +106,9 @@ class ZonneplanChargePointButton(ChargePointEntity, CoordinatorEntity, ButtonEnt
             await self.coordinator.async_start_charge()
         elif self._button_key == "stop":
             await self.coordinator.async_stop_charge()
+        elif self._button_key == "continue_auto_charging":
+            await self.coordinator.async_continue_auto_charging()
+        elif self._button_key == "reset_dynamic_charge":
+            await self.coordinator.async_reset_dynamic_charge()
         else:
             _LOGGER.warning("Unknown button action for %s", self._button_key)
