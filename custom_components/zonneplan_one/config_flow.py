@@ -15,8 +15,8 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-POLL_INTERVAL_SEC = 5
-POLL_MAX_ATTEMPTS = 120  # 120 * 5s = 10 minutes
+POLL_INTERVAL_SEC = 3
+POLL_MAX_ATTEMPTS = 300  # 300 * 3s = 15 minutes
 
 
 class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN):
