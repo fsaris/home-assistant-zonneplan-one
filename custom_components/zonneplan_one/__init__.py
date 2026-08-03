@@ -151,10 +151,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
                         EnergySupplyCostsDataUpdateCoordinator(
                             hass,
                             zonneplan_api,
-                            address_group["uuid"],
+                            address_group["address"]["id"],
                             connection["uuid"],
                             organization_uuid,
-                            contracts[ELECTRICITY][0],
                         ),
                     )
                 else:

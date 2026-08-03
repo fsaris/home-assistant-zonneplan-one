@@ -581,7 +581,7 @@ class ZonneplanEnergySupplyCostsSensor(ZonneplanSensor):
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device information."""
-        return base_device_info(self.coordinator.address_uuid)
+        return base_device_info(self.coordinator.address_id)
 
 
 class ZonneplanPvSensor(PvEntity, ZonneplanSensor):

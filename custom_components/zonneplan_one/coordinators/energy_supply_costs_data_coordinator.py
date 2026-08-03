@@ -9,7 +9,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 
 from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
+from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 from ..zonneplan_api.types import ZonneplanContract
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
@@ -29,17 +29,16 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     hass: HomeAssistant
     api: AsyncConfigEntryAuth
     contract: ZonneplanContract
-    address_uuid: str
+    address_id: str
     organization_uuid: str
 
     def __init__(
         self,
         hass: HomeAssistant,
         api: AsyncConfigEntryAuth,
-        address_uuid: str,
+        address_id: str,
         connection_uuid: str,
         organization_uuid: str,
-        contract: ZonneplanContract,
     ) -> None:
         """Initialize."""
         super().__init__(
@@ -51,20 +50,18 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         )
 
         self.api: AsyncConfigEntryAuth = api
-        self.address_uuid = address_uuid
+        self.address_id = address_id
         self.connection_uuid = connection_uuid
         self.organization_uuid = organization_uuid
-        self.contract = contract
-        self._zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
-        start_of_today = dt_util.now(self._zonneplan_api_time_zone).replace(hour=0, minute=0, second=0, microsecond=0)
+        start_of_today = dt_util.now(ZONNEPLAN_API_TIME_ZONE).replace(hour=0, minute=0, second=0, microsecond=0)
 
         try:
             costs = await self.api.async_get_energy_supply_costs(
                 self.organization_uuid,
-                self.address_uuid,
+                self.address_id,
                 start_of_today.date(),
                 start_of_today.date(),
             )
