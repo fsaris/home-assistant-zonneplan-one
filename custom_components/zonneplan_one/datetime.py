@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import homeassistant.util.dt as dt_util
 from homeassistant.components.datetime import DateTimeEntity
@@ -96,9 +96,13 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
         return dt_util.parse_datetime(value) if isinstance(value, str) else None
 
     async def async_set_value(self, value: datetime) -> None:
+        if value < dt_util.now() + timedelta(minutes=15):
+            msg = "Can not start a dynamic charge session, the end date is too close."
+            raise ValueError(msg)
+
         self.coordinator.set_data_value(
             self.entity_description.key.format(install_index=self._install_index),
-            dt_util.as_local(value).isoformat(),
+            value.isoformat(),
         )
 
         await self.coordinator.async_dynamic_charge()

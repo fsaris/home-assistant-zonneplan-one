@@ -10,8 +10,8 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import async_call_later
 
-from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN
+from ..api import AsyncConfigEntryAuth, ZonneplanRateLimitError
+from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 from ..zonneplan_api.types import ZonneplanContract
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
@@ -56,7 +56,6 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self._last_edited_dynamic_charge_unit: str | None = None
         self.vehicles: list[dict] = []
         self.selected_vehicle_uuid: str | None = None
-        self.zonneplan_api_time_zone = dt_util.get_time_zone("Europe/Amsterdam")
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
@@ -138,7 +137,7 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
             _LOGGER.warning("Can not set the dynamic charge session to end in the past or the next 15 minutes.")
             return  # do nothing when the desired end time already passed (or is too soon)
 
-        user_constraints = {"desired_end_time": desired_end_datetime.astimezone(self.zonneplan_api_time_zone).strftime("%Y-%m-%d %H:%M:00")}
+        user_constraints = {"desired_end_time": desired_end_datetime.astimezone(ZONNEPLAN_API_TIME_ZONE).strftime("%Y-%m-%d %H:%M:00")}
 
         if self._last_edited_dynamic_charge_unit == "kilometers" and desired_kilometers:
             user_constraints["unit"] = "kilometers"
@@ -176,6 +175,30 @@ class ChargePointDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         await self.api.async_post(
             self.connection_uuid,
             "/charge-points/" + self.contract["uuid"] + "/actions/unsuppress_always_flex",
+        )
+
+        self.data["state"]["processing"] = True
+
+        self.async_update_listeners()
+
+        await self.async_fetch_charge_point_data()
+
+    async def async_reset_dynamic_charge(self) -> None:
+        # The app stops a running dynamic session before clearing the planning; mirror that order.
+        # A planning scheduled for later has nothing to stop, so tolerate that rejection and still reset.
+        try:
+            await self.api.async_post(
+                self.connection_uuid,
+                "/charge-points/" + self.contract["uuid"] + "/actions/stop_dynamic_charging_session",
+            )
+        except ZonneplanRateLimitError:
+            raise
+        except ClientResponseError as e:
+            _LOGGER.debug("Could not stop the dynamic charge session before reset (%s); continuing", e.status)
+
+        await self.api.async_post(
+            self.connection_uuid,
+            "/charge-points/" + self.contract["uuid"] + "/actions/reset_schedule",
         )
 
         self.data["state"]["processing"] = True
