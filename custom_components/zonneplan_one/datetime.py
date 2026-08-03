@@ -12,6 +12,7 @@ from homeassistant.helpers.update_coordinator import (
 from .const import (
     CHARGE_POINT,
     DATETIME_TYPE,
+    ZONNEPLAN_API_TIME_ZONE,
     ZonneplanDateTimeEntityDescription,
 )
 from .coordinators.account_data_coordinator import ZonneplanConfigEntry
@@ -102,7 +103,7 @@ class ZonneplanChargePointDateTime(ChargePointEntity, CoordinatorEntity[ChargePo
 
         self.coordinator.set_data_value(
             self.entity_description.key.format(install_index=self._install_index),
-            dt_util.as_local(value).isoformat(),
+            value.astimezone(ZONNEPLAN_API_TIME_ZONE).isoformat(),
         )
 
         await self.coordinator.async_dynamic_charge()
