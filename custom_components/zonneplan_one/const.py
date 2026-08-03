@@ -13,6 +13,7 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.components.button import (
     ButtonEntityDescription,
 )
+from homeassistant.components.datetime import DateTimeEntityDescription
 from homeassistant.components.number import NumberEntityDescription, NumberMode
 from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import (
@@ -22,6 +23,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.const import (
     CURRENCY_EURO,
+    EntityCategory,
     UnitOfEnergy,
     UnitOfLength,
     UnitOfPower,
@@ -51,7 +53,7 @@ BATTERY_CHARTS = "battery_charts"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 GAS_NEXT_PRICE_HOUR = 6
-VERSION = "2026.7.2"
+VERSION = "2026.8.0"
 
 ZONNEPLAN_API_TIME_ZONE = dt_util.get_time_zone("Europe/Amsterdam")
 
@@ -98,11 +100,20 @@ class ZonneplanNumberEntityDescription(NumberEntityDescription):
 
     entity_registry_enabled_default: bool = True
     has_entity_name: bool = True
+    value_factor: float | None = None
 
 
 @dataclass(frozen=True, kw_only=True)
 class ZonneplanSelectEntityDescription(SelectEntityDescription):
     """A class that describes Zonneplan select entities."""
+
+    entity_registry_enabled_default: bool = True
+    has_entity_name: bool = True
+
+
+@dataclass(frozen=True, kw_only=True)
+class ZonneplanDateTimeEntityDescription(DateTimeEntityDescription):
+    """A class that describes Zonneplan datatime entities."""
 
     entity_registry_enabled_default: bool = True
     has_entity_name: bool = True
@@ -1438,6 +1449,14 @@ SENSOR_TYPES: dict[
             native_unit_of_measurement=UnitOfLength.KILOMETERS,
             entity_registry_enabled_default=True,
         ),
+        "dynamic_charging_user_constraints.desired_additional_battery_percentage": ZonneplanSensorEntityDescription(
+            key="state.dynamic_charging_user_constraints.desired_additional_battery_percentage",
+            name="Charge point dynamic load desired percentage",
+            translation_key="charge_point_dynamic_desired_additional_battery_percentage",
+            native_unit_of_measurement=UnitOfRatio.PERCENTAGE,
+            entity_registry_enabled_default=True,
+            value_factor=0.1,
+        ),
         "dynamic_charging_user_constraints.desired_end_time": ZonneplanSensorEntityDescription(
             key="state.dynamic_charging_user_constraints.desired_end_time",
             name="Charge point dynamic load desired end time",
@@ -1619,6 +1638,13 @@ BUTTON_TYPES: dict[str, dict[str, ZonneplanButtonEntityDescription]] = {
             name="Continue auto charging",
             translation_key="continue_auto_charging",
         ),
+        "reset_dynamic_charge": ZonneplanButtonEntityDescription(
+            key="charge_point.reset_dynamic_charge",
+            name="Reset dynamic charge plan",
+            translation_key="reset_dynamic_charge",
+            icon="mdi:calendar-remove-outline",
+            entity_category=EntityCategory.CONFIG,
+        ),
     },
 }
 
@@ -1652,6 +1678,30 @@ NUMBER_TYPES: dict[str, dict[str, ZonneplanNumberEntityDescription]] = {
             entity_registry_enabled_default=False,
         ),
     },
+    CHARGE_POINT: {
+        "dynamic_charging_user_constraints.desired_additional_battery_percentage": ZonneplanNumberEntityDescription(
+            key="state.dynamic_charging_user_constraints.desired_additional_battery_percentage",
+            name="Desired percentage",
+            translation_key="charge_point_dynamic_desired_additional_battery_percentage",
+            mode=NumberMode.SLIDER,
+            native_unit_of_measurement=UnitOfRatio.PERCENTAGE,
+            entity_registry_enabled_default=True,
+            native_max_value=100,
+            native_min_value=5,
+            value_factor=0.1,
+            entity_category=EntityCategory.CONFIG,
+        ),
+        "dynamic_charging_user_constraints.desired_distance_in_kilometers": ZonneplanNumberEntityDescription(
+            key="state.dynamic_charging_user_constraints.desired_distance_in_kilometers",
+            name="Desired kilometers",
+            translation_key="charge_point_dynamic_load_desired_distance",
+            mode=NumberMode.BOX,
+            native_unit_of_measurement=UnitOfLength.KILOMETERS,
+            entity_registry_enabled_default=True,
+            native_max_value=500,  # will be updated later to match the vehicle
+            entity_category=EntityCategory.CONFIG,
+        ),
+    },
 }
 
 SELECT_TYPES = {
@@ -1662,5 +1712,26 @@ SELECT_TYPES = {
             translation_key="battery_control_mode",
             icon="mdi:battery-sync-outline",
         )
+    },
+    CHARGE_POINT: {
+        "selected_vehicle": ZonneplanSelectEntityDescription(
+            key="vehicles",
+            name="Charge point vehicle",
+            translation_key="charge_point_vehicle",
+            icon="mdi:car-electric",
+            entity_category=EntityCategory.CONFIG,
+        )
+    },
+}
+
+DATETIME_TYPE = {
+    CHARGE_POINT: {
+        "dynamic_charging_user_constraints.desired_end_time": ZonneplanDateTimeEntityDescription(
+            key="state.dynamic_charging_user_constraints.desired_end_time",
+            name="Charge point dynamic load desired end time",
+            translation_key="charge_point_dynamic_load_desired_end_time",
+            entity_registry_enabled_default=True,
+            entity_category=EntityCategory.CONFIG,
+        ),
     }
 }
