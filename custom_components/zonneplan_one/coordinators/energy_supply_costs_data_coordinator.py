@@ -30,6 +30,7 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     api: AsyncConfigEntryAuth
     contract: ZonneplanContract
     address_id: str
+    address_uuid: str
     organization_uuid: str
 
     def __init__(
@@ -37,6 +38,7 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         hass: HomeAssistant,
         api: AsyncConfigEntryAuth,
         address_id: str,
+        address_uud: str,
         connection_uuid: str,
         organization_uuid: str,
     ) -> None:
@@ -51,6 +53,7 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
 
         self.api: AsyncConfigEntryAuth = api
         self.address_id = address_id
+        self.address_uuid = address_uud
         self.connection_uuid = connection_uuid
         self.organization_uuid = organization_uuid
 
