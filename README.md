@@ -889,7 +889,7 @@ layout:
     l: 40
     r: 20
     b: 40
-  dragmode: false
+  dragmode: true
   clickmode: none
   legend:
     itemclick: false
@@ -926,6 +926,13 @@ entities:
       color: $ex vars.color
     type: bar
     hovertemplate: $ex vars.hover
+    texttemplate: "%{y:.3f}"
+    textangle: 270
+    textfont:
+      color: white
+      weight: 400
+      shadow: 0 0 5px black, 1px 1px 1px black
+      size: 13
   - entity: ""
     mode: markers
     textposition: top
