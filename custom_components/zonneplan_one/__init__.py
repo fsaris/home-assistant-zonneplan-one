@@ -11,6 +11,12 @@ from homeassistant.helpers import (
     aiohttp_client,
     config_entry_oauth2_flow,
 )
+from homeassistant.helpers import (
+    device_registry as dr,
+)
+from homeassistant.helpers import (
+    entity_registry as er,
+)
 
 from . import api, config_flow
 from .const import (
@@ -267,6 +273,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
                 )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Clean up unused device entries with no entities
+    device_registry = dr.async_get(hass)
+    entity_registry = er.async_get(hass)
+
+    device_entries = dr.async_entries_for_config_entry(device_registry, config_entry_id=entry.entry_id)
+    for dev in device_entries:
+        dev_entities = er.async_entries_for_device(entity_registry, dev.id, include_disabled_entities=True)
+        if not dev_entities:
+            _LOGGER.info("Removing obsolete device entry %s", dev.name)
+            device_registry.async_remove_device(dev.id)
 
     return True
 
