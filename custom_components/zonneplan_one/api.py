@@ -5,7 +5,7 @@ from datetime import date
 from http import HTTPStatus
 from typing import Any
 
-from aiohttp import ClientResponseError, ClientSession
+from aiohttp import ClientResponseError, ClientSession, client
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import DOMAIN
@@ -59,6 +59,10 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             await self._oauth_session.async_ensure_token_valid()
 
         return self._oauth_session.token["access_token"]
+
+    async def async_set_locale(self, locale: str) -> None:
+        """Set the locale for the API "remote" session."""
+        await self.async_put("user-accounts/locale", {"locale": locale})
 
     async def async_get_user_accounts(self) -> ZonneplanAccountsData | None:
         return await self._async_get("user-accounts/me")
@@ -162,6 +166,24 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             headers=dict(self._request_headers),
         )
 
+        return await self._process_response(response)
+
+    async def async_put(self, path: str, params: dict | None = None) -> dict:
+        if params is None:
+            params = {}
+        _LOGGER.info("PUT: %s?%s", path, params)
+
+        response = await self._oauth_session.async_request(
+            "PUT",
+            "https://app-api.zonneplan.nl/" + path,
+            json=params,
+            headers=dict(self._request_headers),
+        )
+
+        return await self._process_response(response)
+
+    async def _process_response(self, response: client.ClientResponse) -> dict:
+
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
 
@@ -176,7 +198,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             )
 
         if response.status >= HTTPStatus.BAD_REQUEST:
-            _LOGGER.error("ZonneplanAPI error response for POST %s?%s: %s", path, params, await response.text())
+            _LOGGER.error("ZonneplanAPI error response for %s %s: %s", response.request_info.method, response.request_info.url, await response.text())
 
         response.raise_for_status()
 
