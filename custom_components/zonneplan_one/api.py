@@ -5,7 +5,7 @@ from datetime import date
 from http import HTTPStatus
 from typing import Any
 
-from aiohttp import ClientResponseError, ClientSession
+from aiohttp import ClientResponseError, ClientSession, client
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import DOMAIN
@@ -57,10 +57,12 @@ class AsyncConfigEntryAuth(ZonneplanApi):
         """Return a valid access token."""
         if not self._oauth_session.valid_token:
             await self._oauth_session.async_ensure_token_valid()
-            # Set locale for "remote" session
-            await self.async_put("user-accounts/locale", {"locale": "nl-NL"})
 
         return self._oauth_session.token["access_token"]
+
+    async def async_set_locale(self, locale: str) -> None:
+        """Set the locale for the API "remote" session."""
+        await self.async_put("user-accounts/locale", {"locale": locale})
 
     async def async_get_user_accounts(self) -> ZonneplanAccountsData | None:
         return await self._async_get("user-accounts/me")
@@ -164,38 +166,12 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             headers=dict(self._request_headers),
         )
 
-        _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
-
-        if response.status == HTTPStatus.TOO_MANY_REQUESTS:
-            raise ZonneplanRateLimitError(
-                request_info=response.request_info,
-                history=response.history,
-                status=response.status,
-                message="Rate limit exceeded",
-                headers=response.headers,
-                retry_after=_parse_retry_after(response.headers.get("Retry-After")),
-            )
-
-        if response.status >= HTTPStatus.BAD_REQUEST:
-            _LOGGER.error("ZonneplanAPI error response for POST %s?%s: %s", path, params, await response.text())
-
-        response.raise_for_status()
-
-        # 204 No Content successful response
-        if response.status == HTTPStatus.NO_CONTENT:
-            return {"ok": True}
-
-        response_json = await response.json()
-
-        _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
-
-        return response_json
+        return await self._process_response(response)
 
     async def async_put(self, path: str, params: dict | None = None) -> dict:
         if params is None:
             params = {}
-        _LOGGER.info("POST: %s?%s", path, params)
+        _LOGGER.info("PUT: %s?%s", path, params)
 
         response = await self._oauth_session.async_request(
             "PUT",
@@ -204,6 +180,10 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             headers=dict(self._request_headers),
         )
 
+        return await self._process_response(response)
+
+    async def _process_response(self, response: client.ClientResponse) -> dict:
+
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
 
@@ -218,7 +198,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             )
 
         if response.status >= HTTPStatus.BAD_REQUEST:
-            _LOGGER.error("ZonneplanAPI error response for PUT %s?%s: %s", path, params, await response.text())
+            _LOGGER.error("ZonneplanAPI error response for %s %s: %s", response.request_info.method, response.request_info.url, await response.text())
 
         response.raise_for_status()
 
