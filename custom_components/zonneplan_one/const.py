@@ -53,7 +53,7 @@ BATTERY_CHARTS = "battery_charts"
 NONE_IS_ZERO = "none-is-zero"
 NONE_USE_PREVIOUS = "none-is-previous"
 GAS_NEXT_PRICE_HOUR = 6
-VERSION = "2026.8.0"
+VERSION = "2026.8.1"
 
 ZONNEPLAN_API_TIME_ZONE = dt_util.get_time_zone("Europe/Amsterdam")
 
