@@ -227,22 +227,23 @@ class ZonneplanOAuth2Implementation(config_entry_oauth2_flow.AbstractOAuth2Imple
         """Domain that is providing the implementation."""
         return DOMAIN
 
-    async def async_request_temp_pass(self, email: str) -> str | None:
-        return await self._api.async_request_temp_pass(email)
+    async def async_request_otp(self, email: str, source_name: str) -> tuple[str, str] | None:
+        """Start the auth challenge. Returns (auth_session, code_verifier)."""
+        return await self._api.async_request_otp(email, source_name)
 
     async def async_resolve_external_data(self, external_data: Any) -> dict:
         """
         Not used.
 
-        Token resolution happens via ZonneplanApi.async_get_temp_pass
-        polling in the config flow, not via the external callback.
+        Token resolution happens via ZonneplanApi.async_submit_otp
+        in the config flow, not via the external callback.
         """
-        msg = "ZonneplanOAuth2Implementation uses email + polling, not a redirect flow"
+        msg = "ZonneplanOAuth2Implementation uses email + OTP, not a redirect flow"
         raise NotImplementedError(msg)
 
-    async def async_resolve_token_by_temp_pass(self, email: str, uuid: str) -> dict | None:
-        """Resolve external data to tokens."""
-        return await self._api.async_get_temp_pass(email, uuid)
+    async def async_submit_otp(self, auth_session: str, otp: str, code_verifier: str) -> dict | None:
+        """Submit the emailed OTP and resolve it to tokens."""
+        return await self._api.async_submit_otp(auth_session, otp, code_verifier)
 
     async def _async_refresh_token(self, token: dict) -> dict:
         """Refresh a token."""

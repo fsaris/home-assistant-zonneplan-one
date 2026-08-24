@@ -2,10 +2,17 @@
   "config": {
     "step": {
       "auth": {
-        "title": "Login link opvragen",
-        "description": "Vul je e-mailadres in om Zonneplan om een login link te kunnen vragen",
+        "title": "Login code opvragen",
+        "description": "Vul je e-mailadres in om Zonneplan om een inlogcode te te kunnen vragen",
         "data": {
           "email": "E-mailadres"
+        }
+      },
+      "otp": {
+        "title": "Vul login code in",
+        "description": "Vul de 6 cijferige inlogcode uit de email in",
+        "data": {
+          "otp": "Inlogcode"
         }
       },
       "timeout": {
@@ -30,8 +37,8 @@
       "reauth_successful": "Herauthenticatie was succesvol"
     },
     "error": {
-      "failed_to_request_login": "Het opvragen van een login link ging mis, probeer het later nog een keer. *(Blijft het mis gaan, controleer dan de logs)*",
-      "no_password": "Nog een wachtwoord ontvangen *(heb je op de link uit de mail van Zonneplan geklikt?)*"
+      "failed_to_request_login": "Het opvragen van een inlogcode ging mis, probeer het later nog een keer. *(Blijft het mis gaan, controleer dan de logs)*",
+      "invalid_otp": "De inlogcode is onjuist of verlopen. Er is een nieuwe verstuurd."
     }
   },
   "entity": {
