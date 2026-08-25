@@ -454,6 +454,12 @@
       "charge_point_session_charged_distance": {
         "name": "Laadpaal sessie geladen afstand"
       },
+      "delivery_costs_today": {
+        "name": "Netto afname vandaag"
+      },
+      "delivery_costs_today_excl_tax": {
+        "name": "Netto afname vandaag (excl. btw)"
+      },
       "delivery_costs_this_month": {
         "name": "Netto afname deze maand"
       },
@@ -465,6 +471,12 @@
       },
       "delivery_costs_this_year_excl_tax": {
         "name": "Netto afname dit jaar (excl. btw)"
+      },
+      "production_costs_today": {
+        "name": "Netto teruggeleverd vandaag"
+      },
+      "production_costs_today_excl_tax": {
+        "name": "Netto teruggeleverd vandaag (excl. btw)"
       },
       "production_costs_this_month": {
         "name": "Netto teruggeleverd deze maand"

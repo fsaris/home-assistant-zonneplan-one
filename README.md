@@ -57,6 +57,18 @@ _Some generic/summary sensors_
    - Gas delivery costs today (excl. tax): `€` _(when there is a Zonneplan gas contract and a gas meter registered in the P1 reader, default disabled)_
 
 
+- Daily energy supply costs _(available when there is a Zonneplan Energy contract)_
+
+   These match the daily costs shown in the app, so they exclude battery trading.
+   Note that production costs are **negative** here (revenue), while the month/year sensors below
+   report the same revenue as a positive number; each mirrors the sign of the API it comes from.
+
+   - Net delivery costs today `€` _(default disabled)_
+   - Net delivery costs today (excl. tax) `€` _(default disabled)_
+   - Net production costs today `€` _(default disabled)_
+   - Net production costs today (excl. tax) `€` _(default disabled)_
+
+
 - Net values _(available when there is a Zonneplan Battery)_
 
    - Net delivery costs this month `€` _(default disabled)_

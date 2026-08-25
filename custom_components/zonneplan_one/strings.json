@@ -318,11 +318,17 @@
       "charge_point_session_charged_distance": {
         "name": "Charge point session charged distance"
       },
+      "delivery_costs_today": {
+        "name": "Net delivery costs today"
+      },
       "delivery_costs_this_month": {
         "name": "Net delivery costs this month"
       },
       "delivery_costs_this_year": {
         "name": "Net delivery costs this year"
+      },
+      "production_costs_today": {
+        "name": "Net production costs today"
       },
       "production_costs_this_month": {
         "name": "Net production costs this month"

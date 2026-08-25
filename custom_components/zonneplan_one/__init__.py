@@ -28,6 +28,7 @@ from .const import (
     ELECTRICITY,
     ELECTRICITY_HOME_CONSUMPTION,
     ELECTRICITY_PRICES,
+    ENERGY_SUPPLY_COSTS,
     GAS,
     GAS_PRICES,
     P1_ELECTRICITY,
@@ -52,6 +53,9 @@ from .coordinators.electricity_home_consumption_data_coordinator import (
     ElectricityHomeConsumptionDataUpdateCoordinator,
 )
 from .coordinators.electricity_prices_data_coordinator import ElectricityPricesDataUpdateCoordinator
+from .coordinators.energy_supply_costs_data_coordinator import (
+    EnergySupplyCostsDataUpdateCoordinator,
+)
 from .coordinators.gas_data_coordinator import GasDataUpdateCoordinator
 from .coordinators.gas_prices_data_coordinator import GasPricesDataUpdateCoordinator
 from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
@@ -145,6 +149,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ZonneplanConfigEntry) ->
                         contracts[ELECTRICITY][0],
                     ),
                 )
+
+                if organization_uuid := address_group.get("organization_uuid"):
+                    account_coordinator.add_coordinator(
+                        connection["uuid"],
+                        ENERGY_SUPPLY_COSTS,
+                        EnergySupplyCostsDataUpdateCoordinator(
+                            hass,
+                            zonneplan_api,
+                            address_group["address"]["id"],
+                            address_group["uuid"],
+                            connection["uuid"],
+                            organization_uuid,
+                        ),
+                    )
+                else:
+                    _LOGGER.info("Skipped ENERGY_SUPPLY_COSTS because the address group has no organization_uuid")
 
             if GAS in contracts:
                 account_coordinator.add_coordinator(
