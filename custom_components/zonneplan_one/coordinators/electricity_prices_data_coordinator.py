@@ -128,8 +128,8 @@ class ElectricityPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
             price_data = self.data or {}
 
-            hourly = await self.api.async_get_consumer_prices("electricity-hourly") or price_data.get("hourly")
-            quarter_hourly = await self.api.async_get_consumer_prices("electricity-quarter-hourly") or price_data.get("quarter_hourly")
+            hourly = await self.api.async_get_consumer_prices("electricity-hourly", self.contract["uuid"]) or price_data.get("hourly")
+            quarter_hourly = await self.api.async_get_consumer_prices("electricity-quarter-hourly", self.contract["uuid"]) or price_data.get("quarter_hourly")
 
             if hourly:
                 price_data["hourly"] = hourly
