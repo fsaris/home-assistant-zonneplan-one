@@ -95,17 +95,20 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             params,
         )
 
-    async def async_get_consumer_prices(self, chart_name: str) -> dict | None:
-        return await self._async_get(f"api/consumer-prices/charts/{chart_name}")
+    async def async_get_consumer_prices(self, chart_name: str, contract_uuid: str) -> dict | None:
+        # The URL is the same for every contract, so keep a separate ETag per contract.
+        # A shared ETag makes the second contract get a 304 for data it never received.
+        return await self._async_get(f"api/consumer-prices/charts/{chart_name}", etag_key=contract_uuid)
 
-    async def _async_get(self, path: str, *, ignore_etag: bool = False) -> dict | None:
+    async def _async_get(self, path: str, *, ignore_etag: bool = False, etag_key: str | None = None) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 
         headers = dict(self._request_headers)
         url = "https://app-api.zonneplan.nl/" + path
+        etag_cache_key = url if etag_key is None else f"{url}#{etag_key}"
 
-        if not ignore_etag and self._etags.get(url):
-            headers["If-None-Match"] = self._etags[url]
+        if not ignore_etag and self._etags.get(etag_cache_key):
+            headers["If-None-Match"] = self._etags[etag_cache_key]
 
         _LOGGER.debug("ZonneplanAPI request header: %s", headers)
         response = await self._oauth_session.async_request(
@@ -150,7 +153,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         self.diagnostics[path] = response_json
 
-        self._etags[url] = response.headers.get("ETag")
+        self._etags[etag_cache_key] = response.headers.get("ETag")
 
         return response_json["data"]
 
