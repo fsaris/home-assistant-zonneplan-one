@@ -81,7 +81,7 @@ def prepare_legacy_prices(price_series: list[dict]) -> list[dict]:
             "electricity_price": price,
             "electricity_price_excl_tax": price_excl_tax,
         }
-        sustainability_score = price_data.get("sustainability_score", {}).get("permille", 0)
+        sustainability_score = (price_data.get("sustainability_score") or {}).get("permille", 0)
         tariff_group = price_data.get("tariff_group", "")
         price_info["sustainability_score"] = sustainability_score
         price_info["tariff_group"] = tariff_group
