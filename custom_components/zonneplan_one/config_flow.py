@@ -23,7 +23,6 @@ class ZonneplanLoginFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandl
     VERSION = 1
 
     DOMAIN = DOMAIN
-    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     _email: str | None = None
     _auth_session: str | None = None
