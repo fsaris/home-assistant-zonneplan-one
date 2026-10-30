@@ -24,6 +24,7 @@ from .electricity_home_consumption_data_coordinator import (
     ElectricityHomeConsumptionDataUpdateCoordinator,
 )
 from .electricity_prices_data_coordinator import ElectricityPricesDataUpdateCoordinator
+from .energy_supply_costs_data_coordinator import EnergySupplyCostsDataUpdateCoordinator
 from .gas_data_coordinator import GasDataUpdateCoordinator
 from .gas_prices_data_coordinator import GasPricesDataUpdateCoordinator
 from .pv_data_coordinator import PvDataUpdateCoordinator
@@ -45,6 +46,7 @@ class ConnectionCoordinators:
     p1_electricity: ElectricityDataUpdateCoordinator | None = None
     p1_gas: GasDataUpdateCoordinator | None = None
     electricity_home_consumption: ElectricityHomeConsumptionDataUpdateCoordinator | None = None
+    energy_supply_costs: EnergySupplyCostsDataUpdateCoordinator | None = None
     charge_point_installation: ChargePointDataUpdateCoordinator | None = None
     home_battery_installation: BatteryDataUpdateCoordinator | None = None
     battery_control: BatteryControlDataUpdateCoordinator | None = None
