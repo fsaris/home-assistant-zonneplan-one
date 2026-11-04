@@ -1248,16 +1248,16 @@ SENSOR_TYPES: dict[
         # matching the daily figure the Zonneplan app shows. Note production costs come
         # back negative here (revenue), unlike the measurement_groups meta used by the
         # month/year sensors, which reports the same revenue positive.
+        # No state_class: these miss the last update of the day, so they should not build
+        # long-term statistics. EnergySupplyCostsStatisticsService keeps the correct history.
         "delivery_costs_today": ZonneplanSensorEntityDescription(
             key="usage_costs.electricity_costs.delivery_costs.amount",
             name="Net delivery costs today",
             translation_key="delivery_costs_today",
             native_unit_of_measurement=CURRENCY_EURO,
             device_class=SensorDeviceClass.MONETARY,
-            state_class=SensorStateClass.TOTAL,
             value_factor=0.0000001,
             none_value_behaviour=NONE_IS_ZERO,
-            last_reset_key="date",
         ),
         "delivery_costs_excl_tax_today": ZonneplanSensorEntityDescription(
             key="usage_costs.electricity_costs.delivery_costs_tax_excluded.amount",
@@ -1265,10 +1265,8 @@ SENSOR_TYPES: dict[
             translation_key="delivery_costs_today_excl_tax",
             native_unit_of_measurement=CURRENCY_EURO,
             device_class=SensorDeviceClass.MONETARY,
-            state_class=SensorStateClass.TOTAL,
             value_factor=0.0000001,
             none_value_behaviour=NONE_IS_ZERO,
-            last_reset_key="date",
         ),
         "production_costs_today": ZonneplanSensorEntityDescription(
             key="usage_costs.electricity_costs.production_costs.amount",
@@ -1276,10 +1274,8 @@ SENSOR_TYPES: dict[
             translation_key="production_costs_today",
             native_unit_of_measurement=CURRENCY_EURO,
             device_class=SensorDeviceClass.MONETARY,
-            state_class=SensorStateClass.TOTAL,
             value_factor=0.0000001,
             none_value_behaviour=NONE_IS_ZERO,
-            last_reset_key="date",
         ),
         "production_costs_excl_tax_today": ZonneplanSensorEntityDescription(
             key="usage_costs.electricity_costs.production_costs_tax_excluded.amount",
@@ -1287,10 +1283,8 @@ SENSOR_TYPES: dict[
             translation_key="production_costs_today_excl_tax",
             native_unit_of_measurement=CURRENCY_EURO,
             device_class=SensorDeviceClass.MONETARY,
-            state_class=SensorStateClass.TOTAL,
             value_factor=0.0000001,
             none_value_behaviour=NONE_IS_ZERO,
-            last_reset_key="date",
         ),
     },
     ELECTRICITY_HOME_CONSUMPTION: {

@@ -471,7 +471,7 @@
       "fields": {
         "endpoint": {
           "name": "Endpoint",
-          "description": "The data endpoint to refetch statistics for (electricity or gas)."
+          "description": "The data endpoint to refetch statistics for (electricity, gas or energy_supply_costs)."
         },
         "start_date": {
           "name": "Start date",

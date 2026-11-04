@@ -1,16 +1,16 @@
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
-import homeassistant.util.dt as dt_util
 from aiohttp.client_exceptions import ClientResponseError
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.debounce import Debouncer
 
 from ..api import AsyncConfigEntryAuth
-from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
+from ..const import DOMAIN
 from ..zonneplan_api.types import ZonneplanContract
+from .statistics import EnergySupplyCostsStatisticsService
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,6 +24,9 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     scoped, and it asks for a single explicit day (today in the Zonneplan API time
     zone). These are the battery-filtered costs the app shows on its daily overview;
     the `/electricity-home-consumption` payload only carries them per month/year.
+
+    The sensors only show the running value of today. The last update of a day comes
+    in after midnight, so the history of these costs is kept as external statistics.
     """
 
     hass: HomeAssistant
@@ -32,6 +35,7 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
     address_id: str
     address_uuid: str
     organization_uuid: str
+    _statistics_service: EnergySupplyCostsStatisticsService
 
     def __init__(
         self,
@@ -56,18 +60,18 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         self.address_uuid = address_uud
         self.connection_uuid = connection_uuid
         self.organization_uuid = organization_uuid
+        self._statistics_service = EnergySupplyCostsStatisticsService(
+            hass=self.hass,
+            api=self.api,
+            organization_uuid=self.organization_uuid,
+            address_id=self.address_id,
+            connection_uuid=self.connection_uuid,
+        )
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest status."""
-        start_of_today = dt_util.now(ZONNEPLAN_API_TIME_ZONE).replace(hour=0, minute=0, second=0, microsecond=0)
-
         try:
-            costs = await self.api.async_get_energy_supply_costs(
-                self.organization_uuid,
-                self.address_id,
-                start_of_today.date(),
-                start_of_today.date(),
-            )
+            costs = await self._statistics_service.async_fetch_today()
 
         except ClientResponseError as e:
             if e.status == HTTPStatus.UNAUTHORIZED:
@@ -76,9 +80,11 @@ class EnergySupplyCostsDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         else:
             _LOGGER.debug("Energy supply costs data: %s", costs)
 
-            if not costs:
-                return self.data
+            if costs:
+                await self._statistics_service.process_payload(costs)
 
-            # The response carries no date of its own, so stamp the day it covers to
-            # give the daily cost sensors a last_reset.
-            return {"date": start_of_today.isoformat(), **costs}
+            return costs or self.data
+
+    async def async_backfill_statistics(self, start_date: datetime) -> None:
+        """Backfill statistics from start_date until now."""
+        await self._statistics_service.async_backfill_from(start_date)
