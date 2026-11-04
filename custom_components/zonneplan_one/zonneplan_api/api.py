@@ -1,16 +1,28 @@
 """ZonneplanAPI."""
 
+import base64
+import hashlib
 import logging
+import secrets
+from http import HTTPStatus
 
 import aiohttp
 
 from ..const import VERSION
 
 APP_VERSION = "5.10.1"
-LOGIN_REQUEST_URI = "https://app-api.zonneplan.nl/auth/request"
+AUTHORIZE_CHALLENGE_URI = "https://app-api.zonneplan.nl/oauth/authorize-challenge"
 OAUTH2_TOKEN_URI = "https://app-api.zonneplan.nl/oauth/token"  # noqa: S105
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _generate_pkce_pair() -> tuple[str, str]:
+    """Generate a fresh (code_verifier, code_challenge) pair for one login attempt."""
+    verifier = secrets.token_urlsafe(96)[:128]
+    digest = hashlib.sha256(verifier.encode("ascii")).digest()
+    challenge = base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
+    return verifier, challenge
 
 
 class ZonneplanApi:
@@ -23,103 +35,109 @@ class ZonneplanApi:
             "x-ha-integration": VERSION,
         }
 
-    async def async_request_temp_pass(self, email: str) -> str | None:
+    async def async_request_otp(self, email: str, source_name: str) -> tuple[str, str] | None:
+        """Start the auth challenge (step 1). Returns (auth_session, code_verifier) or None."""
+        code_verifier, code_challenge = _generate_pkce_pair()
+
         try:
             timeout = aiohttp.ClientTimeout(total=10)
             async with (
                 aiohttp.ClientSession(timeout=timeout) as session,
                 session.post(
-                    LOGIN_REQUEST_URI,
-                    json={"email": email},
+                    AUTHORIZE_CHALLENGE_URI,
+                    json={
+                        "response_type": "code",
+                        "email": email,
+                        "code_challenge": code_challenge,
+                        "code_challenge_method": "S256",
+                        "source_name": source_name[:255],
+                    },
+                    headers=dict(self._request_headers),
+                ) as response,
+            ):
+                # HTTP 403 with otp_required is the *expected* success path here,
+                # so don't let raise_for_status() treat it as an error.
+                if response.status != HTTPStatus.FORBIDDEN:
+                    response.raise_for_status()
+
+                _LOGGER.debug(
+                    "ZonneplanAPI authorize-challenge status: %s (%s)",
+                    response.status,
+                    response,
+                )
+                response_json = await response.json()
+                _LOGGER.debug("ZonneplanAPI authorize-challenge response body received")
+
+        except TimeoutError:
+            _LOGGER.exception("Timeout calling ZonneplanAPI to request OTP")
+            return None
+
+        except aiohttp.ClientResponseError as err:
+            _LOGGER.exception(
+                "HTTP error calling ZonneplanAPI to request OTP: %s %s",
+                err.status,
+                err.message,
+            )
+            return None
+
+        except aiohttp.ClientError:
+            _LOGGER.exception("Client error calling ZonneplanAPI to request OTP")
+            return None
+
+        if not response_json.get("otp_required") or "auth_session" not in response_json:
+            _LOGGER.error("Unexpected ZonneplanAPI authorize-challenge response: %s", response_json)
+            return None
+
+        return response_json["auth_session"], code_verifier
+
+    async def async_submit_otp(self, auth_session: str, otp: str, code_verifier: str) -> dict | None:
+        """Submit the emailed OTP (step 2) and exchange the code for tokens (step 3)."""
+        try:
+            timeout = aiohttp.ClientTimeout(total=10)
+            async with (
+                aiohttp.ClientSession(timeout=timeout) as session,
+                session.post(
+                    AUTHORIZE_CHALLENGE_URI,
+                    json={"auth_session": auth_session, "otp": otp},
                     headers=dict(self._request_headers),
                 ) as response,
             ):
                 response.raise_for_status()
                 _LOGGER.debug(
-                    "ZonneplanAPI validated status: %s (%s)",
+                    "ZonneplanAPI authorize-challenge (otp) status: %s (%s)",
                     response.status,
                     response,
                 )
-
-                # Get Json
                 response_json = await response.json()
-                _LOGGER.debug("ZonneplanAPI response body: %s", response_json)
+                _LOGGER.debug("ZonneplanAPI authorize-challenge (otp) response body received")
 
         except TimeoutError:
-            _LOGGER.exception("Timeout calling ZonneplanAPI to request login email")
+            _LOGGER.exception("Timeout calling ZonneplanAPI to submit OTP")
             return None
 
         except aiohttp.ClientResponseError as err:
             _LOGGER.exception(
-                "HTTP error calling ZonneplanAPI to request login email: %s %s",
+                "HTTP error calling ZonneplanAPI to submit OTP (likely wrong/expired code): %s %s",
                 err.status,
                 err.message,
             )
             return None
 
         except aiohttp.ClientError:
-            _LOGGER.exception(
-                "Client error calling ZonneplanAPI to request login email: %s",
-            )
+            _LOGGER.exception("Client error calling ZonneplanAPI to submit OTP")
             return None
 
-        _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
-        _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
-
-        return response_json["data"]["uuid"]
-
-    async def async_get_temp_pass(self, email: str, uuid: str) -> dict | None:
-        try:
-            timeout = aiohttp.ClientTimeout(total=10)
-            async with (
-                aiohttp.ClientSession(timeout=timeout) as session,
-                session.get(LOGIN_REQUEST_URI + "/" + uuid, headers=dict(self._request_headers)) as response,
-            ):
-                response.raise_for_status()
-                _LOGGER.debug(
-                    "Temporary password validated status: %s (%s)",
-                    response.status,
-                    response,
-                )
-
-                response_json = await response.json()
-                _LOGGER.debug("Temporary password response received")
-
-        except TimeoutError:
-            _LOGGER.exception("Timeout calling ZonneplanAPI to request temporary password")
+        authorization_code = response_json.get("authorization_code")
+        if not authorization_code:
+            _LOGGER.error("Unexpected ZonneplanAPI authorize-challenge (otp) response: %s", response_json)
             return None
 
-        except aiohttp.ClientResponseError as err:
-            _LOGGER.exception(
-                "HTTP error calling ZonneplanAPI to request login email: %s %s",
-                err.status,
-                err.message,
-            )
-            return None
-
-        except aiohttp.ClientError:
-            _LOGGER.exception(
-                "Client error calling ZonneplanAPI to request login email: %s",
-            )
-            return None
-
-        _LOGGER.debug("Temporary password response header: %s", response.headers)
-        _LOGGER.debug("Temporary password response status: %s", response.status)
-
-        if (
-            "data" in response_json
-            and "is_activated" in response_json["data"]
-            and response_json["data"]["is_activated"]
-            and "password" in response_json["data"]
-        ):
-            grant_params = {
-                "grant_type": "one_time_password",
-                "email": email,
-                "password": response_json["data"]["password"],
-            }
-            return await self._async_request_new_token(grant_params)
-
-        return None
+        grant_params = {
+            "grant_type": "authorization_code",
+            "code": authorization_code,
+            "code_verifier": code_verifier,
+        }
+        return await self._async_request_new_token(grant_params)
 
     async def async_refresh_token(self, token: dict) -> dict:
         grant_params = {

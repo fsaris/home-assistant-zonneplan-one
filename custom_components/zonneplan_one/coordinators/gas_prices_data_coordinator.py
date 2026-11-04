@@ -75,7 +75,7 @@ class GasPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         """Fetch the latest status."""
         try:
             data = {}
-            gas_daily = await self.api.async_get_consumer_prices("gas-daily")
+            gas_daily = await self.api.async_get_consumer_prices("gas-daily", self.contract["uuid"])
             if gas_daily:
                 prices = get_price_series_from_chart_data(gas_daily)
                 data["gas_prices"] = get_prices_by_date_and_hour(prices)

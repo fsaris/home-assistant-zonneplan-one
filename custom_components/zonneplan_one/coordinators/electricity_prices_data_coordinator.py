@@ -81,7 +81,7 @@ def prepare_legacy_prices(price_series: list[dict]) -> list[dict]:
             "electricity_price": price,
             "electricity_price_excl_tax": price_excl_tax,
         }
-        sustainability_score = price_data.get("sustainability_score", {}).get("permille", 0)
+        sustainability_score = (price_data.get("sustainability_score") or {}).get("permille", 0)
         tariff_group = price_data.get("tariff_group", "")
         price_info["sustainability_score"] = sustainability_score
         price_info["tariff_group"] = tariff_group
@@ -128,8 +128,8 @@ class ElectricityPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
         try:
             price_data = self.data or {}
 
-            hourly = await self.api.async_get_consumer_prices("electricity-hourly") or price_data.get("hourly")
-            quarter_hourly = await self.api.async_get_consumer_prices("electricity-quarter-hourly") or price_data.get("quarter_hourly")
+            hourly = await self.api.async_get_consumer_prices("electricity-hourly", self.contract["uuid"]) or price_data.get("hourly")
+            quarter_hourly = await self.api.async_get_consumer_prices("electricity-quarter-hourly", self.contract["uuid"]) or price_data.get("quarter_hourly")
 
             if hourly:
                 price_data["hourly"] = hourly

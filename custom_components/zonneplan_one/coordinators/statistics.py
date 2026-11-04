@@ -69,6 +69,10 @@ class BaseZonneplanStatisticsService(ABC):
     ) -> None:
         self.hass = hass
         self._refetched_statistics_yesterday: datetime | None = None
+        # Day up to which history was already fetched. Days without hourly measurements
+        # do not move the last statistic forward, so without this every run would fetch
+        # the same empty days again and hit the API rate limit.
+        self._backfilled_until: datetime | None = None
 
     @abstractmethod
     async def _fetch_day_payload(self, day: datetime, *, ignore_etag: bool = False) -> dict[str, Any] | None:
@@ -88,7 +92,12 @@ class BaseZonneplanStatisticsService(ABC):
         backfill_failed = False
         if any(state.last_time < start_of_today for state in states.values()):
             try:
-                await self._backfill_history(states, start_of_today, retry_on_max_connections=False)
+                await self._backfill_history(
+                    states,
+                    start_of_today,
+                    retry_on_max_connections=False,
+                    resume_from=self._backfilled_until,
+                )
             except ClientResponseError as err:
                 backfill_failed = True
                 _LOGGER.warning(
@@ -239,8 +248,14 @@ class BaseZonneplanStatisticsService(ABC):
         notification_id: str | None = None,
         *,
         retry_on_max_connections: bool,
+        resume_from: datetime | None = None,
     ) -> None:
         current_day = min(state.last_time for state in states.values())
+        if resume_from and resume_from > current_day:
+            current_day = resume_from
+        if current_day >= start_of_today:
+            return
+
         _LOGGER.info(
             "Last stat for %s is outdated, fetching historical data since %s",
             [config.statistic_id for config in self.channel_configs],
@@ -296,6 +311,7 @@ class BaseZonneplanStatisticsService(ABC):
             self._ingest_measurements(measurements, states)
             self._flush_pending(states)
             current_day += timedelta(days=1)
+            self._backfilled_until = current_day
 
     def _extract_measurements(self, payload: dict[str, Any], context: str) -> list[dict[str, Any]]:
         if not payload:

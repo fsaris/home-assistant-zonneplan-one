@@ -2,27 +2,23 @@
   "config": {
     "step": {
       "auth": {
-        "title": "Request login token",
-        "description": "Provide your email address to get a login mail",
+        "title": "Request login code",
+        "description": "Provide your email address to get a login code",
         "data": {
           "email": "Email address"
         }
       },
-      "timeout": {
-        "title": "Login link expired",
-        "description": "You didn't click the login link in time. Submit to request a new one."
-      },
-      "poll_failed": {
-        "title": "Something went wrong",
-        "description": "We couldn't verify the login link. Submit to try again."
+      "otp": {
+        "title": "Enter login code",
+        "description": "Enter the 6-digit code we emailed you",
+        "data": {
+          "otp": "Login code"
+        }
       },
       "reauth_confirm": {
         "title": "Reauthenticate Integration",
         "description": "The Zonneplan integration needs to re-authenticate your account"
       }
-    },
-    "progress": {
-      "wait_for_approval": "Check your mailbox and click on the link from Zonneplan."
     },
     "abort": {
       "failed_to_authenticate": "Failed to successful authenticate",
@@ -30,8 +26,8 @@
       "reauth_successful": "Re-authentication was successful"
     },
     "error": {
-      "failed_to_request_login": "Failed to request login link, try again at a later point. *(If keeps failing, check logs)*",
-      "no_password": "No password received yet *(did you follow the link from the email?)*"
+      "failed_to_request_login": "Failed to request a login code, try again at a later point. *(If keeps failing, check logs)*",
+      "invalid_otp": "That code was wrong or expired. We've sent you a new one, please try again."
     }
   },
   "entity": {

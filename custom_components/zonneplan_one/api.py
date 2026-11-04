@@ -5,7 +5,7 @@ from datetime import date
 from http import HTTPStatus
 from typing import Any
 
-from aiohttp import ClientResponseError, ClientSession
+from aiohttp import ClientResponseError, ClientSession, client
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import DOMAIN
@@ -60,6 +60,10 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         return self._oauth_session.token["access_token"]
 
+    async def async_set_locale(self, locale: str) -> None:
+        """Set the locale for the API "remote" session."""
+        await self.async_put("user-accounts/locale", {"locale": locale})
+
     async def async_get_user_accounts(self) -> ZonneplanAccountsData | None:
         return await self._async_get("user-accounts/me")
 
@@ -107,17 +111,20 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             params,
         )
 
-    async def async_get_consumer_prices(self, chart_name: str) -> dict | None:
-        return await self._async_get(f"api/consumer-prices/charts/{chart_name}")
+    async def async_get_consumer_prices(self, chart_name: str, contract_uuid: str) -> dict | None:
+        # The URL is the same for every contract, so keep a separate ETag per contract.
+        # A shared ETag makes the second contract get a 304 for data it never received.
+        return await self._async_get(f"api/consumer-prices/charts/{chart_name}", etag_key=contract_uuid)
 
-    async def _async_get(self, path: str, *, ignore_etag: bool = False) -> dict | None:
+    async def _async_get(self, path: str, *, ignore_etag: bool = False, etag_key: str | None = None) -> dict | None:
         _LOGGER.info("fetch: %s", path)
 
         headers = dict(self._request_headers)
         url = "https://app-api.zonneplan.nl/" + path
+        etag_cache_key = url if etag_key is None else f"{url}#{etag_key}"
 
-        if not ignore_etag and self._etags.get(url):
-            headers["If-None-Match"] = self._etags[url]
+        if not ignore_etag and self._etags.get(etag_cache_key):
+            headers["If-None-Match"] = self._etags[etag_cache_key]
 
         _LOGGER.debug("ZonneplanAPI request header: %s", headers)
         response = await self._oauth_session.async_request(
@@ -162,7 +169,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
 
         self.diagnostics[path] = response_json
 
-        self._etags[url] = response.headers.get("ETag")
+        self._etags[etag_cache_key] = response.headers.get("ETag")
 
         return response_json["data"]
 
@@ -178,6 +185,24 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             headers=dict(self._request_headers),
         )
 
+        return await self._process_response(response)
+
+    async def async_put(self, path: str, params: dict | None = None) -> dict:
+        if params is None:
+            params = {}
+        _LOGGER.info("PUT: %s?%s", path, params)
+
+        response = await self._oauth_session.async_request(
+            "PUT",
+            "https://app-api.zonneplan.nl/" + path,
+            json=params,
+            headers=dict(self._request_headers),
+        )
+
+        return await self._process_response(response)
+
+    async def _process_response(self, response: client.ClientResponse) -> dict:
+
         _LOGGER.debug("ZonneplanAPI response header: %s", response.headers)
         _LOGGER.debug("ZonneplanAPI response status: %s", response.status)
 
@@ -192,7 +217,7 @@ class AsyncConfigEntryAuth(ZonneplanApi):
             )
 
         if response.status >= HTTPStatus.BAD_REQUEST:
-            _LOGGER.error("ZonneplanAPI error response for POST %s?%s: %s", path, params, await response.text())
+            _LOGGER.error("ZonneplanAPI error response for %s %s: %s", response.request_info.method, response.request_info.url, await response.text())
 
         response.raise_for_status()
 
@@ -221,22 +246,23 @@ class ZonneplanOAuth2Implementation(config_entry_oauth2_flow.AbstractOAuth2Imple
         """Domain that is providing the implementation."""
         return DOMAIN
 
-    async def async_request_temp_pass(self, email: str) -> str | None:
-        return await self._api.async_request_temp_pass(email)
+    async def async_request_otp(self, email: str, source_name: str) -> tuple[str, str] | None:
+        """Start the auth challenge. Returns (auth_session, code_verifier)."""
+        return await self._api.async_request_otp(email, source_name)
 
     async def async_resolve_external_data(self, external_data: Any) -> dict:
         """
         Not used.
 
-        Token resolution happens via ZonneplanApi.async_get_temp_pass
-        polling in the config flow, not via the external callback.
+        Token resolution happens via ZonneplanApi.async_submit_otp
+        in the config flow, not via the external callback.
         """
-        msg = "ZonneplanOAuth2Implementation uses email + polling, not a redirect flow"
+        msg = "ZonneplanOAuth2Implementation uses email + OTP, not a redirect flow"
         raise NotImplementedError(msg)
 
-    async def async_resolve_token_by_temp_pass(self, email: str, uuid: str) -> dict | None:
-        """Resolve external data to tokens."""
-        return await self._api.async_get_temp_pass(email, uuid)
+    async def async_submit_otp(self, auth_session: str, otp: str, code_verifier: str) -> dict | None:
+        """Submit the emailed OTP and resolve it to tokens."""
+        return await self._api.async_submit_otp(auth_session, otp, code_verifier)
 
     async def _async_refresh_token(self, token: dict) -> dict:
         """Refresh a token."""

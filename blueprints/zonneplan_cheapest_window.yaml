@@ -165,15 +165,16 @@ action:
                 | sort(attribute='start_date') | list -%}
           {%- set n = entries | length -%}
           {# duration is given in full hours, when forcast isn't in full hours we multiply by 4 to get quarterly hours to process #}
+          {%- set _duration = duration -%}
           {%- if entries[0].end_date.minute > 0 %}
-            {%- set duration = duration * 4 %}
+            {%- set _duration = duration * 4 %}
           {%- endif -%}
           {%- set ns = namespace(best_i=-1, best_avg=none) -%}
-          {%- for i in range(0, n - duration + 1) -%}
+          {%- for i in range(0, n - _duration + 1) -%}
             {%- set start_dt = entries[i].start_date -%}
-            {%- set end_dt = entries[i + duration - 1].end_date -%}
+            {%- set end_dt = entries[i + _duration - 1].end_date -%}
             {%- if start_dt >= win_start_dt and end_dt <= win_end_dt -%}
-              {%- set avg = (entries[i:i+duration] | map(attribute=price_attribute) | map(attribute='amount') | map('float') | sum) / duration * 0.0000001 -%}
+              {%- set avg = (entries[i:i+_duration] | map(attribute=price_attribute) | map(attribute='amount') | map('float') | sum) / _duration * 0.0000001 -%}
               {%- if ns.best_avg is none or avg < ns.best_avg -%}
                 {%- set ns.best_i = i -%}
                 {%- set ns.best_avg = avg -%}
@@ -184,7 +185,7 @@ action:
             {%- set best_start = as_datetime(entries[ns.best_i].start_date) -%}
             {%- set best_end = best_start + timedelta(hours=duration) -%}
             {%- set price_ok = (max_price is none) or (ns.best_avg <= max_price) -%}
-            {%- set result = {'found': price_ok, 'is_now': price_ok and now() >= best_start and now() < best_end, 'start': best_start.isoformat(), 'avg_price': ns.best_avg} -%}
+            {%- set result = {'found': price_ok, 'is_now': price_ok and now() >= best_start and now() < best_end, 'start': best_start.isoformat(), 'end': best_end.isoformat(), 'avg_price': ns.best_avg} -%}
           {%- endif -%}
           {{ result | to_json }}
   - if:
