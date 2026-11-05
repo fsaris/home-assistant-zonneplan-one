@@ -14,6 +14,7 @@ import argparse
 import json
 import re
 import sys
+from math import floor, log10
 from pathlib import Path
 from typing import Any
 
@@ -85,6 +86,15 @@ SAFE_STRING_KEYS = {
     "type",
 }
 
+# Rounded: these are close to unique per household, so exact values could be matched to data posted elsewhere.
+ROUNDED_KEYS = {
+    "cycle_count",
+    "expected_delivery",
+    "expected_production",
+    "total_power_measured",
+}
+ROUNDED_SIGNIFICANT_DIGITS = 2
+
 FAKE_ADDRESS = {
     "id": "1234AB1",
     "zipcode": "1234 AB",
@@ -100,6 +110,13 @@ FAKE_ADDRESS = {
 MIN_LEAK_CHECK_LENGTH = 4
 # Short identifiers such as meter model codes can also occur inside prices or measurements.
 MIN_IDENTIFIER_LEAK_CHECK_LENGTH = 8
+
+
+def round_significant(value: float) -> float:
+    """Round to ROUNDED_SIGNIFICANT_DIGITS significant digits, keeping integers as integers."""
+    if not value:
+        return value
+    return round(value, ROUNDED_SIGNIFICANT_DIGITS - 1 - floor(log10(abs(value))))
 
 
 class UnknownFieldError(ValueError):
@@ -178,6 +195,8 @@ class Anonymizer:
             return [self.walk(item, key, path) for item in value]
         if isinstance(value, str):
             return self._string(key, value, path)
+        if key in ROUNDED_KEYS and isinstance(value, int | float) and not isinstance(value, bool):
+            return round_significant(value)
         return value
 
     def _string(self, key: str, value: str, path: str) -> str:

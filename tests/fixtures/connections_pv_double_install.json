@@ -20,7 +20,7 @@
             "last_measured_at": "2024-03-06T09:05:23.000000Z",
             "last_measured_power_value": 2239,
             "grid_stabilization_active": false,
-            "total_power_measured": 13074960,
+            "total_power_measured": 13000000,
             "network": {
               "name": "Onbekend",
               "color": "unknown",
@@ -50,7 +50,7 @@
             "last_measured_at": "2024-03-06T09:05:03.000000Z",
             "last_measured_power_value": 6404,
             "grid_stabilization_active": false,
-            "total_power_measured": 6270,
+            "total_power_measured": 6300,
             "network": {
               "name": "Vodafone",
               "color": "poor",
@@ -462,7 +462,7 @@
           "last_measured_at": "2024-03-06T08:55:23.000000Z",
           "last_measured_power_value": 2281,
           "grid_stabilization_active": false,
-          "total_power_measured": 13074780,
+          "total_power_measured": 13000000,
           "network": {
             "name": "Onbekend",
             "color": "unknown",

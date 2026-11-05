@@ -19,7 +19,7 @@
             "first_measured_at": "2022-12-27T14:45:08.000000Z",
             "last_measured_at": "2024-03-27T14:30:09.000000Z",
             "last_measured_power_value": 310,
-            "total_power_measured": 6520260,
+            "total_power_measured": 6500000,
             "network": {
               "name": "KPN",
               "color": "poor",
@@ -2656,7 +2656,7 @@
           "first_measured_at": "2022-12-27T14:45:08.000000Z",
           "last_measured_at": "2024-03-27T14:30:09.000000Z",
           "last_measured_power_value": 310,
-          "total_power_measured": 6520260,
+          "total_power_measured": 6500000,
           "network": {
             "name": "KPN",
             "color": "poor",

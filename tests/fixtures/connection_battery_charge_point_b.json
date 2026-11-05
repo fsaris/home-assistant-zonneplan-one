@@ -1933,7 +1933,7 @@
           "manual_control_enabled": false,
           "manual_control_state": null,
           "self_consumption_enabled": false,
-          "cycle_count": 765,
+          "cycle_count": 760,
           "show_in_contract_screen": true,
           "reserve_discharge_cutoff_wh": null,
           "backup_power_capable": false,
@@ -2818,7 +2818,7 @@
         "manual_control_enabled": false,
         "manual_control_state": null,
         "self_consumption_enabled": false,
-        "cycle_count": 765,
+        "cycle_count": 760,
         "show_in_contract_screen": true,
         "reserve_discharge_cutoff_wh": null,
         "backup_power_capable": false

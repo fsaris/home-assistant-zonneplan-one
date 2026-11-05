@@ -78,6 +78,21 @@ def test_non_string_values_and_timestamps_are_kept() -> None:
     assert Anonymizer().walk(data) == data
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [(13074780, 13000000), (2591, 2600), (138, 140), (450, 450), (7, 7), (0, 0), (None, None)],
+)
+def test_household_totals_are_rounded(value: int | None, expected: int | None) -> None:
+    result = Anonymizer().walk({"total_power_measured": value})["total_power_measured"]
+
+    assert result == expected
+    assert type(result) is type(expected)
+
+
+def test_other_numbers_are_not_rounded() -> None:
+    assert Anonymizer().walk({"value": 13074780}) == {"value": 13074780}
+
+
 def test_load_raw_accepts_comments_and_python_literals(tmp_path: Path) -> None:
     path = tmp_path / "raw.json"
     path.write_text('# GET /api/contracts/secret\n{"a": None, "b": True, "c": "None of True", "d": false}')

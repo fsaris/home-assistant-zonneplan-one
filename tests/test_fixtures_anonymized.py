@@ -16,6 +16,8 @@ EMAIL_RE = re.compile(r"[\w.+-]+@[\w.-]+")
 # Letters are masked to X, digits to a low counter padded with zeros.
 MASKED_IDENTIFIER_RE = re.compile(r"[X_\-.]*(0[X_\-.]*)*\d{0,4}[X_\-.]*")
 IDENTIFIER_KEYS = {"electricity_meter_identifier", "gas_meter_identifier", "identifier", "serial_number", "sgn_serial_number"}
+ROUNDED_KEYS = {"cycle_count", "expected_delivery", "expected_production", "total_power_measured"}
+MAX_SIGNIFICANT_DIGITS = 2
 FORBIDDEN_KEYS = {"chat", "access_token", "refresh_token", "token"}
 
 
@@ -64,6 +66,13 @@ def test_addresses_and_names_are_fake(path: Any) -> None:
     assert {address["street"] for address in _values_for(data, {"address"})} <= {"Teststraat"}
     assert set(_values_for(data, {"full_name"})) <= {"Test User"}
     assert set(_values_for(data, {"first_name"})) <= {"Test"}
+
+
+@pytest.mark.parametrize("path", FIXTURES, ids=FIXTURE_IDS)
+def test_household_totals_are_rounded(path: Any) -> None:
+    values = _values_for(json.loads(path.read_text()), ROUNDED_KEYS)
+
+    assert [value for value in values if value is not None and len(str(abs(value)).rstrip("0")) > MAX_SIGNIFICANT_DIGITS] == []
 
 
 @pytest.mark.parametrize("path", FIXTURES, ids=FIXTURE_IDS)

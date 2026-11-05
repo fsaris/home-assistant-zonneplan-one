@@ -18,7 +18,7 @@
           "first_measured_at": "2021-01-22T13:45:56.000000Z",
           "last_measured_at": "2024-04-01T13:51:40.000000Z",
           "last_measured_power_value": 1166,
-          "total_power_measured": 13511950,
+          "total_power_measured": 14000000,
           "network": {
             "name": "Onbekend",
             "color": "unknown",
@@ -1538,7 +1538,7 @@
         "first_measured_at": "2021-01-22T13:45:56.000000Z",
         "last_measured_at": "2024-04-01T13:51:40.000000Z",
         "last_measured_power_value": 1166,
-        "total_power_measured": 13511950,
+        "total_power_measured": 14000000,
         "network": {
           "name": "Onbekend",
           "color": "unknown",

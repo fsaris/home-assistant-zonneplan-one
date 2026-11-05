@@ -1690,7 +1690,7 @@
             "manual_control_state": null,
             "show_in_contract_screen": true,
             "self_consumption_enabled": false,
-            "cycle_count": 138,
+            "cycle_count": 140,
             "total_earned": 283684390,
             "total_day": 72727971,
             "delivery_day": 27110,
@@ -3691,7 +3691,7 @@
           "end_reason": null,
           "show_in_contract_screen": true,
           "expected_delivery": 4500,
-          "expected_production": 2560
+          "expected_production": 2600
         }
       }
     ],
@@ -3732,7 +3732,7 @@
           "manual_control_state": null,
           "show_in_contract_screen": true,
           "self_consumption_enabled": false,
-          "cycle_count": 138,
+          "cycle_count": 140,
           "total_earned": 283684390,
           "total_day": 72727971,
           "delivery_day": 27110,
