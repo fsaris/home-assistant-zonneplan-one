@@ -2,11 +2,17 @@
 
 import json
 import re
+from dataclasses import fields
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+
+from custom_components.zonneplan_one.const import DOMAIN, GAS_NEXT_PRICE_HOUR, ZONNEPLAN_API_TIME_ZONE
 
 API = "https://app-api.zonneplan.nl"
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
@@ -18,6 +24,10 @@ CONTRACT_KEYS = (
     "charge_point_installation",
     "home_battery_installation",
 )
+# The connection and contracts of the default fixture, connections_battery_charge_point_control.json.
+CONNECTION_UUID = "00000000-0000-4000-8000-000000000019"
+BATTERY_UUID = "00000000-0000-4000-8000-000000000029"
+CHARGE_POINT_UUID = "00000000-0000-4000-8000-000000000027"
 CONNECTION_FIXTURES = sorted(path.name for path in FIXTURE_DIR.glob("connection*.json"))
 
 
@@ -102,7 +112,9 @@ def mock_connection(aioclient_mock: AiohttpClientMocker, connection_uuid: str, c
     for contract in connection.get("charge_point_installation") or []:
         # The dump holds the coordinator's value, which is `contracts[0]` of the response.
         charge_point = connection.get("charge_point_data") or contract
-        aioclient_mock.get(f"{base}/charge-points/{contract['uuid']}", json={"data": {"contracts": [charge_point], "vehicles": []}})
+        aioclient_mock.get(
+            f"{base}/charge-points/{contract['uuid']}", json={"data": {"contracts": [charge_point], "vehicles": connection.get("vehicles") or []}}
+        )
 
     for contract in connection.get("home_battery_installation") or []:
         uuid = contract["uuid"]
@@ -117,12 +129,41 @@ def mock_connection(aioclient_mock: AiohttpClientMocker, connection_uuid: str, c
 def mock_api(aioclient_mock: AiohttpClientMocker, connections: dict[str, dict[str, Any]], now: datetime, accounts: dict[str, Any] | None = None) -> None:
     """Register the account, price and per-connection endpoints."""
     start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    # Gas prices change daily at 06:00 in the API time zone, starting yesterday so "today" is the second price.
+    gas_start = (now.astimezone(ZONNEPLAN_API_TIME_ZONE) - timedelta(days=1)).replace(hour=GAS_NEXT_PRICE_HOUR, minute=0, second=0, microsecond=0)
     charts = f"{API}/api/consumer-prices/charts"
     aioclient_mock.put(f"{API}/user-accounts/locale", status=204)
+    aioclient_mock.post(re.compile(rf"{API}/connections/.*/actions/"), status=204)
     aioclient_mock.get(f"{API}/user-accounts/me", json={"data": accounts or accounts_from_connections(connections)})
     aioclient_mock.get(f"{charts}/electricity-hourly", json={"data": price_chart(start_of_day, step=timedelta(hours=1), count=48)})
     aioclient_mock.get(f"{charts}/electricity-quarter-hourly", json={"data": price_chart(start_of_day, step=timedelta(minutes=15), count=192)})
-    aioclient_mock.get(f"{charts}/gas-daily", json={"data": price_chart(start_of_day, step=timedelta(days=1), count=2)})
+    aioclient_mock.get(f"{charts}/gas-daily", json={"data": price_chart(gas_start, step=timedelta(days=1), count=3)})
 
     for connection_uuid, connection in connections.items():
         mock_connection(aioclient_mock, connection_uuid, connection, now)
+
+
+async def refresh_coordinators(hass: HomeAssistant, entry: MockConfigEntry) -> None:
+    """
+    Refresh every coordinator once more after setup.
+
+    A coordinator's first refresh starts when its first entity subscribes. Mocked responses are
+    instant, so it finishes before the other entities subscribe, and those would stay unknown.
+    """
+    for connection in entry.runtime_data.coordinators.values():
+        for field in fields(connection):
+            if coordinator := getattr(connection, field.name):
+                await coordinator.async_refresh()
+    await hass.async_block_till_done()
+
+
+def entity_id_for(hass: HomeAssistant, platform: str, unique_id: str) -> str:
+    entity_id = er.async_get(hass).async_get_entity_id(platform, DOMAIN, unique_id)
+    assert entity_id, f"no {platform} entity with unique id {unique_id}"
+    return entity_id
+
+
+def posted_actions(aioclient_mock: AiohttpClientMocker, connection_uuid: str = CONNECTION_UUID) -> list[tuple[str, Any]]:
+    """Return the POST requests so far as (path below the connection, json body)."""
+    prefix = f"{API}/connections/{connection_uuid}"
+    return [(str(url).removeprefix(prefix), data) for method, url, data, _ in aioclient_mock.mock_calls if method.upper() == "POST"]

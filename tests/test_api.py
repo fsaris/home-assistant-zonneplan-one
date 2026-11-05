@@ -2,13 +2,21 @@
 
 import base64
 import hashlib
+from datetime import date
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from aiohttp import ClientResponseError
 
-from custom_components.zonneplan_one.api import AsyncConfigEntryAuth, ZonneplanRateLimitError, _parse_retry_after
+from custom_components.zonneplan_one.api import (
+    AsyncConfigEntryAuth,
+    ZonneplanApiError,
+    ZonneplanOAuth2Implementation,
+    ZonneplanRateLimitError,
+    _parse_retry_after,
+)
+from custom_components.zonneplan_one.const import DOMAIN
 from custom_components.zonneplan_one.zonneplan_api.api import _generate_pkce_pair
 
 URL = "https://app-api.zonneplan.nl/"
@@ -141,3 +149,104 @@ def test_pkce_challenge_is_the_s256_hash_of_the_verifier() -> None:
 
 def test_pkce_pairs_are_unique() -> None:
     assert _generate_pkce_pair() != _generate_pkce_pair()
+
+
+async def test_access_token_is_refreshed_when_expired() -> None:
+    oauth_session = MagicMock(valid_token=False, token={"access_token": "new"})
+    oauth_session.async_ensure_token_valid = AsyncMock()
+    api = AsyncConfigEntryAuth(MagicMock(), oauth_session)
+
+    assert await api.async_get_access_token() == "new"
+    oauth_session.async_ensure_token_valid.assert_awaited_once()
+
+
+async def test_valid_access_token_is_not_refreshed() -> None:
+    oauth_session = MagicMock(valid_token=True, token={"access_token": "current"})
+    oauth_session.async_ensure_token_valid = AsyncMock()
+    api = AsyncConfigEntryAuth(MagicMock(), oauth_session)
+
+    assert await api.async_get_access_token() == "current"
+    oauth_session.async_ensure_token_valid.assert_not_awaited()
+
+
+async def test_set_locale_puts_the_locale() -> None:
+    api, request = _api(FakeResponse(status=204))
+
+    await api.async_set_locale("nl-NL")
+
+    assert request.call_args.args == ("PUT", f"{URL}user-accounts/locale")
+    assert request.call_args.kwargs["json"] == {"locale": "nl-NL"}
+
+
+@pytest.mark.parametrize(
+    ("call", "path"),
+    [
+        pytest.param(lambda api: api.async_get_user_accounts(), "user-accounts/me", id="accounts"),
+        pytest.param(
+            lambda api: api.async_get_battery_chart("c", "days", date(2025, 12, 1)),
+            "contracts/c/home_battery_installation/charts/days?date=2025-12-01",
+            id="chart",
+        ),
+        pytest.param(lambda api: api.async_get_battery_control_mode("c"), "api/contracts/c/home-battery/control-mode", id="control_mode"),
+        pytest.param(
+            lambda api: api.async_get_battery_home_optimization("c"), "api/contracts/c/home-battery/control-mode/home_optimization", id="optimization"
+        ),
+        pytest.param(lambda api: api.async_get_consumer_prices("gas-daily", "c"), "api/consumer-prices/charts/gas-daily", id="prices"),
+    ],
+)
+async def test_get_endpoints_use_the_expected_url(call: Any, path: str) -> None:
+    api, request = _api(FakeResponse(body={"data": {}}))
+
+    await call(api)
+
+    assert request.call_args.args == ("GET", f"{URL}{path}")
+
+
+async def test_ratelimit_header_is_handled_on_a_normal_response(caplog: pytest.LogCaptureFixture) -> None:
+    api, _ = _api(FakeResponse(body={"data": {}}, headers={"x-ratelimit-remaining": "0", "Retry-After": "30"}))
+
+    await api.async_get("connection", "/summary")
+
+    assert "retry in: 30 seconds" in caplog.text
+
+
+def _implementation(**api_methods: AsyncMock) -> ZonneplanOAuth2Implementation:
+    return ZonneplanOAuth2Implementation(MagicMock(**api_methods))
+
+
+def test_oauth_implementation_identifies_itself() -> None:
+    implementation = _implementation()
+
+    assert implementation.name == "Zonneplan"
+    assert implementation.domain == DOMAIN
+
+
+async def test_oauth_implementation_has_no_redirect_flow() -> None:
+    implementation = _implementation()
+
+    assert await implementation.async_generate_authorize_url("flow") == ""
+    with pytest.raises(NotImplementedError):
+        await implementation.async_resolve_external_data({})
+
+
+async def test_oauth_implementation_forwards_the_login_calls() -> None:
+    implementation = _implementation(
+        async_request_otp=AsyncMock(return_value=("session", "verifier")),
+        async_submit_otp=AsyncMock(return_value={"access_token": "access"}),
+    )
+
+    assert await implementation.async_request_otp("user@example.com", "source") == ("session", "verifier")
+    assert await implementation.async_submit_otp("session", "123456", "verifier") == {"access_token": "access"}
+
+
+async def test_oauth_implementation_refresh_returns_the_new_token() -> None:
+    implementation = _implementation(async_refresh_token=AsyncMock(return_value={"access_token": "new"}))
+
+    assert await implementation._async_refresh_token({"refresh_token": "refresh"}) == {"access_token": "new"}
+
+
+async def test_oauth_implementation_refresh_without_token_raises() -> None:
+    implementation = _implementation(async_refresh_token=AsyncMock(return_value=None))
+
+    with pytest.raises(ZonneplanApiError):
+        await implementation._async_refresh_token({"refresh_token": "refresh"})

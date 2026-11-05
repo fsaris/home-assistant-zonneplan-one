@@ -1,44 +1,28 @@
 """Tests that sensors show the values from the API responses."""
 
-from dataclasses import fields
 from typing import Any
 
 import pytest
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
-from custom_components.zonneplan_one.const import DOMAIN
-
-from .common import load_fixture, mock_api
+from .common import BATTERY_UUID, CHARGE_POINT_UUID, CONNECTION_UUID, entity_id_for, load_fixture, mock_api, refresh_coordinators
 from .conftest import NOW
 
-CONNECTION = "00000000-0000-4000-8000-000000000019"
-BATTERY = "00000000-0000-4000-8000-000000000029"
-CHARGE_POINT = "00000000-0000-4000-8000-000000000027"
+CONNECTION = CONNECTION_UUID
+BATTERY = BATTERY_UUID
+CHARGE_POINT = CHARGE_POINT_UUID
 
 
 @pytest.fixture(autouse=True)
 async def refreshed_integration(entity_registry_enabled_by_default: None, hass: HomeAssistant, setup_integration: MockConfigEntry) -> None:  # noqa: ARG001
-    """
-    Refresh every coordinator once more after setup.
-
-    A coordinator's first refresh starts when its first entity subscribes. Mocked responses are
-    instant, so it finishes before the other entities subscribe, and those would stay unknown.
-    """
-    for connection in setup_integration.runtime_data.coordinators.values():
-        for field in fields(connection):
-            if coordinator := getattr(connection, field.name):
-                await coordinator.async_refresh()
-    await hass.async_block_till_done()
+    await refresh_coordinators(hass, setup_integration)
 
 
 def _state(hass: HomeAssistant, unique_id: str) -> Any:
-    entity_id = er.async_get(hass).async_get_entity_id("sensor", DOMAIN, unique_id)
-    assert entity_id, f"no sensor with unique id {unique_id}"
-    state = hass.states.get(entity_id)
-    assert state, f"{entity_id} has no state"
+    state = hass.states.get(entity_id_for(hass, "sensor", unique_id))
+    assert state, f"sensor {unique_id} has no state"
     return state
 
 

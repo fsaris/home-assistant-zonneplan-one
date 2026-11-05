@@ -115,6 +115,48 @@ async def test_token_without_expiry_aborts(hass: HomeAssistant, submit_otp: Asyn
     assert result["reason"] == "oauth_error"
 
 
+async def test_otp_request_exception_shows_error(hass: HomeAssistant, request_otp: AsyncMock) -> None:
+    request_otp.side_effect = RuntimeError("unexpected")
+
+    result = await _at_otp_step(hass)
+
+    assert result["step_id"] == "auth"
+    assert result["errors"] == {"email": "failed_to_request_login"}
+
+
+@pytest.mark.usefixtures("request_otp")
+async def test_otp_submit_exception_is_handled_like_a_wrong_code(hass: HomeAssistant, submit_otp: AsyncMock) -> None:
+    result = await _at_otp_step(hass)
+    submit_otp.side_effect = RuntimeError("unexpected")
+
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"otp": "123456"})
+
+    assert result["step_id"] == "otp"
+    assert result["errors"] == {"otp": "invalid_otp"}
+
+
+@pytest.mark.usefixtures("request_otp")
+async def test_token_with_invalid_expiry_aborts(hass: HomeAssistant, submit_otp: AsyncMock) -> None:
+    result = await _at_otp_step(hass)
+    submit_otp.return_value = {"access_token": "access", "expires_in": "soon"}
+
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"otp": "123456"})
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "oauth_error"
+
+
+@pytest.mark.usefixtures("request_otp")
+async def test_token_with_expiry_as_text_is_accepted(hass: HomeAssistant, submit_otp: AsyncMock) -> None:
+    result = await _at_otp_step(hass)
+    submit_otp.return_value = {"access_token": "access", "expires_in": "3600"}
+
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"otp": "123456"})
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"]["token"]["expires_in"] == 3600  # noqa: PLR2004
+
+
 @pytest.mark.usefixtures("submit_otp")
 async def test_reauth_updates_existing_entry(hass: HomeAssistant, request_otp: AsyncMock, config_entry: MockConfigEntry) -> None:
     config_entry.add_to_hass(hass)
