@@ -25,6 +25,15 @@ ignore = [
     "CPY001", # Ignore copyright header check
 ]
 
+[lint.per-file-ignores]
+"scripts/*.py" = [
+    "T201", # Printing is how a command line script reports
+]
+"tests/*.py" = [
+    "S101", # Tests use assert
+    "SLF001", # Tests may reach into private helpers
+]
+
 [lint.pylint]
 max-args = 8
 

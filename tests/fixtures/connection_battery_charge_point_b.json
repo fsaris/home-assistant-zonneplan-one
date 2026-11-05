@@ -1,0 +1,3399 @@
+{
+  "uuid": "00000000-0000-4000-8000-000000000019",
+  "pv_data": {},
+  "electricity_data": {
+    "contracts": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000021",
+        "label": "Connect energiemeter",
+        "type": "p1_installation",
+        "start_date": "2024-06-16T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "electricity_meter_code": "X0022",
+          "electricity_meter_identifier": "000000000023",
+          "electricity_first_measured_at": "2024-06-19T13:02:33.000000Z",
+          "electricity_last_measured_at": "2025-12-24T15:20:00.000000Z",
+          "electricity_last_measured_production_at": "2025-12-24T15:20:00.000000Z",
+          "electricity_last_measured_delivery_value": 2377,
+          "electricity_last_measured_production_value": 443,
+          "electricity_last_measured_average_value": 2290,
+          "gas_first_measured_at": null,
+          "gas_last_measured_at": null,
+          "gas_meter_code": null,
+          "gas_meter_identifier": null,
+          "dsmr_version": "50",
+          "sgn_serial_number": "XX-X000000024",
+          "sgn_firmware": "3.1.3+dsmr-meter-p1-hw0",
+          "show_in_contract_screen": false
+        }
+      }
+    ],
+    "powerplay": null,
+    "measurement_groups": [
+      {
+        "group_type": "multi",
+        "date": "2025-12-23T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": true,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": 44662,
+          "energy_produced_sum": 218,
+          "delivery_costs_excl_tax": 40767502.99999999,
+          "delivery_costs_incl_tax": 95640755,
+          "production_costs_excl_tax": 220369.00000000003,
+          "production_costs_incl_tax": 488212,
+          "delivery_price_per_unit_excl_tax": 912800.7000000001,
+          "delivery_price_per_unit_incl_tax": 2141434.6999999997,
+          "production_price_per_unit_excl_tax": 1010867,
+          "production_price_per_unit_incl_tax": 2239504.6,
+          "result_tax_excluded": 40987871.99999999,
+          "result_tax_included": 96128967
+        },
+        "mutable": true,
+        "type": "live",
+        "measurements": [
+          {
+            "values": {
+              "d": 1497,
+              "p": null
+            },
+            "date": "2025-12-24T09:25:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1535,
+              "p": null
+            },
+            "date": "2025-12-24T09:30:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1115,
+              "p": null
+            },
+            "date": "2025-12-24T09:35:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1052,
+              "p": null
+            },
+            "date": "2025-12-24T09:40:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2367,
+              "p": null
+            },
+            "date": "2025-12-24T09:45:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2909,
+              "p": null
+            },
+            "date": "2025-12-24T09:50:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1046,
+              "p": null
+            },
+            "date": "2025-12-24T09:55:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1063,
+              "p": null
+            },
+            "date": "2025-12-24T10:00:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2034,
+              "p": null
+            },
+            "date": "2025-12-24T10:05:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3272,
+              "p": null
+            },
+            "date": "2025-12-24T10:10:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3945,
+              "p": null
+            },
+            "date": "2025-12-24T10:15:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3263,
+              "p": null
+            },
+            "date": "2025-12-24T10:20:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2994,
+              "p": null
+            },
+            "date": "2025-12-24T10:25:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2986,
+              "p": null
+            },
+            "date": "2025-12-24T10:30:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3135,
+              "p": null
+            },
+            "date": "2025-12-24T10:35:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4090,
+              "p": null
+            },
+            "date": "2025-12-24T10:40:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4983,
+              "p": null
+            },
+            "date": "2025-12-24T10:45:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 5654,
+              "p": null
+            },
+            "date": "2025-12-24T10:50:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4466,
+              "p": null
+            },
+            "date": "2025-12-24T10:55:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4677,
+              "p": null
+            },
+            "date": "2025-12-24T11:00:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4405,
+              "p": null
+            },
+            "date": "2025-12-24T11:05:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 5013,
+              "p": null
+            },
+            "date": "2025-12-24T11:10:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 5144,
+              "p": null
+            },
+            "date": "2025-12-24T11:15:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4716,
+              "p": null
+            },
+            "date": "2025-12-24T11:20:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2932,
+              "p": null
+            },
+            "date": "2025-12-24T11:25:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2515,
+              "p": null
+            },
+            "date": "2025-12-24T11:30:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2487,
+              "p": null
+            },
+            "date": "2025-12-24T11:35:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2315,
+              "p": null
+            },
+            "date": "2025-12-24T11:40:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2542,
+              "p": null
+            },
+            "date": "2025-12-24T11:45:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1867,
+              "p": null
+            },
+            "date": "2025-12-24T11:50:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2115,
+              "p": null
+            },
+            "date": "2025-12-24T11:55:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3558,
+              "p": null
+            },
+            "date": "2025-12-24T12:00:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 6504,
+              "p": null
+            },
+            "date": "2025-12-24T12:05:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3281,
+              "p": null
+            },
+            "date": "2025-12-24T12:10:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4688,
+              "p": null
+            },
+            "date": "2025-12-24T12:15:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3365,
+              "p": null
+            },
+            "date": "2025-12-24T12:20:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 9197,
+              "p": null
+            },
+            "date": "2025-12-24T12:25:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 11710,
+              "p": null
+            },
+            "date": "2025-12-24T12:30:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 7567,
+              "p": null
+            },
+            "date": "2025-12-24T12:35:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3047,
+              "p": null
+            },
+            "date": "2025-12-24T12:40:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 10044,
+              "p": null
+            },
+            "date": "2025-12-24T12:45:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 9491,
+              "p": null
+            },
+            "date": "2025-12-24T12:50:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3649,
+              "p": null
+            },
+            "date": "2025-12-24T12:55:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4601,
+              "p": null
+            },
+            "date": "2025-12-24T13:00:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3107,
+              "p": null
+            },
+            "date": "2025-12-24T13:05:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3567,
+              "p": null
+            },
+            "date": "2025-12-24T13:10:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3275,
+              "p": null
+            },
+            "date": "2025-12-24T13:15:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3512,
+              "p": null
+            },
+            "date": "2025-12-24T13:20:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3018,
+              "p": null
+            },
+            "date": "2025-12-24T13:25:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3005,
+              "p": null
+            },
+            "date": "2025-12-24T13:30:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3238,
+              "p": null
+            },
+            "date": "2025-12-24T13:35:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2775,
+              "p": null
+            },
+            "date": "2025-12-24T13:40:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2681,
+              "p": null
+            },
+            "date": "2025-12-24T13:45:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3055,
+              "p": null
+            },
+            "date": "2025-12-24T13:50:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3235,
+              "p": null
+            },
+            "date": "2025-12-24T13:55:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3362,
+              "p": null
+            },
+            "date": "2025-12-24T14:00:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2980,
+              "p": null
+            },
+            "date": "2025-12-24T14:05:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3132,
+              "p": null
+            },
+            "date": "2025-12-24T14:10:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2949,
+              "p": null
+            },
+            "date": "2025-12-24T14:15:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3180,
+              "p": null
+            },
+            "date": "2025-12-24T14:20:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2738,
+              "p": null
+            },
+            "date": "2025-12-24T14:25:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1680,
+              "p": null
+            },
+            "date": "2025-12-24T14:30:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1903,
+              "p": null
+            },
+            "date": "2025-12-24T14:35:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1807,
+              "p": null
+            },
+            "date": "2025-12-24T14:40:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2551,
+              "p": null
+            },
+            "date": "2025-12-24T14:45:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2342,
+              "p": null
+            },
+            "date": "2025-12-24T14:50:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2607,
+              "p": null
+            },
+            "date": "2025-12-24T14:55:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2392,
+              "p": null
+            },
+            "date": "2025-12-24T15:00:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 4178,
+              "p": null
+            },
+            "date": "2025-12-24T15:05:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 3169,
+              "p": null
+            },
+            "date": "2025-12-24T15:10:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1551,
+              "p": null
+            },
+            "date": "2025-12-24T15:15:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2290,
+              "p": null
+            },
+            "date": "2025-12-24T15:20:00.000000Z"
+          }
+        ],
+        "totals": {
+          "d": 44662,
+          "p": 218
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      },
+      {
+        "group_type": "multi",
+        "date": "2025-12-23T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": true,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": 44662,
+          "energy_produced_sum": 218,
+          "delivery_costs_excl_tax": 40767502.99999999,
+          "delivery_costs_incl_tax": 95640755,
+          "production_costs_excl_tax": 220369.00000000003,
+          "production_costs_incl_tax": 488212,
+          "delivery_price_per_unit_excl_tax": 912800.7000000001,
+          "delivery_price_per_unit_incl_tax": 2141434.6999999997,
+          "production_price_per_unit_excl_tax": 1010867,
+          "production_price_per_unit_incl_tax": 2239504.6,
+          "result_tax_excluded": 40987871.99999999,
+          "result_tax_included": 96128967
+        },
+        "mutable": true,
+        "type": "hours",
+        "measurements": [
+          {
+            "values": {
+              "d": 539,
+              "p": 0
+            },
+            "date": "2025-12-23T23:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 490,
+              "p": 0
+            },
+            "date": "2025-12-24T00:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 494,
+              "p": 0
+            },
+            "date": "2025-12-24T01:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 1395,
+              "p": 0
+            },
+            "date": "2025-12-24T02:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 8843,
+              "p": 0
+            },
+            "date": "2025-12-24T03:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 7986,
+              "p": -66
+            },
+            "date": "2025-12-24T04:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 1019,
+              "p": -46
+            },
+            "date": "2025-12-24T05:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 784,
+              "p": -10
+            },
+            "date": "2025-12-24T06:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 967,
+              "p": -24
+            },
+            "date": "2025-12-24T07:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 586,
+              "p": -55
+            },
+            "date": "2025-12-24T08:00:00.000000Z",
+            "meta": {
+              "tariff_group": "high"
+            }
+          },
+          {
+            "values": {
+              "d": 1615,
+              "p": -17
+            },
+            "date": "2025-12-24T09:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 3792,
+              "p": 0
+            },
+            "date": "2025-12-24T10:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 3302,
+              "p": 0
+            },
+            "date": "2025-12-24T11:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 6430,
+              "p": 0
+            },
+            "date": "2025-12-24T12:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 3154,
+              "p": 0
+            },
+            "date": "2025-12-24T13:00:00.000000Z",
+            "meta": {
+              "tariff_group": "low"
+            }
+          },
+          {
+            "values": {
+              "d": 2524,
+              "p": 0
+            },
+            "date": "2025-12-24T14:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 742,
+              "p": 0
+            },
+            "date": "2025-12-24T15:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          }
+        ],
+        "totals": {
+          "d": 44662,
+          "p": 218
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      },
+      {
+        "group_type": "multi",
+        "date": "2025-11-30T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": true,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": 1423142,
+          "energy_produced_sum": 375664,
+          "delivery_costs_excl_tax": 1740208871,
+          "delivery_costs_incl_tax": 3488729518,
+          "production_costs_excl_tax": 532984749,
+          "production_costs_incl_tax": 994538313,
+          "delivery_price_per_unit_excl_tax": 1222793.6,
+          "delivery_price_per_unit_incl_tax": 2451427.6,
+          "production_price_per_unit_excl_tax": 1418780.5,
+          "production_price_per_unit_incl_tax": 2647414.5,
+          "result_tax_excluded": 2273193620,
+          "result_tax_included": 4483267831
+        },
+        "mutable": true,
+        "type": "days",
+        "measurements": [
+          {
+            "values": {
+              "d": 48660,
+              "p": -19993
+            },
+            "date": "2025-11-30T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 35863697,
+              "result_tax_included": 71084947
+            }
+          },
+          {
+            "values": {
+              "d": 81172,
+              "p": -18119
+            },
+            "date": "2025-12-01T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 68534309,
+              "result_tax_included": 146003368
+            }
+          },
+          {
+            "values": {
+              "d": 52388,
+              "p": -22547
+            },
+            "date": "2025-12-02T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 34205569,
+              "result_tax_included": 70869236
+            }
+          },
+          {
+            "values": {
+              "d": 52030,
+              "p": -7734
+            },
+            "date": "2025-12-03T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 66480795,
+              "result_tax_included": 120904367
+            }
+          },
+          {
+            "values": {
+              "d": 38569,
+              "p": -13798
+            },
+            "date": "2025-12-04T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 35693769,
+              "result_tax_included": 66128262
+            }
+          },
+          {
+            "values": {
+              "d": 78962,
+              "p": -815
+            },
+            "date": "2025-12-05T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 80737949,
+              "result_tax_included": 176752009
+            }
+          },
+          {
+            "values": {
+              "d": 51134,
+              "p": -7326
+            },
+            "date": "2025-12-06T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 46740927,
+              "result_tax_included": 100564924
+            }
+          },
+          {
+            "values": {
+              "d": 56508,
+              "p": -12244
+            },
+            "date": "2025-12-07T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 41472267,
+              "result_tax_included": 95856522
+            }
+          },
+          {
+            "values": {
+              "d": 52849,
+              "p": -29705
+            },
+            "date": "2025-12-08T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 25332497,
+              "result_tax_included": 53768002
+            }
+          },
+          {
+            "values": {
+              "d": 62341,
+              "p": -23927
+            },
+            "date": "2025-12-09T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 30007719,
+              "result_tax_included": 77204465
+            }
+          },
+          {
+            "values": {
+              "d": 63400,
+              "p": -27440
+            },
+            "date": "2025-12-10T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 43782433,
+              "result_tax_included": 87964112
+            }
+          },
+          {
+            "values": {
+              "d": 63715,
+              "p": -14868
+            },
+            "date": "2025-12-11T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 64966051,
+              "result_tax_included": 124981136
+            }
+          },
+          {
+            "values": {
+              "d": 49804,
+              "p": -19151
+            },
+            "date": "2025-12-12T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 36026286,
+              "result_tax_included": 73687605
+            }
+          },
+          {
+            "values": {
+              "d": 76314,
+              "p": -13159
+            },
+            "date": "2025-12-13T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 74466430,
+              "result_tax_included": 152060811
+            }
+          },
+          {
+            "values": {
+              "d": 67614,
+              "p": -17475
+            },
+            "date": "2025-12-14T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 60006301,
+              "result_tax_included": 121608781
+            }
+          },
+          {
+            "values": {
+              "d": 75067,
+              "p": -29700
+            },
+            "date": "2025-12-15T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 62548243,
+              "result_tax_included": 118287681
+            }
+          },
+          {
+            "values": {
+              "d": 44572,
+              "p": -14259
+            },
+            "date": "2025-12-16T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 41456375,
+              "result_tax_included": 78699958
+            }
+          },
+          {
+            "values": {
+              "d": 57532,
+              "p": -15973
+            },
+            "date": "2025-12-17T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 39204121,
+              "result_tax_included": 90264922
+            }
+          },
+          {
+            "values": {
+              "d": 56898,
+              "p": -18801
+            },
+            "date": "2025-12-18T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 30189752,
+              "result_tax_included": 76997022
+            }
+          },
+          {
+            "values": {
+              "d": 53797,
+              "p": -7419
+            },
+            "date": "2025-12-19T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 66520026,
+              "result_tax_included": 123501614
+            }
+          },
+          {
+            "values": {
+              "d": 62702,
+              "p": -8193
+            },
+            "date": "2025-12-20T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 69094037,
+              "result_tax_included": 136065648
+            }
+          },
+          {
+            "values": {
+              "d": 78834,
+              "p": -16323
+            },
+            "date": "2025-12-21T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 70756144,
+              "result_tax_included": 147559284
+            }
+          },
+          {
+            "values": {
+              "d": 53618,
+              "p": -16477
+            },
+            "date": "2025-12-22T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 42591291,
+              "result_tax_included": 88223986
+            }
+          },
+          {
+            "values": {
+              "d": 44662,
+              "p": -218
+            },
+            "date": "2025-12-23T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 40547134,
+              "result_tax_included": 95152543
+            }
+          }
+        ],
+        "totals": {
+          "d": 1423142,
+          "p": 375664
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      },
+      {
+        "group_type": "multi",
+        "date": "2024-12-31T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": true,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": 15441995,
+          "energy_produced_sum": 12420861,
+          "delivery_costs_excl_tax": 18658794192,
+          "delivery_costs_incl_tax": 37631354259,
+          "production_costs_excl_tax": 15364881351,
+          "production_costs_incl_tax": 30625573484,
+          "delivery_price_per_unit_excl_tax": 1208315,
+          "delivery_price_per_unit_incl_tax": 2436949,
+          "production_price_per_unit_excl_tax": 1237022.2000000002,
+          "production_price_per_unit_incl_tax": 2465656.1999999997,
+          "result_tax_excluded": 34023675543,
+          "result_tax_included": 68256927743
+        },
+        "mutable": true,
+        "type": "months",
+        "measurements": [
+          {
+            "values": {
+              "d": "2269411",
+              "p": -802416
+            },
+            "date": "2024-12-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1782519",
+              "p": -660517
+            },
+            "date": "2025-01-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1538738",
+              "p": -1106755
+            },
+            "date": "2025-02-28T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "942475",
+              "p": -1350191
+            },
+            "date": "2025-03-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "916721",
+              "p": -1687663
+            },
+            "date": "2025-04-30T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "864891",
+              "p": -1468214
+            },
+            "date": "2025-05-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "626034",
+              "p": -1318301
+            },
+            "date": "2025-06-30T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "822107",
+              "p": -1253669
+            },
+            "date": "2025-07-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1148307",
+              "p": -1144554
+            },
+            "date": "2025-08-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1377720",
+              "p": -738830
+            },
+            "date": "2025-09-30T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1730672",
+              "p": -514087
+            },
+            "date": "2025-10-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1423142",
+              "p": -375664
+            },
+            "date": "2025-11-30T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          }
+        ],
+        "totals": {
+          "d": 15441995,
+          "p": 12420861
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      }
+    ]
+  },
+  "gas_data": {
+    "contracts": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000021",
+        "label": "Connect energiemeter",
+        "type": "p1_installation",
+        "start_date": "2024-06-16T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "electricity_meter_code": "X0022",
+          "electricity_meter_identifier": "000000000023",
+          "electricity_first_measured_at": "2024-06-19T13:02:33.000000Z",
+          "electricity_last_measured_at": "2025-12-24T15:20:00.000000Z",
+          "electricity_last_measured_production_at": "2025-12-24T15:20:00.000000Z",
+          "electricity_last_measured_delivery_value": 2377,
+          "electricity_last_measured_production_value": 443,
+          "electricity_last_measured_average_value": 2290,
+          "gas_first_measured_at": null,
+          "gas_last_measured_at": null,
+          "gas_meter_code": null,
+          "gas_meter_identifier": null,
+          "dsmr_version": "50",
+          "sgn_serial_number": "XX-X000000024",
+          "sgn_firmware": "3.1.3+dsmr-meter-p1-hw0",
+          "show_in_contract_screen": false
+        }
+      }
+    ],
+    "powerplay": null,
+    "measurement_groups": [
+      {
+        "group_type": "normal",
+        "date": "2025-12-23T23:00:00.000000Z",
+        "meta": {
+          "price": 11048410,
+          "has_supply_contract": false,
+          "energy_delivered_sum": null,
+          "delivery_costs_excl_tax": null,
+          "delivery_costs_incl_tax": null,
+          "delivery_price_per_unit_excl_tax": null,
+          "delivery_price_per_unit_incl_tax": null
+        },
+        "mutable": true,
+        "type": "hours",
+        "measurements": [],
+        "total": 0
+      },
+      {
+        "group_type": "normal",
+        "date": "2025-11-30T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": false,
+          "energy_delivered_sum": null,
+          "delivery_costs_excl_tax": null,
+          "delivery_costs_incl_tax": null,
+          "delivery_price_per_unit_excl_tax": null,
+          "delivery_price_per_unit_incl_tax": null
+        },
+        "mutable": true,
+        "type": "days",
+        "measurements": [],
+        "total": 0
+      },
+      {
+        "group_type": "normal",
+        "date": "2024-12-31T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": false,
+          "energy_delivered_sum": null,
+          "delivery_costs_excl_tax": null,
+          "delivery_costs_incl_tax": null,
+          "delivery_price_per_unit_excl_tax": null,
+          "delivery_price_per_unit_incl_tax": null
+        },
+        "mutable": true,
+        "type": "months",
+        "measurements": [],
+        "total": 0
+      }
+    ]
+  },
+  "summary_data": {
+    "usage": {
+      "value": 503,
+      "measured_at": "2025-12-24T15:23:37.000000Z",
+      "type": "normal",
+      "speed": 0,
+      "sustainability_score": 487,
+      "status_message": "",
+      "status_tip": "Gemiddeld tarief"
+    },
+    "price_per_hour": [
+      {
+        "electricity_price": 2505533,
+        "electricity_price_excl_tax": 1276899,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T15:00:00.000000Z",
+        "sustainability_score": 488
+      },
+      {
+        "electricity_price": 2516422,
+        "electricity_price_excl_tax": 1287788,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T16:00:00.000000Z",
+        "sustainability_score": 457
+      },
+      {
+        "electricity_price": 2444519,
+        "electricity_price_excl_tax": 1215885,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T17:00:00.000000Z",
+        "sustainability_score": 470
+      },
+      {
+        "electricity_price": 2427125,
+        "electricity_price_excl_tax": 1198491,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T18:00:00.000000Z",
+        "sustainability_score": 488
+      },
+      {
+        "electricity_price": 2372492,
+        "electricity_price_excl_tax": 1143858,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T19:00:00.000000Z",
+        "sustainability_score": 496
+      },
+      {
+        "electricity_price": 2274785,
+        "electricity_price_excl_tax": 1046151,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T20:00:00.000000Z",
+        "sustainability_score": 492
+      },
+      {
+        "electricity_price": 2292694,
+        "electricity_price_excl_tax": 1064060,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T21:00:00.000000Z",
+        "sustainability_score": 505
+      },
+      {
+        "electricity_price": 2201763,
+        "electricity_price_excl_tax": 973129,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T22:00:00.000000Z",
+        "sustainability_score": 516
+      },
+      {
+        "electricity_price": 2138510,
+        "electricity_price_excl_tax": 909876,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-23T23:00:00.000000Z",
+        "sustainability_score": 546
+      },
+      {
+        "electricity_price": 2071385,
+        "electricity_price_excl_tax": 842751,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T00:00:00.000000Z",
+        "sustainability_score": 563
+      },
+      {
+        "electricity_price": 2059104,
+        "electricity_price_excl_tax": 830470,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T01:00:00.000000Z",
+        "sustainability_score": 574
+      },
+      {
+        "electricity_price": 2035448,
+        "electricity_price_excl_tax": 806814,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T02:00:00.000000Z",
+        "sustainability_score": 572
+      },
+      {
+        "electricity_price": 2025345,
+        "electricity_price_excl_tax": 796711,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T03:00:00.000000Z",
+        "sustainability_score": 580
+      },
+      {
+        "electricity_price": 2027402,
+        "electricity_price_excl_tax": 798768,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T04:00:00.000000Z",
+        "sustainability_score": 570
+      },
+      {
+        "electricity_price": 2069903,
+        "electricity_price_excl_tax": 841269,
+        "gas_price": 11048409,
+        "gas_price_excl_tax": 4052673,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T05:00:00.000000Z",
+        "sustainability_score": 533
+      },
+      {
+        "electricity_price": 2233223,
+        "electricity_price_excl_tax": 1004589,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T06:00:00.000000Z",
+        "sustainability_score": 488
+      },
+      {
+        "electricity_price": 2408732,
+        "electricity_price_excl_tax": 1180098,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T07:00:00.000000Z",
+        "sustainability_score": 460
+      },
+      {
+        "electricity_price": 2426520,
+        "electricity_price_excl_tax": 1197886,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T08:00:00.000000Z",
+        "sustainability_score": 482
+      },
+      {
+        "electricity_price": 2329236,
+        "electricity_price_excl_tax": 1100602,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T09:00:00.000000Z",
+        "sustainability_score": 558
+      },
+      {
+        "electricity_price": 2189118,
+        "electricity_price_excl_tax": 960484,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T10:00:00.000000Z",
+        "sustainability_score": 649
+      },
+      {
+        "electricity_price": 2169667,
+        "electricity_price_excl_tax": 941033,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T11:00:00.000000Z",
+        "sustainability_score": 720
+      },
+      {
+        "electricity_price": 2162407,
+        "electricity_price_excl_tax": 933773,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T12:00:00.000000Z",
+        "sustainability_score": 762
+      },
+      {
+        "electricity_price": 2225116,
+        "electricity_price_excl_tax": 996482,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T13:00:00.000000Z",
+        "sustainability_score": 655
+      },
+      {
+        "electricity_price": 2345964,
+        "electricity_price_excl_tax": 1117330,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T14:00:00.000000Z",
+        "sustainability_score": 560
+      },
+      {
+        "electricity_price": 2471199,
+        "electricity_price_excl_tax": 1242565,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T15:00:00.000000Z",
+        "sustainability_score": 487
+      },
+      {
+        "electricity_price": 2507014,
+        "electricity_price_excl_tax": 1278380,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T16:00:00.000000Z",
+        "sustainability_score": 446
+      },
+      {
+        "electricity_price": 2383413,
+        "electricity_price_excl_tax": 1154779,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T17:00:00.000000Z",
+        "sustainability_score": 463
+      },
+      {
+        "electricity_price": 2297079,
+        "electricity_price_excl_tax": 1068445,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T18:00:00.000000Z",
+        "sustainability_score": 496
+      },
+      {
+        "electricity_price": 2253339,
+        "electricity_price_excl_tax": 1024705,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T19:00:00.000000Z",
+        "sustainability_score": 523
+      },
+      {
+        "electricity_price": 2216343,
+        "electricity_price_excl_tax": 987709,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T20:00:00.000000Z",
+        "sustainability_score": 537
+      },
+      {
+        "electricity_price": 2241753,
+        "electricity_price_excl_tax": 1013119,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T21:00:00.000000Z",
+        "sustainability_score": 557
+      },
+      {
+        "electricity_price": 2179650,
+        "electricity_price_excl_tax": 951016,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T22:00:00.000000Z",
+        "sustainability_score": 580
+      },
+      {
+        "electricity_price": 2132762,
+        "electricity_price_excl_tax": 904128,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-24T23:00:00.000000Z",
+        "sustainability_score": 601
+      },
+      {
+        "electricity_price": 2063762,
+        "electricity_price_excl_tax": 835128,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T00:00:00.000000Z",
+        "sustainability_score": 629
+      },
+      {
+        "electricity_price": 2062945,
+        "electricity_price_excl_tax": 834311,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T01:00:00.000000Z",
+        "sustainability_score": 648
+      },
+      {
+        "electricity_price": 2027644,
+        "electricity_price_excl_tax": 799010,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T02:00:00.000000Z",
+        "sustainability_score": 660
+      },
+      {
+        "electricity_price": 2010068,
+        "electricity_price_excl_tax": 781434,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T03:00:00.000000Z",
+        "sustainability_score": 670
+      },
+      {
+        "electricity_price": 1996031,
+        "electricity_price_excl_tax": 767397,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T04:00:00.000000Z",
+        "sustainability_score": 678
+      },
+      {
+        "electricity_price": 1973133,
+        "electricity_price_excl_tax": 744499,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T05:00:00.000000Z",
+        "sustainability_score": 672
+      },
+      {
+        "electricity_price": 2043918,
+        "electricity_price_excl_tax": 815284,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T06:00:00.000000Z",
+        "sustainability_score": 653
+      },
+      {
+        "electricity_price": 2162528,
+        "electricity_price_excl_tax": 933894,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T07:00:00.000000Z",
+        "sustainability_score": 621
+      },
+      {
+        "electricity_price": 2199948,
+        "electricity_price_excl_tax": 971314,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T08:00:00.000000Z",
+        "sustainability_score": 662
+      },
+      {
+        "electricity_price": 2040651,
+        "electricity_price_excl_tax": 812017,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T09:00:00.000000Z",
+        "sustainability_score": 740
+      },
+      {
+        "electricity_price": 1967567,
+        "electricity_price_excl_tax": 738933,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T10:00:00.000000Z",
+        "sustainability_score": 856
+      },
+      {
+        "electricity_price": 1972740,
+        "electricity_price_excl_tax": 744106,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T11:00:00.000000Z",
+        "sustainability_score": 915
+      },
+      {
+        "electricity_price": 1963331,
+        "electricity_price_excl_tax": 734697,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T12:00:00.000000Z",
+        "sustainability_score": 965
+      },
+      {
+        "electricity_price": 2174567,
+        "electricity_price_excl_tax": 945933,
+        "tariff_group": "low",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T13:00:00.000000Z",
+        "sustainability_score": 849
+      },
+      {
+        "electricity_price": 2432962,
+        "electricity_price_excl_tax": 1204328,
+        "tariff_group": "normal",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T14:00:00.000000Z",
+        "sustainability_score": 681
+      },
+      {
+        "electricity_price": 2503656,
+        "electricity_price_excl_tax": 1275022,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T15:00:00.000000Z",
+        "sustainability_score": 563
+      },
+      {
+        "electricity_price": 2562948,
+        "electricity_price_excl_tax": 1334314,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T16:00:00.000000Z",
+        "sustainability_score": 504
+      },
+      {
+        "electricity_price": 2569240,
+        "electricity_price_excl_tax": 1340606,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T17:00:00.000000Z",
+        "sustainability_score": 502
+      },
+      {
+        "electricity_price": 2543497,
+        "electricity_price_excl_tax": 1314863,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T18:00:00.000000Z",
+        "sustainability_score": 514
+      },
+      {
+        "electricity_price": 2532031,
+        "electricity_price_excl_tax": 1303397,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T19:00:00.000000Z",
+        "sustainability_score": 490
+      },
+      {
+        "electricity_price": 2541258,
+        "electricity_price_excl_tax": 1312624,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T20:00:00.000000Z",
+        "sustainability_score": 452
+      },
+      {
+        "electricity_price": 2578708,
+        "electricity_price_excl_tax": 1350074,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T21:00:00.000000Z",
+        "sustainability_score": 424
+      },
+      {
+        "electricity_price": 2529520,
+        "electricity_price_excl_tax": 1300886,
+        "tariff_group": "high",
+        "solar_percentage": 0,
+        "solar_yield": 0,
+        "datetime": "2025-12-25T22:00:00.000000Z",
+        "sustainability_score": 398
+      }
+    ],
+    "surplus_electricity": 218,
+    "electricity": 44662,
+    "gas_price": 11048409,
+    "gas_price_next": null
+  },
+  "charge_point_data": {
+    "uuid": "00000000-0000-4000-8000-000000000027",
+    "label": "Charge laadpaal",
+    "type": "charge_point_installation",
+    "start_date": "2025-05-27T22:00:00.000000Z",
+    "end_date": null,
+    "meta": {
+      "serial_number": "XX00000000000028",
+      "charge_point_model_name": "AC011K-AE-35Z-7,5M",
+      "identifier": "XX00000000000028",
+      "first_measured_at": "2025-05-28T08:00:17.000000Z",
+      "last_measured_at": "2025-12-24T15:20:00.000000Z",
+      "show_in_contract_screen": true,
+      "charge_timeline": [
+        {
+          "start_time": "2025-12-25T10:00:00.000000Z",
+          "end_time": "2025-12-25T11:00:00.000000Z"
+        },
+        {
+          "start_time": "2025-12-25T12:00:00.000000Z",
+          "end_time": "2025-12-25T13:00:00.000000Z"
+        }
+      ],
+      "session_charging_cost_total": null,
+      "session_flex_result": null,
+      "session_charged_energy": null,
+      "session_average_cost_in_cents": null,
+      "charging_cost_total": null,
+      "flex_result": null,
+      "charged_energy": null,
+      "average_cost_in_cents": null
+    },
+    "state": {
+      "connectivity_state": true,
+      "state": "VehicleDetected",
+      "power_actual": 0,
+      "energy_delivered_session": 0,
+      "can_charge": true,
+      "can_schedule": true,
+      "charging_manually": false,
+      "charging_automatically": false,
+      "plug_and_charge": false,
+      "overload_protection_active": false,
+      "dynamic_charging_enabled": true,
+      "dynamic_charging_flex_enabled": true,
+      "dynamic_charging_flex_suppressed": false,
+      "dynamic_load_balancing_health": "HEALTHY",
+      "charge_schedules": [],
+      "dynamic_charging_user_constraints": {
+        "desired_distance_in_kilometers": 104,
+        "desired_additional_battery_percentage": 400,
+        "desired_end_time": "2025-12-27T05:45:00.000000Z"
+      },
+      "charge_point_session": null,
+      "last_known_vehicle_uuid": "00000000-0000-4000-8000-000000000059",
+      "start_mode": "AlwaysFlex",
+      "plugged_in_at": "2025-12-23T14:34:01.000000Z"
+    },
+    "charge_schedules": []
+  },
+  "battery_data": {
+    "contracts": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000029",
+        "label": "Thuisbatterij",
+        "type": "home_battery_installation",
+        "start_date": "2024-06-30T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "identifier": "0000000000000030",
+          "host_device_model_name": "S6-EA3P10K-H-ZP-V2",
+          "first_measured_at": "2024-07-01T09:17:07.000000Z",
+          "last_measured_at": "2025-12-24T15:20:00.000000Z",
+          "state_of_charge": 500,
+          "power_ac": -1995,
+          "inverter_state": "Operative",
+          "battery_state": "Discharging",
+          "dynamic_charging_enabled": true,
+          "home_optimization_enabled": true,
+          "home_optimization_active": true,
+          "dynamic_load_balancing_enabled": true,
+          "dynamic_load_balancing_overload_active": false,
+          "grid_congestion_active": false,
+          "manual_control_enabled": false,
+          "manual_control_state": null,
+          "self_consumption_enabled": false,
+          "cycle_count": 765,
+          "show_in_contract_screen": true,
+          "reserve_discharge_cutoff_wh": null,
+          "backup_power_capable": false,
+          "total_earned": 20152897373,
+          "total_day": -1984113,
+          "delivery_day": 19230,
+          "production_day": 8000,
+          "average_day": 37182467,
+          "production_month": null
+        },
+        "charts": {
+          "this_year": {
+            "year": 2025,
+            "total_result": 1086.6673738,
+            "total_delivery_kwh": 10744.86,
+            "total_production_kwh": 9352.03,
+            "months": {
+              "2025-01": {
+                "result": 98.4971424,
+                "delivery_kwh": 1132.55,
+                "production_kwh": 991.3000000000001
+              },
+              "2025-02": {
+                "result": 76.1331822,
+                "delivery_kwh": 913.3000000000001,
+                "production_kwh": 788.89
+              },
+              "2025-03": {
+                "result": 88.9883795,
+                "delivery_kwh": 1055.68,
+                "production_kwh": 917.75
+              },
+              "2025-04": {
+                "result": 94.8769085,
+                "delivery_kwh": 958.1700000000001,
+                "production_kwh": 847.23
+              },
+              "2025-05": {
+                "result": 123.7070622,
+                "delivery_kwh": 1073.42,
+                "production_kwh": 952.52
+              },
+              "2025-06": {
+                "result": 141.8711298,
+                "delivery_kwh": 887.38,
+                "production_kwh": 768.01
+              },
+              "2025-07": {
+                "result": 91.6979758,
+                "delivery_kwh": 655.62,
+                "production_kwh": 564.38
+              },
+              "2025-08": {
+                "result": 71.9542587,
+                "delivery_kwh": 774.69,
+                "production_kwh": 663.48
+              },
+              "2025-09": {
+                "result": 149.9779657,
+                "delivery_kwh": 991.4200000000001,
+                "production_kwh": 874.9300000000001
+              },
+              "2025-10": {
+                "result": 68.9499807,
+                "delivery_kwh": 867.6,
+                "production_kwh": 754.66
+              },
+              "2025-11": {
+                "result": 51.7258511,
+                "delivery_kwh": 825.04,
+                "production_kwh": 707.0
+              },
+              "2025-12": {
+                "result": 28.2875372,
+                "delivery_kwh": 609.99,
+                "production_kwh": 521.88
+              }
+            }
+          },
+          "last_year": {
+            "year": 2024,
+            "total_result": 928.6223635,
+            "total_delivery_kwh": 6629.02,
+            "total_production_kwh": 5853.88,
+            "months": {
+              "2024-07": {
+                "result": 131.33107619999998,
+                "delivery_kwh": 1057.16,
+                "production_kwh": 931.95
+              },
+              "2024-08": {
+                "result": 242.2146052,
+                "delivery_kwh": 1148.1100000000001,
+                "production_kwh": 1015.65
+              },
+              "2024-09": {
+                "result": 190.2552239,
+                "delivery_kwh": 1134.23,
+                "production_kwh": 1009.52
+              },
+              "2024-10": {
+                "result": 124.90679139999999,
+                "delivery_kwh": 1039.58,
+                "production_kwh": 912.04
+              },
+              "2024-11": {
+                "result": 155.7234913,
+                "delivery_kwh": 1034.34,
+                "production_kwh": 906.73
+              },
+              "2024-12": {
+                "result": 84.1911755,
+                "delivery_kwh": 1215.6000000000001,
+                "production_kwh": 1077.99
+              }
+            }
+          },
+          "this_month": {
+            "month": "2025-12",
+            "total_result": 28.2875372,
+            "total_delivery_kwh": 609.99,
+            "total_production_kwh": 521.88,
+            "days": {
+              "2025-12-01": {
+                "result": 1.4007763,
+                "delivery_kwh": 20.63,
+                "production_kwh": 23.96
+              },
+              "2025-12-02": {
+                "result": 0.639984,
+                "delivery_kwh": 40.5,
+                "production_kwh": 24.28
+              },
+              "2025-12-03": {
+                "result": 2.3725693,
+                "delivery_kwh": 25.72,
+                "production_kwh": 28.150000000000002
+              },
+              "2025-12-04": {
+                "result": -0.40180469999999996,
+                "delivery_kwh": 22.92,
+                "production_kwh": 7.83
+              },
+              "2025-12-05": {
+                "result": 1.8778092,
+                "delivery_kwh": 3.21,
+                "production_kwh": 18.69
+              },
+              "2025-12-06": {
+                "result": -0.3034511,
+                "delivery_kwh": 5.73,
+                "production_kwh": 1.08
+              },
+              "2025-12-07": {
+                "result": 0.4697722,
+                "delivery_kwh": 16.39,
+                "production_kwh": 10.68
+              },
+              "2025-12-08": {
+                "result": 1.1665303999999999,
+                "delivery_kwh": 21.02,
+                "production_kwh": 14.93
+              },
+              "2025-12-09": {
+                "result": 1.9906898,
+                "delivery_kwh": 29.36,
+                "production_kwh": 33.1
+              },
+              "2025-12-10": {
+                "result": 2.1388214,
+                "delivery_kwh": 34.94,
+                "production_kwh": 29.32
+              },
+              "2025-12-11": {
+                "result": 1.5013257999999998,
+                "delivery_kwh": 37.54,
+                "production_kwh": 33.35
+              },
+              "2025-12-12": {
+                "result": 0.7696409,
+                "delivery_kwh": 36.09,
+                "production_kwh": 21.63
+              },
+              "2025-12-13": {
+                "result": 1.8472818999999998,
+                "delivery_kwh": 24.19,
+                "production_kwh": 30.51
+              },
+              "2025-12-14": {
+                "result": 0.7367066999999999,
+                "delivery_kwh": 34.29,
+                "production_kwh": 19.38
+              },
+              "2025-12-15": {
+                "result": 1.8640157,
+                "delivery_kwh": 30.07,
+                "production_kwh": 25.54
+              },
+              "2025-12-16": {
+                "result": 2.1847518,
+                "delivery_kwh": 53.64,
+                "production_kwh": 45.84
+              },
+              "2025-12-17": {
+                "result": 1.5970912,
+                "delivery_kwh": 13.66,
+                "production_kwh": 22.84
+              },
+              "2025-12-18": {
+                "result": 1.7796013,
+                "delivery_kwh": 30.04,
+                "production_kwh": 23.12
+              },
+              "2025-12-19": {
+                "result": 1.3649402,
+                "delivery_kwh": 33.1,
+                "production_kwh": 31.66
+              },
+              "2025-12-20": {
+                "result": 0.0835905,
+                "delivery_kwh": 8.14,
+                "production_kwh": 8.39
+              },
+              "2025-12-21": {
+                "result": -0.0666963,
+                "delivery_kwh": 18.01,
+                "production_kwh": 10.93
+              },
+              "2025-12-22": {
+                "result": 1.8878283999999999,
+                "delivery_kwh": 31.62,
+                "production_kwh": 26.98
+              },
+              "2025-12-23": {
+                "result": 1.5841736,
+                "delivery_kwh": 19.95,
+                "production_kwh": 21.69
+              },
+              "2025-12-24": {
+                "result": -0.19841129999999998,
+                "delivery_kwh": 19.23,
+                "production_kwh": 8.0
+              }
+            }
+          },
+          "last_month": {
+            "month": "2025-11",
+            "total_result": 51.7258511,
+            "total_delivery_kwh": 825.04,
+            "total_production_kwh": 707.0,
+            "days": {
+              "2025-11-01": {
+                "result": 1.2264526999999998,
+                "delivery_kwh": 31.560000000000002,
+                "production_kwh": 16.73
+              },
+              "2025-11-02": {
+                "result": 2.4075172,
+                "delivery_kwh": 23.55,
+                "production_kwh": 29.78
+              },
+              "2025-11-03": {
+                "result": 1.525243,
+                "delivery_kwh": 36.0,
+                "production_kwh": 20.93
+              },
+              "2025-11-04": {
+                "result": 2.9143295,
+                "delivery_kwh": 21.2,
+                "production_kwh": 28.490000000000002
+              },
+              "2025-11-05": {
+                "result": 1.8441622,
+                "delivery_kwh": 35.27,
+                "production_kwh": 29.03
+              },
+              "2025-11-06": {
+                "result": 1.0094522,
+                "delivery_kwh": 43.300000000000004,
+                "production_kwh": 29.080000000000002
+              },
+              "2025-11-07": {
+                "result": 2.26673,
+                "delivery_kwh": 24.330000000000002,
+                "production_kwh": 33.32
+              },
+              "2025-11-08": {
+                "result": 1.2164354,
+                "delivery_kwh": 30.18,
+                "production_kwh": 27.16
+              },
+              "2025-11-09": {
+                "result": 0.1195164,
+                "delivery_kwh": 29.04,
+                "production_kwh": 17.73
+              },
+              "2025-11-10": {
+                "result": 2.4402719,
+                "delivery_kwh": 28.150000000000002,
+                "production_kwh": 30.67
+              },
+              "2025-11-11": {
+                "result": 1.6922116999999999,
+                "delivery_kwh": 35.42,
+                "production_kwh": 25.46
+              },
+              "2025-11-12": {
+                "result": 3.1373104,
+                "delivery_kwh": 58.07,
+                "production_kwh": 44.71
+              },
+              "2025-11-13": {
+                "result": 4.2895562,
+                "delivery_kwh": 33.160000000000004,
+                "production_kwh": 44.21
+              },
+              "2025-11-14": {
+                "result": 0.4601072,
+                "delivery_kwh": 20.54,
+                "production_kwh": 12.66
+              },
+              "2025-11-15": {
+                "result": 0.2951392,
+                "delivery_kwh": 18.45,
+                "production_kwh": 16.330000000000002
+              },
+              "2025-11-16": {
+                "result": 0.4669962,
+                "delivery_kwh": 8.73,
+                "production_kwh": 8.040000000000001
+              },
+              "2025-11-17": {
+                "result": 2.2336803,
+                "delivery_kwh": 20.62,
+                "production_kwh": 18.62
+              },
+              "2025-11-18": {
+                "result": 0.39822949999999996,
+                "delivery_kwh": 31.26,
+                "production_kwh": 17.78
+              },
+              "2025-11-19": {
+                "result": 1.5388241,
+                "delivery_kwh": 24.400000000000002,
+                "production_kwh": 27.79
+              },
+              "2025-11-20": {
+                "result": 2.0840958,
+                "delivery_kwh": 31.66,
+                "production_kwh": 23.89
+              },
+              "2025-11-21": {
+                "result": 4.278743599999999,
+                "delivery_kwh": 31.310000000000002,
+                "production_kwh": 34.54
+              },
+              "2025-11-22": {
+                "result": 0.2090175,
+                "delivery_kwh": 27.88,
+                "production_kwh": 16.79
+              },
+              "2025-11-23": {
+                "result": 1.4394783,
+                "delivery_kwh": 12.05,
+                "production_kwh": 14.86
+              },
+              "2025-11-24": {
+                "result": 1.8019048,
+                "delivery_kwh": 39.59,
+                "production_kwh": 22.88
+              },
+              "2025-11-25": {
+                "result": 4.0931896,
+                "delivery_kwh": 42.5,
+                "production_kwh": 35.35
+              },
+              "2025-11-26": {
+                "result": 3.079868,
+                "delivery_kwh": 22.46,
+                "production_kwh": 34.35
+              },
+              "2025-11-27": {
+                "result": 0.6917279,
+                "delivery_kwh": 18.91,
+                "production_kwh": 10.92
+              },
+              "2025-11-28": {
+                "result": 0.39891719999999997,
+                "delivery_kwh": 11.18,
+                "production_kwh": 8.55
+              },
+              "2025-11-29": {
+                "result": -0.16906449999999998,
+                "delivery_kwh": 7.04,
+                "production_kwh": 1.42
+              },
+              "2025-11-30": {
+                "result": 2.3358076,
+                "delivery_kwh": 27.23,
+                "production_kwh": 24.93
+              }
+            }
+          }
+        }
+      }
+    ],
+    "powerplay": [
+      {
+        "scenario": "GridOptimization",
+        "starts_at": "2025-12-24T03:25:01.000000Z",
+        "ends_at": "2025-12-24T05:00:00.000000Z"
+      },
+      {
+        "scenario": "HomeOptimization",
+        "starts_at": "2025-12-24T05:00:00.000000Z",
+        "ends_at": "2025-12-24T07:45:00.000000Z"
+      },
+      {
+        "scenario": "GridOptimization",
+        "starts_at": "2025-12-24T07:45:00.000000Z",
+        "ends_at": "2025-12-24T08:15:00.000000Z"
+      },
+      {
+        "scenario": "HomeOptimization",
+        "starts_at": "2025-12-24T08:15:00.000000Z",
+        "ends_at": "2025-12-24T09:00:00.000000Z"
+      },
+      {
+        "scenario": "GridOptimization",
+        "starts_at": "2025-12-24T09:00:00.000000Z",
+        "ends_at": "2025-12-24T15:15:00.000000Z"
+      }
+    ],
+    "measurement_groups": [
+      {
+        "group_type": "normal",
+        "date": "2025-12-23T23:00:00.000000Z",
+        "mutable": true,
+        "type": "live",
+        "measurements": [
+          {
+            "value": 9480,
+            "measured_at": "2025-12-24T03:25:01.000000Z",
+            "meta": {
+              "state_of_charge": 220
+            }
+          },
+          {
+            "value": 9910,
+            "measured_at": "2025-12-24T03:30:01.000000Z",
+            "meta": {
+              "state_of_charge": 330
+            }
+          },
+          {
+            "value": 9970,
+            "measured_at": "2025-12-24T03:45:01.000000Z",
+            "meta": {
+              "state_of_charge": 370
+            }
+          },
+          {
+            "value": 9910,
+            "measured_at": "2025-12-24T04:00:01.000000Z",
+            "meta": {
+              "state_of_charge": 470
+            }
+          },
+          {
+            "value": 9910,
+            "measured_at": "2025-12-24T04:15:01.000000Z",
+            "meta": {
+              "state_of_charge": 530
+            }
+          },
+          {
+            "value": 9930,
+            "measured_at": "2025-12-24T04:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 610
+            }
+          },
+          {
+            "value": 9890,
+            "measured_at": "2025-12-24T04:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 670
+            }
+          },
+          {
+            "value": -1970,
+            "measured_at": "2025-12-24T05:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 700
+            }
+          },
+          {
+            "value": -2000,
+            "measured_at": "2025-12-24T05:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 680
+            }
+          },
+          {
+            "value": -1990,
+            "measured_at": "2025-12-24T05:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 660
+            }
+          },
+          {
+            "value": -2570,
+            "measured_at": "2025-12-24T05:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 640
+            }
+          },
+          {
+            "value": -2570,
+            "measured_at": "2025-12-24T06:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 610
+            }
+          },
+          {
+            "value": -2570,
+            "measured_at": "2025-12-24T06:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 580
+            }
+          },
+          {
+            "value": -2000,
+            "measured_at": "2025-12-24T06:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 560
+            }
+          },
+          {
+            "value": -2000,
+            "measured_at": "2025-12-24T06:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 530
+            }
+          },
+          {
+            "value": -2000,
+            "measured_at": "2025-12-24T07:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 510
+            }
+          },
+          {
+            "value": -2000,
+            "measured_at": "2025-12-24T07:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 490
+            }
+          },
+          {
+            "value": -1820,
+            "measured_at": "2025-12-24T07:30:01.000000Z",
+            "meta": {
+              "state_of_charge": 460
+            }
+          },
+          {
+            "value": -1940,
+            "measured_at": "2025-12-24T07:45:01.000000Z",
+            "meta": {
+              "state_of_charge": 440
+            }
+          },
+          {
+            "value": -1980,
+            "measured_at": "2025-12-24T08:00:01.000000Z",
+            "meta": {
+              "state_of_charge": 430
+            }
+          },
+          {
+            "value": -1950,
+            "measured_at": "2025-12-24T08:15:01.000000Z",
+            "meta": {
+              "state_of_charge": 420
+            }
+          },
+          {
+            "value": -1980,
+            "measured_at": "2025-12-24T08:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 400
+            }
+          },
+          {
+            "value": -1810,
+            "measured_at": "2025-12-24T08:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 380
+            }
+          },
+          {
+            "value": -1980,
+            "measured_at": "2025-12-24T09:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 350
+            }
+          },
+          {
+            "value": 20,
+            "measured_at": "2025-12-24T09:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 340
+            }
+          },
+          {
+            "value": 10,
+            "measured_at": "2025-12-24T09:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 340
+            }
+          },
+          {
+            "value": 9950,
+            "measured_at": "2025-12-24T09:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 350
+            }
+          },
+          {
+            "value": 20,
+            "measured_at": "2025-12-24T10:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 350
+            }
+          },
+          {
+            "value": 10,
+            "measured_at": "2025-12-24T10:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 360
+            }
+          },
+          {
+            "value": 20,
+            "measured_at": "2025-12-24T10:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 360
+            }
+          },
+          {
+            "value": 40,
+            "measured_at": "2025-12-24T10:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 360
+            }
+          },
+          {
+            "value": 40,
+            "measured_at": "2025-12-24T11:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 360
+            }
+          },
+          {
+            "value": 50,
+            "measured_at": "2025-12-24T11:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 360
+            }
+          },
+          {
+            "value": 50,
+            "measured_at": "2025-12-24T11:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 360
+            }
+          },
+          {
+            "value": 20,
+            "measured_at": "2025-12-24T11:45:02.000000Z",
+            "meta": {
+              "state_of_charge": 360
+            }
+          },
+          {
+            "value": 470,
+            "measured_at": "2025-12-24T12:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 370
+            }
+          },
+          {
+            "value": 9550,
+            "measured_at": "2025-12-24T12:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 400
+            }
+          },
+          {
+            "value": 9320,
+            "measured_at": "2025-12-24T12:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 460
+            }
+          },
+          {
+            "value": 9870,
+            "measured_at": "2025-12-24T12:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 490,
+            "measured_at": "2025-12-24T13:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 30,
+            "measured_at": "2025-12-24T13:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 20,
+            "measured_at": "2025-12-24T13:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 20,
+            "measured_at": "2025-12-24T13:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 10,
+            "measured_at": "2025-12-24T14:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 10,
+            "measured_at": "2025-12-24T14:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 10,
+            "measured_at": "2025-12-24T14:30:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": 10,
+            "measured_at": "2025-12-24T14:45:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": -2010,
+            "measured_at": "2025-12-24T15:00:00.000000Z",
+            "meta": {
+              "state_of_charge": 520
+            }
+          },
+          {
+            "value": -2000,
+            "measured_at": "2025-12-24T15:15:00.000000Z",
+            "meta": {
+              "state_of_charge": 510
+            }
+          }
+        ],
+        "total": 0
+      }
+    ]
+  },
+  "p1_installation": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000021",
+      "label": "Connect energiemeter",
+      "type": "p1_installation",
+      "start_date": "2024-06-16T22:00:00.000000Z",
+      "end_date": null,
+      "meta": {
+        "electricity_meter_code": "X0022",
+        "electricity_meter_identifier": "000000000023",
+        "electricity_first_measured_at": "2024-06-19T13:02:33.000000Z",
+        "electricity_last_measured_at": "2025-12-24T15:20:00.000000Z",
+        "electricity_last_measured_production_at": "2025-12-24T15:20:00.000000Z",
+        "electricity_last_measured_delivery_value": 2377,
+        "electricity_last_measured_production_value": 443,
+        "electricity_last_measured_average_value": 2290,
+        "gas_first_measured_at": null,
+        "gas_last_measured_at": null,
+        "gas_meter_code": null,
+        "gas_meter_identifier": null,
+        "dsmr_version": "50",
+        "sgn_serial_number": "XX-X000000024",
+        "sgn_firmware": "3.1.3+dsmr-meter-p1-hw0",
+        "show_in_contract_screen": false
+      }
+    }
+  ],
+  "electricity": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000025",
+      "label": "Stroom tegen uurprijzen",
+      "type": "electricity",
+      "start_date": "2024-06-30T22:00:00.000000Z",
+      "end_date": null,
+      "meta": {
+        "external_contract_id": "00000000-0000-4000-8000-000000000026",
+        "agreement_date": "2024-03-31",
+        "original_end_date": null,
+        "contract_type": "smart",
+        "proposition_reference": "marktprijs-e-2023-05",
+        "start_reason": null,
+        "end_reason": null,
+        "show_in_contract_screen": true,
+        "expected_delivery": 10000,
+        "expected_production": 6000,
+        "gas_price_ceiling_contract_start_date": null,
+        "gas_price_ceiling_contract_end_date": null,
+        "deposit_type": "dynamic",
+        "monthly_advanced_deposit_amount": null
+      }
+    }
+  ],
+  "charge_point_installation": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000027",
+      "label": "Charge laadpaal",
+      "type": "charge_point_installation",
+      "start_date": "2025-05-27T22:00:00.000000Z",
+      "end_date": null,
+      "meta": {
+        "serial_number": "XX00000000000028",
+        "charge_point_model_name": "AC011K-AE-35Z-7,5M",
+        "identifier": "XX00000000000028",
+        "first_measured_at": "2025-05-28T08:00:17.000000Z",
+        "last_measured_at": "2025-12-24T15:20:00.000000Z",
+        "show_in_contract_screen": true,
+        "charge_timeline": []
+      },
+      "charge_schedules": []
+    }
+  ],
+  "home_battery_installation": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000029",
+      "label": "Thuisbatterij",
+      "type": "home_battery_installation",
+      "start_date": "2024-06-30T22:00:00.000000Z",
+      "end_date": null,
+      "meta": {
+        "identifier": "0000000000000030",
+        "host_device_model_name": "S6-EA3P10K-H-ZP-V2",
+        "first_measured_at": "2024-07-01T09:17:07.000000Z",
+        "last_measured_at": "2025-12-24T15:20:00.000000Z",
+        "state_of_charge": 500,
+        "power_ac": -1995,
+        "inverter_state": "Operative",
+        "battery_state": "Discharging",
+        "dynamic_charging_enabled": true,
+        "home_optimization_enabled": true,
+        "home_optimization_active": true,
+        "dynamic_load_balancing_enabled": true,
+        "dynamic_load_balancing_overload_active": false,
+        "grid_congestion_active": false,
+        "manual_control_enabled": false,
+        "manual_control_state": null,
+        "self_consumption_enabled": false,
+        "cycle_count": 765,
+        "show_in_contract_screen": true,
+        "reserve_discharge_cutoff_wh": null,
+        "backup_power_capable": false
+      }
+    }
+  ],
+  "battery_control_mode": {
+    "control_mode": "home_optimization",
+    "modes": {
+      "dynamic_charging": {
+        "available": true,
+        "enabled": true
+      },
+      "home_optimization": {
+        "available": true,
+        "enabled": true
+      },
+      "self_consumption": {
+        "available": true,
+        "enabled": false
+      }
+    }
+  },
+  "battery_home_optimization": {
+    "max_desired_discharge_power_watts": 2000,
+    "max_desired_charge_power_watts": 500,
+    "max_desired_discharge_power_limits": {
+      "max_watts": 10000,
+      "min_watts": 0
+    },
+    "max_desired_charge_power_limits": {
+      "max_watts": 10000,
+      "min_watts": 0
+    },
+    "power_preset": null,
+    "power_presets": {
+      "data": [
+        {
+          "name": "low",
+          "max_desired_charge_power_watts": 500,
+          "max_desired_discharge_power_watts": 500
+        },
+        {
+          "name": "medium",
+          "max_desired_charge_power_watts": 1000,
+          "max_desired_discharge_power_watts": 1000
+        },
+        {
+          "name": "high",
+          "max_desired_charge_power_watts": 2000,
+          "max_desired_discharge_power_watts": 2000
+        }
+      ]
+    }
+  },
+  "electricity_home_consumption": {
+    "contracts": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000021",
+        "label": "Connect energiemeter",
+        "type": "p1_installation",
+        "start_date": "2024-06-16T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "electricity_meter_code": "X0022",
+          "electricity_meter_identifier": "000000000023",
+          "electricity_first_measured_at": "2024-06-19T13:02:33.000000Z",
+          "electricity_last_measured_at": "2025-12-24T15:20:00.000000Z",
+          "electricity_last_measured_production_at": "2025-12-24T15:20:00.000000Z",
+          "electricity_last_measured_delivery_value": 2377,
+          "electricity_last_measured_production_value": 443,
+          "electricity_last_measured_average_value": 2290,
+          "gas_first_measured_at": null,
+          "gas_last_measured_at": null,
+          "gas_meter_code": null,
+          "gas_meter_identifier": null,
+          "dsmr_version": "50",
+          "sgn_serial_number": "XX-X000000024",
+          "sgn_firmware": "3.1.3+dsmr-meter-p1-hw0",
+          "show_in_contract_screen": false
+        }
+      }
+    ],
+    "powerplay": null,
+    "measurement_groups": [
+      {
+        "group_type": "multi",
+        "date": "2025-12-23T23:00:00.000000Z",
+        "mutable": true,
+        "type": "live",
+        "measurements": [],
+        "totals": [],
+        "labels": []
+      },
+      {
+        "group_type": "multi",
+        "date": "2025-12-23T23:00:00.000000Z",
+        "mutable": true,
+        "type": "hours",
+        "measurements": [],
+        "totals": [],
+        "labels": []
+      },
+      {
+        "group_type": "multi",
+        "date": "2025-11-30T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": true,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": 934533,
+          "energy_produced_sum": 2345,
+          "delivery_costs_excl_tax": 1203373273,
+          "delivery_costs_incl_tax": 2351572292,
+          "production_costs_excl_tax": 3303493,
+          "production_costs_incl_tax": 6184642,
+          "delivery_price_per_unit_excl_tax": 1287673.4,
+          "delivery_price_per_unit_incl_tax": 2516307.4000000004,
+          "production_price_per_unit_excl_tax": 1408739,
+          "production_price_per_unit_incl_tax": 2637373.9999999995,
+          "result_tax_excluded": 1206676766,
+          "result_tax_included": 2357756934
+        },
+        "mutable": true,
+        "type": "days",
+        "measurements": [
+          {
+            "values": {
+              "d": 32017,
+              "p": -20
+            },
+            "date": "2025-11-30T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 39768339,
+              "result_tax_included": 79080940
+            }
+          },
+          {
+            "values": {
+              "d": 46834,
+              "p": -1
+            },
+            "date": "2025-12-01T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 58314451,
+              "result_tax_included": 115855067
+            }
+          },
+          {
+            "values": {
+              "d": 32276,
+              "p": -5
+            },
+            "date": "2025-12-02T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 65837744,
+              "result_tax_included": 105486992
+            }
+          },
+          {
+            "values": {
+              "d": 29729,
+              "p": -523
+            },
+            "date": "2025-12-03T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 43322018,
+              "result_tax_included": 79205503
+            }
+          },
+          {
+            "values": {
+              "d": 38942,
+              "p": -21
+            },
+            "date": "2025-12-04T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 66105464,
+              "result_tax_included": 113925128
+            }
+          },
+          {
+            "values": {
+              "d": 73497,
+              "p": 0
+            },
+            "date": "2025-12-05T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 75445016,
+              "result_tax_included": 165745929
+            }
+          },
+          {
+            "values": {
+              "d": 36557,
+              "p": -19
+            },
+            "date": "2025-12-06T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 43353460,
+              "result_tax_included": 88245289
+            }
+          },
+          {
+            "values": {
+              "d": 38174,
+              "p": 0
+            },
+            "date": "2025-12-07T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 34995312,
+              "result_tax_included": 81897186
+            }
+          },
+          {
+            "values": {
+              "d": 27429,
+              "p": -545
+            },
+            "date": "2025-12-08T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 32949357,
+              "result_tax_included": 65979953
+            }
+          },
+          {
+            "values": {
+              "d": 32470,
+              "p": -116
+            },
+            "date": "2025-12-09T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 36461175,
+              "result_tax_included": 76212399
+            }
+          },
+          {
+            "values": {
+              "d": 31070,
+              "p": -410
+            },
+            "date": "2025-12-10T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 41996246,
+              "result_tax_included": 79666165
+            }
+          },
+          {
+            "values": {
+              "d": 32774,
+              "p": -67
+            },
+            "date": "2025-12-11T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 51748107,
+              "result_tax_included": 91933040
+            }
+          },
+          {
+            "values": {
+              "d": 32848,
+              "p": -65
+            },
+            "date": "2025-12-12T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 43600403,
+              "result_tax_included": 83878712
+            }
+          },
+          {
+            "values": {
+              "d": 47535,
+              "p": 0
+            },
+            "date": "2025-12-13T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 58074609,
+              "result_tax_included": 116477726
+            }
+          },
+          {
+            "values": {
+              "d": 45379,
+              "p": 0
+            },
+            "date": "2025-12-14T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 56523341,
+              "result_tax_included": 112277524
+            }
+          },
+          {
+            "values": {
+              "d": 34673,
+              "p": -116
+            },
+            "date": "2025-12-15T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 53727293,
+              "result_tax_included": 96185197
+            }
+          },
+          {
+            "values": {
+              "d": 38523,
+              "p": 0
+            },
+            "date": "2025-12-16T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 57754149,
+              "result_tax_included": 105084817
+            }
+          },
+          {
+            "values": {
+              "d": 33011,
+              "p": -2
+            },
+            "date": "2025-12-17T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 36582606,
+              "result_tax_included": 77138586
+            }
+          },
+          {
+            "values": {
+              "d": 34694,
+              "p": -67
+            },
+            "date": "2025-12-18T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 39265285,
+              "result_tax_included": 81809194
+            }
+          },
+          {
+            "values": {
+              "d": 46628,
+              "p": 0
+            },
+            "date": "2025-12-19T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 66311945,
+              "result_tax_included": 123600692
+            }
+          },
+          {
+            "values": {
+              "d": 47439,
+              "p": 0
+            },
+            "date": "2025-12-20T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 60893842,
+              "result_tax_included": 119179010
+            }
+          },
+          {
+            "values": {
+              "d": 56333,
+              "p": -242
+            },
+            "date": "2025-12-21T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 66340014,
+              "result_tax_included": 135255324
+            }
+          },
+          {
+            "values": {
+              "d": 38882,
+              "p": -1
+            },
+            "date": "2025-12-22T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 44658891,
+              "result_tax_included": 92429409
+            }
+          },
+          {
+            "values": {
+              "d": 26819,
+              "p": -125
+            },
+            "date": "2025-12-23T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1,
+              "result_tax_excluded": 26040713,
+              "result_tax_included": 58837868
+            }
+          }
+        ],
+        "totals": {
+          "d": 934533,
+          "p": 2345
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      },
+      {
+        "group_type": "multi",
+        "date": "2024-12-31T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": true,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": 7596247,
+          "energy_produced_sum": 6005388,
+          "delivery_costs_excl_tax": 10513517030,
+          "delivery_costs_incl_tax": 19846524377,
+          "production_costs_excl_tax": 3950341368,
+          "production_costs_incl_tax": 11328765249.999998,
+          "delivery_price_per_unit_excl_tax": 1384041,
+          "delivery_price_per_unit_incl_tax": 2612675.0000000005,
+          "production_price_per_unit_excl_tax": 657799.4999999999,
+          "production_price_per_unit_incl_tax": 1886433.5000000002,
+          "result_tax_excluded": 14463858398,
+          "result_tax_included": 31175289627.000004
+        },
+        "mutable": true,
+        "type": "months",
+        "measurements": [
+          {
+            "values": {
+              "d": "1317985",
+              "p": -4415
+            },
+            "date": "2024-12-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1038576",
+              "p": -42100
+            },
+            "date": "2025-01-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "720835",
+              "p": -431266
+            },
+            "date": "2025-02-28T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "327629",
+              "p": -856561
+            },
+            "date": "2025-03-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "204498",
+              "p": -1090200
+            },
+            "date": "2025-04-30T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "331373",
+              "p": -1033086
+            },
+            "date": "2025-05-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "234285",
+              "p": -1000892
+            },
+            "date": "2025-06-30T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "346060",
+              "p": -866090
+            },
+            "date": "2025-07-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "413896",
+              "p": -519213
+            },
+            "date": "2025-08-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "647234",
+              "p": -133114
+            },
+            "date": "2025-09-30T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "1079343",
+              "p": -26106
+            },
+            "date": "2025-10-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          },
+          {
+            "values": {
+              "d": "934533",
+              "p": -2345
+            },
+            "date": "2025-11-30T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 1
+            }
+          }
+        ],
+        "totals": {
+          "d": 7596247,
+          "p": 6005388
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      }
+    ]
+  }
+}

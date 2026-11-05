@@ -1,0 +1,2 @@
+# Pins homeassistant to the release it was built for. Separate from requirements.txt, which only serves linting.
+pytest-homeassistant-custom-component==0.13.375
