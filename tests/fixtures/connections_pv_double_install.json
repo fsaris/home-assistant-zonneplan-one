@@ -1,0 +1,510 @@
+{
+  "ID3": {
+    "uuid": "XX63",
+    "pv_data": {
+      "contracts": [
+        {
+          "uuid": "XX64",
+          "label": "PV Installatie",
+          "type": "pv_installation",
+          "start_date": "2021-06-24T22:00:00.000000Z",
+          "end_date": "2031-06-24T22:00:00.000000Z",
+          "meta": {
+            "identifier": "XXXXXXXXXX65",
+            "name": "Zonneplan One omvormer",
+            "panel_count": 15,
+            "panel_type": "somting",
+            "installation_wp": 5550,
+            "panel_wp": 370,
+            "first_measured_at": "2021-06-24T18:31:23.000000Z",
+            "last_measured_at": "2024-03-06T09:05:23.000000Z",
+            "last_measured_power_value": 2239,
+            "grid_stabilization_active": false,
+            "total_power_measured": 13000000,
+            "network": {
+              "name": "Onbekend",
+              "color": "unknown",
+              "status": "Onbekend"
+            },
+            "sgn_serial_number": "XXXXXX_XX66",
+            "module_firmware_version": "v3.0.10",
+            "inverter_firmware_version": "v3.036",
+            "show_in_contract_screen": false,
+            "enable_pv_analysis": false
+          }
+        },
+        {
+          "uuid": "XX67",
+          "label": "PV Installatie",
+          "type": "pv_installation",
+          "start_date": null,
+          "end_date": null,
+          "meta": {
+            "identifier": "XXXXXXXXXX68",
+            "name": "Zonneplan One omvormer",
+            "panel_count": 18,
+            "panel_type": null,
+            "installation_wp": 7920,
+            "panel_wp": 440,
+            "first_measured_at": "2024-03-05T15:10:09.000000Z",
+            "last_measured_at": "2024-03-06T09:05:03.000000Z",
+            "last_measured_power_value": 6404,
+            "grid_stabilization_active": false,
+            "total_power_measured": 6300,
+            "network": {
+              "name": "Vodafone",
+              "color": "poor",
+              "status": "Slecht"
+            },
+            "sgn_serial_number": "XXXXXX_XX69",
+            "module_firmware_version": "1.2.1r",
+            "inverter_firmware_version": "3063",
+            "show_in_contract_screen": false,
+            "enable_pv_analysis": false
+          }
+        }
+      ],
+      "powerplay": [],
+      "measurement_groups": [
+        {
+          "group_type": "normal",
+          "date": "2024-03-05T23:00:00.000000Z",
+          "mutable": true,
+          "type": "live",
+          "measurements": [
+            {
+              "value": 0,
+              "measured_at": "2024-03-06T06:10:19.000000Z"
+            },
+            {
+              "value": 72,
+              "measured_at": "2024-03-06T06:15:19.000000Z"
+            },
+            {
+              "value": 90,
+              "measured_at": "2024-03-06T06:20:19.000000Z"
+            },
+            {
+              "value": 176,
+              "measured_at": "2024-03-06T06:25:19.000000Z"
+            },
+            {
+              "value": 367,
+              "measured_at": "2024-03-06T06:30:19.000000Z"
+            },
+            {
+              "value": 890,
+              "measured_at": "2024-03-06T06:35:20.000000Z"
+            },
+            {
+              "value": 1310,
+              "measured_at": "2024-03-06T06:40:20.000000Z"
+            },
+            {
+              "value": 2169,
+              "measured_at": "2024-03-06T06:55:20.000000Z"
+            },
+            {
+              "value": 2419,
+              "measured_at": "2024-03-06T07:00:20.000000Z"
+            },
+            {
+              "value": 2671,
+              "measured_at": "2024-03-06T07:05:20.000000Z"
+            },
+            {
+              "value": 2922,
+              "measured_at": "2024-03-06T07:10:20.000000Z"
+            },
+            {
+              "value": 2631,
+              "measured_at": "2024-03-06T07:15:20.000000Z"
+            },
+            {
+              "value": 1695,
+              "measured_at": "2024-03-06T07:20:21.000000Z"
+            },
+            {
+              "value": 1453,
+              "measured_at": "2024-03-06T07:25:21.000000Z"
+            },
+            {
+              "value": 1599,
+              "measured_at": "2024-03-06T07:30:21.000000Z"
+            },
+            {
+              "value": 959,
+              "measured_at": "2024-03-06T07:35:21.000000Z"
+            },
+            {
+              "value": 967,
+              "measured_at": "2024-03-06T07:40:21.000000Z"
+            },
+            {
+              "value": 1388,
+              "measured_at": "2024-03-06T07:45:21.000000Z"
+            },
+            {
+              "value": 1329,
+              "measured_at": "2024-03-06T07:50:21.000000Z"
+            },
+            {
+              "value": 1473,
+              "measured_at": "2024-03-06T07:55:22.000000Z"
+            },
+            {
+              "value": 1525,
+              "measured_at": "2024-03-06T08:00:22.000000Z"
+            },
+            {
+              "value": 2025,
+              "measured_at": "2024-03-06T08:05:21.000000Z"
+            },
+            {
+              "value": 2799,
+              "measured_at": "2024-03-06T08:10:22.000000Z"
+            },
+            {
+              "value": 3116,
+              "measured_at": "2024-03-06T08:15:22.000000Z"
+            },
+            {
+              "value": 4195,
+              "measured_at": "2024-03-06T08:20:22.000000Z"
+            },
+            {
+              "value": 6985,
+              "measured_at": "2024-03-06T08:25:22.000000Z"
+            },
+            {
+              "value": 5317,
+              "measured_at": "2024-03-06T08:30:22.000000Z"
+            },
+            {
+              "value": 3659,
+              "measured_at": "2024-03-06T08:35:22.000000Z"
+            },
+            {
+              "value": 3912,
+              "measured_at": "2024-03-06T08:40:22.000000Z"
+            },
+            {
+              "value": 3872,
+              "measured_at": "2024-03-06T08:45:23.000000Z"
+            },
+            {
+              "value": 3973,
+              "measured_at": "2024-03-06T08:50:23.000000Z"
+            },
+            {
+              "value": 5100,
+              "measured_at": "2024-03-06T08:55:23.000000Z"
+            },
+            {
+              "value": 7186,
+              "measured_at": "2024-03-06T09:00:23.000000Z"
+            },
+            {
+              "value": 8643,
+              "measured_at": "2024-03-06T09:05:23.000000Z"
+            },
+            {
+              "value": 1562,
+              "measured_at": "2024-03-06T06:45:07.000000Z"
+            },
+            {
+              "value": 1851,
+              "measured_at": "2024-03-06T06:50:04.000000Z"
+            }
+          ],
+          "total": 7500
+        },
+        {
+          "group_type": "normal",
+          "date": "2024-03-05T23:00:00.000000Z",
+          "mutable": true,
+          "type": "minutes",
+          "measurements": [
+            {
+              "value": 0,
+              "measured_at": "2024-03-06T06:05:19.000000Z"
+            },
+            {
+              "value": 0,
+              "measured_at": "2024-03-06T06:10:19.000000Z"
+            },
+            {
+              "value": 72,
+              "measured_at": "2024-03-06T06:15:19.000000Z"
+            },
+            {
+              "value": 90,
+              "measured_at": "2024-03-06T06:20:19.000000Z"
+            },
+            {
+              "value": 176,
+              "measured_at": "2024-03-06T06:25:19.000000Z"
+            },
+            {
+              "value": 367,
+              "measured_at": "2024-03-06T06:30:19.000000Z"
+            },
+            {
+              "value": 890,
+              "measured_at": "2024-03-06T06:35:20.000000Z"
+            },
+            {
+              "value": 1310,
+              "measured_at": "2024-03-06T06:40:20.000000Z"
+            },
+            {
+              "value": 2169,
+              "measured_at": "2024-03-06T06:55:20.000000Z"
+            },
+            {
+              "value": 2419,
+              "measured_at": "2024-03-06T07:00:20.000000Z"
+            },
+            {
+              "value": 2671,
+              "measured_at": "2024-03-06T07:05:20.000000Z"
+            },
+            {
+              "value": 2922,
+              "measured_at": "2024-03-06T07:10:20.000000Z"
+            },
+            {
+              "value": 2631,
+              "measured_at": "2024-03-06T07:15:20.000000Z"
+            },
+            {
+              "value": 1695,
+              "measured_at": "2024-03-06T07:20:21.000000Z"
+            },
+            {
+              "value": 1453,
+              "measured_at": "2024-03-06T07:25:21.000000Z"
+            },
+            {
+              "value": 1599,
+              "measured_at": "2024-03-06T07:30:21.000000Z"
+            },
+            {
+              "value": 959,
+              "measured_at": "2024-03-06T07:35:21.000000Z"
+            },
+            {
+              "value": 967,
+              "measured_at": "2024-03-06T07:40:21.000000Z"
+            },
+            {
+              "value": 1388,
+              "measured_at": "2024-03-06T07:45:21.000000Z"
+            },
+            {
+              "value": 1329,
+              "measured_at": "2024-03-06T07:50:21.000000Z"
+            },
+            {
+              "value": 1473,
+              "measured_at": "2024-03-06T07:55:22.000000Z"
+            },
+            {
+              "value": 1525,
+              "measured_at": "2024-03-06T08:00:22.000000Z"
+            },
+            {
+              "value": 2025,
+              "measured_at": "2024-03-06T08:05:21.000000Z"
+            },
+            {
+              "value": 2799,
+              "measured_at": "2024-03-06T08:10:22.000000Z"
+            },
+            {
+              "value": 3116,
+              "measured_at": "2024-03-06T08:15:22.000000Z"
+            },
+            {
+              "value": 4195,
+              "measured_at": "2024-03-06T08:20:22.000000Z"
+            },
+            {
+              "value": 6985,
+              "measured_at": "2024-03-06T08:25:22.000000Z"
+            },
+            {
+              "value": 5317,
+              "measured_at": "2024-03-06T08:30:22.000000Z"
+            },
+            {
+              "value": 3659,
+              "measured_at": "2024-03-06T08:35:22.000000Z"
+            },
+            {
+              "value": 3912,
+              "measured_at": "2024-03-06T08:40:22.000000Z"
+            },
+            {
+              "value": 3872,
+              "measured_at": "2024-03-06T08:45:23.000000Z"
+            },
+            {
+              "value": 3973,
+              "measured_at": "2024-03-06T08:50:23.000000Z"
+            },
+            {
+              "value": 5100,
+              "measured_at": "2024-03-06T08:55:23.000000Z"
+            },
+            {
+              "value": 7186,
+              "measured_at": "2024-03-06T09:00:23.000000Z"
+            },
+            {
+              "value": 8643,
+              "measured_at": "2024-03-06T09:05:23.000000Z"
+            },
+            {
+              "value": 0,
+              "measured_at": "2024-03-06T05:57:07.000000Z"
+            },
+            {
+              "value": 0,
+              "measured_at": "2024-03-06T06:00:04.000000Z"
+            },
+            {
+              "value": 1562,
+              "measured_at": "2024-03-06T06:45:07.000000Z"
+            },
+            {
+              "value": 1851,
+              "measured_at": "2024-03-06T06:50:04.000000Z"
+            }
+          ],
+          "total": 7500
+        },
+        {
+          "group_type": "normal",
+          "date": "2024-02-29T23:00:00.000000Z",
+          "mutable": true,
+          "type": "days",
+          "measurements": [
+            {
+              "value": 10650,
+              "measured_at": "2024-02-29T23:00:00.000000Z"
+            },
+            {
+              "value": 14690,
+              "measured_at": "2024-03-01T23:00:00.000000Z"
+            },
+            {
+              "value": 13150,
+              "measured_at": "2024-03-02T23:00:00.000000Z"
+            },
+            {
+              "value": 13260,
+              "measured_at": "2024-03-03T23:00:00.000000Z"
+            },
+            {
+              "value": 4370,
+              "measured_at": "2024-03-04T23:00:00.000000Z"
+            },
+            {
+              "value": 7500,
+              "measured_at": "2024-03-05T23:00:00.000000Z"
+            }
+          ],
+          "total": 63620
+        },
+        {
+          "group_type": "normal",
+          "date": "2023-12-31T23:00:00.000000Z",
+          "mutable": true,
+          "type": "months",
+          "measurements": [
+            {
+              "value": 80440,
+              "measured_at": "2023-12-31T23:00:00.000000Z"
+            },
+            {
+              "value": 129710,
+              "measured_at": "2024-01-31T23:00:00.000000Z"
+            },
+            {
+              "value": 63620,
+              "measured_at": "2024-02-29T23:00:00.000000Z"
+            }
+          ],
+          "total": 273030
+        }
+      ]
+    },
+    "electricity_data": {},
+    "gas_data": {},
+    "summary_data": {},
+    "charge_point_data": {},
+    "pv_installation": [
+      {
+        "uuid": "XX64",
+        "label": "PV Installatie",
+        "type": "pv_installation",
+        "start_date": "2021-06-24T22:00:00.000000Z",
+        "end_date": "2031-06-24T22:00:00.000000Z",
+        "meta": {
+          "identifier": "XXXXXXXXXX65",
+          "name": "Zonneplan One omvormer",
+          "panel_count": 15,
+          "panel_type": null,
+          "installation_wp": 5550,
+          "panel_wp": 370,
+          "first_measured_at": "2021-06-24T18:31:23.000000Z",
+          "last_measured_at": "2024-03-06T08:55:23.000000Z",
+          "last_measured_power_value": 2281,
+          "grid_stabilization_active": false,
+          "total_power_measured": 13000000,
+          "network": {
+            "name": "Onbekend",
+            "color": "unknown",
+            "status": "Onbekend"
+          },
+          "sgn_serial_number": "XXXXXX_XX66",
+          "module_firmware_version": "v3.0.10",
+          "inverter_firmware_version": "v3.036",
+          "show_in_contract_screen": false,
+          "enable_pv_analysis": false
+        }
+      },
+      {
+        "uuid": "XX67",
+        "label": "PV Installatie",
+        "type": "pv_installation",
+        "start_date": null,
+        "end_date": null,
+        "meta": {
+          "identifier": "XXXXXXXXXX68",
+          "name": "Zonneplan One omvormer",
+          "panel_count": 18,
+          "panel_type": null,
+          "installation_wp": 7920,
+          "panel_wp": 440,
+          "first_measured_at": "2024-03-05T15:10:09.000000Z",
+          "last_measured_at": "2024-03-06T08:55:00.000000Z",
+          "last_measured_power_value": 2819,
+          "grid_stabilization_active": false,
+          "total_power_measured": 5900,
+          "network": {
+            "name": "Vodafone",
+            "color": "poor",
+            "status": "Slecht"
+          },
+          "sgn_serial_number": "XXXXXX_XX69",
+          "module_firmware_version": "1.2.1r",
+          "inverter_firmware_version": "3063",
+          "show_in_contract_screen": false,
+          "enable_pv_analysis": false
+        }
+      }
+    ]
+  }
+}

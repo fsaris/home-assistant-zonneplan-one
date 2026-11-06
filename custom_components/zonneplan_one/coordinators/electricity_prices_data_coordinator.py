@@ -33,20 +33,6 @@ def get_price_per_quarter_hour(price_series: list[dict]) -> dict:
     return price_by_quarter_hour
 
 
-def get_energy_price(data: dict, dt: datetime | None = None) -> int | None:
-    if dt is None:
-        dt = datetime.now(UTC)
-    price = None
-    price_series = get_price_series_from_chart_data(data)
-    for price_data in price_series:
-        start_datetime = price_data["start_date"]
-        end_datetime = price_data["end_date"]
-        if start_datetime <= dt < end_datetime:
-            price = price_data["price_tax_included"]["amount"]
-            break
-    return price
-
-
 def get_price_series_from_chart_data(data: dict) -> list[dict]:
     prices = data.get("chart", {}).get("series", {}).get("prices", [])
     date_fields = ["start_date", "end_date"]

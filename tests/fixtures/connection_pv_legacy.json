@@ -1,0 +1,1587 @@
+{
+  "uuid": "00000000-0000-4000-8000-000000000001",
+  "pv_data": {
+    "contracts": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000002",
+        "label": "PV Installatie",
+        "type": "pv_installation",
+        "start_date": "2021-01-21T23:00:00.000000Z",
+        "end_date": "2031-01-21T23:00:00.000000Z",
+        "meta": {
+          "identifier": "X0X0000X0000X00003",
+          "name": "Zonneplan One omvormer",
+          "panel_count": 16,
+          "panel_type": null,
+          "installation_wp": 5200,
+          "panel_wp": 325,
+          "first_measured_at": "2021-01-22T13:45:56.000000Z",
+          "last_measured_at": "2024-04-01T13:51:40.000000Z",
+          "last_measured_power_value": 1166,
+          "total_power_measured": 14000000,
+          "network": {
+            "name": "Onbekend",
+            "color": "unknown",
+            "status": "Onbekend"
+          },
+          "sgn_serial_number": "000000000000004",
+          "module_firmware_version": "v3.0.10",
+          "inverter_firmware_version": "v1.171",
+          "show_in_contract_screen": false,
+          "enable_pv_analysis": false
+        }
+      }
+    ],
+    "powerplay": null,
+    "measurement_groups": [
+      {
+        "group_type": "normal",
+        "date": "2024-03-31T22:00:00.000000Z",
+        "mutable": true,
+        "type": "minutes",
+        "measurements": [
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T05:36:01.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T05:41:01.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T05:46:01.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T05:51:02.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T05:56:02.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T06:01:03.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T06:06:03.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T06:11:03.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T06:16:04.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T06:21:04.000000Z"
+          },
+          {
+            "value": 54,
+            "measured_at": "2024-04-01T06:26:05.000000Z"
+          },
+          {
+            "value": 58,
+            "measured_at": "2024-04-01T06:31:05.000000Z"
+          },
+          {
+            "value": 67,
+            "measured_at": "2024-04-01T06:36:05.000000Z"
+          },
+          {
+            "value": 72,
+            "measured_at": "2024-04-01T06:41:05.000000Z"
+          },
+          {
+            "value": 62,
+            "measured_at": "2024-04-01T06:46:06.000000Z"
+          },
+          {
+            "value": 59,
+            "measured_at": "2024-04-01T06:51:06.000000Z"
+          },
+          {
+            "value": 74,
+            "measured_at": "2024-04-01T06:56:07.000000Z"
+          },
+          {
+            "value": 95,
+            "measured_at": "2024-04-01T07:01:07.000000Z"
+          },
+          {
+            "value": 99,
+            "measured_at": "2024-04-01T07:06:08.000000Z"
+          },
+          {
+            "value": 78,
+            "measured_at": "2024-04-01T07:11:08.000000Z"
+          },
+          {
+            "value": 82,
+            "measured_at": "2024-04-01T07:16:08.000000Z"
+          },
+          {
+            "value": 125,
+            "measured_at": "2024-04-01T07:21:09.000000Z"
+          },
+          {
+            "value": 145,
+            "measured_at": "2024-04-01T07:26:09.000000Z"
+          },
+          {
+            "value": 134,
+            "measured_at": "2024-04-01T07:31:09.000000Z"
+          },
+          {
+            "value": 146,
+            "measured_at": "2024-04-01T07:36:10.000000Z"
+          },
+          {
+            "value": 149,
+            "measured_at": "2024-04-01T07:41:10.000000Z"
+          },
+          {
+            "value": 185,
+            "measured_at": "2024-04-01T07:46:10.000000Z"
+          },
+          {
+            "value": 231,
+            "measured_at": "2024-04-01T07:51:11.000000Z"
+          },
+          {
+            "value": 259,
+            "measured_at": "2024-04-01T07:56:11.000000Z"
+          },
+          {
+            "value": 285,
+            "measured_at": "2024-04-01T08:01:12.000000Z"
+          },
+          {
+            "value": 371,
+            "measured_at": "2024-04-01T08:06:12.000000Z"
+          },
+          {
+            "value": 341,
+            "measured_at": "2024-04-01T08:11:13.000000Z"
+          },
+          {
+            "value": 211,
+            "measured_at": "2024-04-01T08:16:13.000000Z"
+          },
+          {
+            "value": 169,
+            "measured_at": "2024-04-01T08:21:13.000000Z"
+          },
+          {
+            "value": 224,
+            "measured_at": "2024-04-01T08:26:14.000000Z"
+          },
+          {
+            "value": 226,
+            "measured_at": "2024-04-01T08:31:15.000000Z"
+          },
+          {
+            "value": 363,
+            "measured_at": "2024-04-01T08:36:15.000000Z"
+          },
+          {
+            "value": 316,
+            "measured_at": "2024-04-01T08:41:16.000000Z"
+          },
+          {
+            "value": 193,
+            "measured_at": "2024-04-01T08:46:16.000000Z"
+          },
+          {
+            "value": 234,
+            "measured_at": "2024-04-01T08:51:16.000000Z"
+          },
+          {
+            "value": 267,
+            "measured_at": "2024-04-01T08:56:17.000000Z"
+          },
+          {
+            "value": 306,
+            "measured_at": "2024-04-01T09:01:17.000000Z"
+          },
+          {
+            "value": 478,
+            "measured_at": "2024-04-01T09:06:18.000000Z"
+          },
+          {
+            "value": 630,
+            "measured_at": "2024-04-01T09:11:18.000000Z"
+          },
+          {
+            "value": 744,
+            "measured_at": "2024-04-01T09:16:19.000000Z"
+          },
+          {
+            "value": 883,
+            "measured_at": "2024-04-01T09:21:19.000000Z"
+          },
+          {
+            "value": 657,
+            "measured_at": "2024-04-01T09:26:20.000000Z"
+          },
+          {
+            "value": 363,
+            "measured_at": "2024-04-01T09:31:20.000000Z"
+          },
+          {
+            "value": 881,
+            "measured_at": "2024-04-01T09:36:21.000000Z"
+          },
+          {
+            "value": 1035,
+            "measured_at": "2024-04-01T09:41:21.000000Z"
+          },
+          {
+            "value": 1153,
+            "measured_at": "2024-04-01T09:46:21.000000Z"
+          },
+          {
+            "value": 882,
+            "measured_at": "2024-04-01T09:51:22.000000Z"
+          },
+          {
+            "value": 1136,
+            "measured_at": "2024-04-01T09:56:22.000000Z"
+          },
+          {
+            "value": 1435,
+            "measured_at": "2024-04-01T10:01:23.000000Z"
+          },
+          {
+            "value": 1106,
+            "measured_at": "2024-04-01T10:06:23.000000Z"
+          },
+          {
+            "value": 1456,
+            "measured_at": "2024-04-01T10:11:24.000000Z"
+          },
+          {
+            "value": 1285,
+            "measured_at": "2024-04-01T10:16:24.000000Z"
+          },
+          {
+            "value": 1059,
+            "measured_at": "2024-04-01T10:21:24.000000Z"
+          },
+          {
+            "value": 927,
+            "measured_at": "2024-04-01T10:26:25.000000Z"
+          },
+          {
+            "value": 969,
+            "measured_at": "2024-04-01T10:31:25.000000Z"
+          },
+          {
+            "value": 907,
+            "measured_at": "2024-04-01T10:36:25.000000Z"
+          },
+          {
+            "value": 892,
+            "measured_at": "2024-04-01T10:41:26.000000Z"
+          },
+          {
+            "value": 985,
+            "measured_at": "2024-04-01T10:46:26.000000Z"
+          },
+          {
+            "value": 994,
+            "measured_at": "2024-04-01T10:51:26.000000Z"
+          },
+          {
+            "value": 1043,
+            "measured_at": "2024-04-01T10:56:27.000000Z"
+          },
+          {
+            "value": 911,
+            "measured_at": "2024-04-01T11:01:27.000000Z"
+          },
+          {
+            "value": 1037,
+            "measured_at": "2024-04-01T11:06:28.000000Z"
+          },
+          {
+            "value": 1143,
+            "measured_at": "2024-04-01T11:11:28.000000Z"
+          },
+          {
+            "value": 1200,
+            "measured_at": "2024-04-01T11:16:28.000000Z"
+          },
+          {
+            "value": 1253,
+            "measured_at": "2024-04-01T11:21:29.000000Z"
+          },
+          {
+            "value": 1232,
+            "measured_at": "2024-04-01T11:26:29.000000Z"
+          },
+          {
+            "value": 1268,
+            "measured_at": "2024-04-01T11:31:30.000000Z"
+          },
+          {
+            "value": 1458,
+            "measured_at": "2024-04-01T11:36:30.000000Z"
+          },
+          {
+            "value": 1428,
+            "measured_at": "2024-04-01T11:41:31.000000Z"
+          },
+          {
+            "value": 1314,
+            "measured_at": "2024-04-01T11:46:31.000000Z"
+          },
+          {
+            "value": 1332,
+            "measured_at": "2024-04-01T11:51:31.000000Z"
+          },
+          {
+            "value": 1287,
+            "measured_at": "2024-04-01T11:56:32.000000Z"
+          },
+          {
+            "value": 1275,
+            "measured_at": "2024-04-01T12:01:32.000000Z"
+          },
+          {
+            "value": 1223,
+            "measured_at": "2024-04-01T12:06:33.000000Z"
+          },
+          {
+            "value": 1269,
+            "measured_at": "2024-04-01T12:11:33.000000Z"
+          },
+          {
+            "value": 1453,
+            "measured_at": "2024-04-01T12:16:33.000000Z"
+          },
+          {
+            "value": 1349,
+            "measured_at": "2024-04-01T12:21:33.000000Z"
+          },
+          {
+            "value": 1354,
+            "measured_at": "2024-04-01T12:26:34.000000Z"
+          },
+          {
+            "value": 1408,
+            "measured_at": "2024-04-01T12:31:34.000000Z"
+          },
+          {
+            "value": 1327,
+            "measured_at": "2024-04-01T12:36:34.000000Z"
+          },
+          {
+            "value": 1142,
+            "measured_at": "2024-04-01T12:41:34.000000Z"
+          },
+          {
+            "value": 999,
+            "measured_at": "2024-04-01T12:46:34.000000Z"
+          },
+          {
+            "value": 961,
+            "measured_at": "2024-04-01T12:51:35.000000Z"
+          },
+          {
+            "value": 958,
+            "measured_at": "2024-04-01T12:56:35.000000Z"
+          },
+          {
+            "value": 998,
+            "measured_at": "2024-04-01T13:01:36.000000Z"
+          },
+          {
+            "value": 958,
+            "measured_at": "2024-04-01T13:06:36.000000Z"
+          },
+          {
+            "value": 1007,
+            "measured_at": "2024-04-01T13:11:36.000000Z"
+          },
+          {
+            "value": 973,
+            "measured_at": "2024-04-01T13:16:37.000000Z"
+          },
+          {
+            "value": 971,
+            "measured_at": "2024-04-01T13:21:37.000000Z"
+          },
+          {
+            "value": 1036,
+            "measured_at": "2024-04-01T13:26:37.000000Z"
+          },
+          {
+            "value": 1014,
+            "measured_at": "2024-04-01T13:31:38.000000Z"
+          },
+          {
+            "value": 1096,
+            "measured_at": "2024-04-01T13:36:39.000000Z"
+          },
+          {
+            "value": 1114,
+            "measured_at": "2024-04-01T13:41:39.000000Z"
+          },
+          {
+            "value": 1121,
+            "measured_at": "2024-04-01T13:46:39.000000Z"
+          },
+          {
+            "value": 1166,
+            "measured_at": "2024-04-01T13:51:40.000000Z"
+          }
+        ],
+        "total": 5640
+      }
+    ]
+  },
+  "electricity_data": {
+    "contracts": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000005",
+        "label": "Connect energiemeter",
+        "type": "p1_installation",
+        "start_date": "2021-04-22T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "electricity_meter_code": "X0006",
+          "electricity_meter_identifier": "000000000007",
+          "electricity_first_measured_at": "2021-05-07T10:20:16.000000Z",
+          "electricity_last_measured_at": "2024-04-01T13:50:03.000000Z",
+          "electricity_last_measured_production_at": "2024-04-01T13:50:03.000000Z",
+          "electricity_last_measured_delivery_value": 1874,
+          "electricity_last_measured_production_value": 1030,
+          "electricity_last_measured_average_value": 82,
+          "gas_first_measured_at": "2021-05-07T12:00:00.000000Z",
+          "gas_last_measured_at": "2024-04-01T13:00:00.000000Z",
+          "gas_meter_code": "X0008",
+          "gas_meter_identifier": "000000000009",
+          "dsmr_version": "42",
+          "network": {
+            "name": "Vodafone",
+            "color": "poor",
+            "status": "Slecht"
+          },
+          "sgn_serial_number": "XX0000000000-0010",
+          "sgn_firmware": "1.2.5p",
+          "show_in_contract_screen": false
+        }
+      }
+    ],
+    "powerplay": null,
+    "measurement_groups": [
+      {
+        "group_type": "multi",
+        "date": "2024-03-31T22:00:00.000000Z",
+        "meta": {
+          "low_tariff_group": 0,
+          "normal_tariff_group": 5775,
+          "high_tariff_group": 0,
+          "has_supply_contract": false,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": null,
+          "energy_produced_sum": null,
+          "delivery_costs_excl_tax": null,
+          "delivery_costs_incl_tax": null,
+          "production_costs_excl_tax": null,
+          "production_costs_incl_tax": null,
+          "delivery_price_per_unit_excl_tax": null,
+          "delivery_price_per_unit_incl_tax": null,
+          "production_price_per_unit_excl_tax": null,
+          "production_price_per_unit_incl_tax": null
+        },
+        "mutable": true,
+        "type": "live",
+        "measurements": [
+          {
+            "values": {
+              "d": 464,
+              "p": null
+            },
+            "date": "2024-04-01T07:55:00.000000Z"
+          },
+          {
+            "values": {
+              "d": -19,
+              "p": null
+            },
+            "date": "2024-04-01T08:00:00.000000Z"
+          },
+          {
+            "values": {
+              "d": -150,
+              "p": null
+            },
+            "date": "2024-04-01T08:05:01.000000Z"
+          },
+          {
+            "values": {
+              "d": -101,
+              "p": null
+            },
+            "date": "2024-04-01T08:10:02.000000Z"
+          },
+          {
+            "values": {
+              "d": -41,
+              "p": null
+            },
+            "date": "2024-04-01T08:15:02.000000Z"
+          },
+          {
+            "values": {
+              "d": 32,
+              "p": null
+            },
+            "date": "2024-04-01T08:20:03.000000Z"
+          },
+          {
+            "values": {
+              "d": -23,
+              "p": null
+            },
+            "date": "2024-04-01T08:25:03.000000Z"
+          },
+          {
+            "values": {
+              "d": 25,
+              "p": null
+            },
+            "date": "2024-04-01T08:30:04.000000Z"
+          },
+          {
+            "values": {
+              "d": -24,
+              "p": null
+            },
+            "date": "2024-04-01T08:35:05.000000Z"
+          },
+          {
+            "values": {
+              "d": -56,
+              "p": null
+            },
+            "date": "2024-04-01T08:40:05.000000Z"
+          },
+          {
+            "values": {
+              "d": 199,
+              "p": null
+            },
+            "date": "2024-04-01T08:45:06.000000Z"
+          },
+          {
+            "values": {
+              "d": 66,
+              "p": null
+            },
+            "date": "2024-04-01T08:50:06.000000Z"
+          },
+          {
+            "values": {
+              "d": -14,
+              "p": null
+            },
+            "date": "2024-04-01T08:55:07.000000Z"
+          },
+          {
+            "values": {
+              "d": -42,
+              "p": null
+            },
+            "date": "2024-04-01T09:00:08.000000Z"
+          },
+          {
+            "values": {
+              "d": 320,
+              "p": null
+            },
+            "date": "2024-04-01T09:05:08.000000Z"
+          },
+          {
+            "values": {
+              "d": 2251,
+              "p": null
+            },
+            "date": "2024-04-01T09:10:09.000000Z"
+          },
+          {
+            "values": {
+              "d": 468,
+              "p": null
+            },
+            "date": "2024-04-01T09:15:09.000000Z"
+          },
+          {
+            "values": {
+              "d": 206,
+              "p": null
+            },
+            "date": "2024-04-01T09:20:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 1304,
+              "p": null
+            },
+            "date": "2024-04-01T09:25:01.000000Z"
+          },
+          {
+            "values": {
+              "d": 1343,
+              "p": null
+            },
+            "date": "2024-04-01T09:30:01.000000Z"
+          },
+          {
+            "values": {
+              "d": 402,
+              "p": null
+            },
+            "date": "2024-04-01T09:35:02.000000Z"
+          },
+          {
+            "values": {
+              "d": 964,
+              "p": null
+            },
+            "date": "2024-04-01T09:40:02.000000Z"
+          },
+          {
+            "values": {
+              "d": 890,
+              "p": null
+            },
+            "date": "2024-04-01T09:45:03.000000Z"
+          },
+          {
+            "values": {
+              "d": 371,
+              "p": null
+            },
+            "date": "2024-04-01T09:50:04.000000Z"
+          },
+          {
+            "values": {
+              "d": -595,
+              "p": null
+            },
+            "date": "2024-04-01T09:55:04.000000Z"
+          },
+          {
+            "values": {
+              "d": -849,
+              "p": null
+            },
+            "date": "2024-04-01T10:00:05.000000Z"
+          },
+          {
+            "values": {
+              "d": -617,
+              "p": null
+            },
+            "date": "2024-04-01T10:05:05.000000Z"
+          },
+          {
+            "values": {
+              "d": 819,
+              "p": null
+            },
+            "date": "2024-04-01T10:10:06.000000Z"
+          },
+          {
+            "values": {
+              "d": 155,
+              "p": null
+            },
+            "date": "2024-04-01T10:15:07.000000Z"
+          },
+          {
+            "values": {
+              "d": -731,
+              "p": null
+            },
+            "date": "2024-04-01T10:20:07.000000Z"
+          },
+          {
+            "values": {
+              "d": -538,
+              "p": null
+            },
+            "date": "2024-04-01T10:25:08.000000Z"
+          },
+          {
+            "values": {
+              "d": -642,
+              "p": null
+            },
+            "date": "2024-04-01T10:30:09.000000Z"
+          },
+          {
+            "values": {
+              "d": -532,
+              "p": null
+            },
+            "date": "2024-04-01T10:35:09.000000Z"
+          },
+          {
+            "values": {
+              "d": -437,
+              "p": null
+            },
+            "date": "2024-04-01T10:40:00.000000Z"
+          },
+          {
+            "values": {
+              "d": -396,
+              "p": null
+            },
+            "date": "2024-04-01T10:45:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 207,
+              "p": null
+            },
+            "date": "2024-04-01T10:50:01.000000Z"
+          },
+          {
+            "values": {
+              "d": 1467,
+              "p": null
+            },
+            "date": "2024-04-01T10:55:02.000000Z"
+          },
+          {
+            "values": {
+              "d": 2075,
+              "p": null
+            },
+            "date": "2024-04-01T11:00:02.000000Z"
+          },
+          {
+            "values": {
+              "d": 541,
+              "p": null
+            },
+            "date": "2024-04-01T11:05:03.000000Z"
+          },
+          {
+            "values": {
+              "d": -619,
+              "p": null
+            },
+            "date": "2024-04-01T11:10:03.000000Z"
+          },
+          {
+            "values": {
+              "d": -551,
+              "p": null
+            },
+            "date": "2024-04-01T11:15:04.000000Z"
+          },
+          {
+            "values": {
+              "d": -724,
+              "p": null
+            },
+            "date": "2024-04-01T11:20:05.000000Z"
+          },
+          {
+            "values": {
+              "d": -866,
+              "p": null
+            },
+            "date": "2024-04-01T11:25:05.000000Z"
+          },
+          {
+            "values": {
+              "d": -788,
+              "p": null
+            },
+            "date": "2024-04-01T11:30:06.000000Z"
+          },
+          {
+            "values": {
+              "d": -1027,
+              "p": null
+            },
+            "date": "2024-04-01T11:35:06.000000Z"
+          },
+          {
+            "values": {
+              "d": -1064,
+              "p": null
+            },
+            "date": "2024-04-01T11:40:07.000000Z"
+          },
+          {
+            "values": {
+              "d": -905,
+              "p": null
+            },
+            "date": "2024-04-01T11:45:08.000000Z"
+          },
+          {
+            "values": {
+              "d": -923,
+              "p": null
+            },
+            "date": "2024-04-01T11:50:08.000000Z"
+          },
+          {
+            "values": {
+              "d": -915,
+              "p": null
+            },
+            "date": "2024-04-01T11:55:09.000000Z"
+          },
+          {
+            "values": {
+              "d": -924,
+              "p": null
+            },
+            "date": "2024-04-01T12:00:09.000000Z"
+          },
+          {
+            "values": {
+              "d": -822,
+              "p": null
+            },
+            "date": "2024-04-01T12:05:00.000000Z"
+          },
+          {
+            "values": {
+              "d": -808,
+              "p": null
+            },
+            "date": "2024-04-01T12:10:01.000000Z"
+          },
+          {
+            "values": {
+              "d": -898,
+              "p": null
+            },
+            "date": "2024-04-01T12:15:01.000000Z"
+          },
+          {
+            "values": {
+              "d": -1018,
+              "p": null
+            },
+            "date": "2024-04-01T12:20:02.000000Z"
+          },
+          {
+            "values": {
+              "d": -879,
+              "p": null
+            },
+            "date": "2024-04-01T12:25:02.000000Z"
+          },
+          {
+            "values": {
+              "d": -1048,
+              "p": null
+            },
+            "date": "2024-04-01T12:30:03.000000Z"
+          },
+          {
+            "values": {
+              "d": -1050,
+              "p": null
+            },
+            "date": "2024-04-01T12:35:04.000000Z"
+          },
+          {
+            "values": {
+              "d": -888,
+              "p": null
+            },
+            "date": "2024-04-01T12:40:04.000000Z"
+          },
+          {
+            "values": {
+              "d": -727,
+              "p": null
+            },
+            "date": "2024-04-01T12:45:05.000000Z"
+          },
+          {
+            "values": {
+              "d": -527,
+              "p": null
+            },
+            "date": "2024-04-01T12:50:05.000000Z"
+          },
+          {
+            "values": {
+              "d": -534,
+              "p": null
+            },
+            "date": "2024-04-01T12:55:06.000000Z"
+          },
+          {
+            "values": {
+              "d": -560,
+              "p": null
+            },
+            "date": "2024-04-01T13:00:07.000000Z"
+          },
+          {
+            "values": {
+              "d": -577,
+              "p": null
+            },
+            "date": "2024-04-01T13:05:07.000000Z"
+          },
+          {
+            "values": {
+              "d": -552,
+              "p": null
+            },
+            "date": "2024-04-01T13:10:08.000000Z"
+          },
+          {
+            "values": {
+              "d": -581,
+              "p": null
+            },
+            "date": "2024-04-01T13:15:08.000000Z"
+          },
+          {
+            "values": {
+              "d": -427,
+              "p": null
+            },
+            "date": "2024-04-01T13:20:09.000000Z"
+          },
+          {
+            "values": {
+              "d": -2,
+              "p": null
+            },
+            "date": "2024-04-01T13:25:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2498,
+              "p": null
+            },
+            "date": "2024-04-01T13:30:00.000000Z"
+          },
+          {
+            "values": {
+              "d": 2774,
+              "p": null
+            },
+            "date": "2024-04-01T13:35:01.000000Z"
+          },
+          {
+            "values": {
+              "d": 2654,
+              "p": null
+            },
+            "date": "2024-04-01T13:40:01.000000Z"
+          },
+          {
+            "values": {
+              "d": 1528,
+              "p": null
+            },
+            "date": "2024-04-01T13:45:02.000000Z"
+          },
+          {
+            "values": {
+              "d": 82,
+              "p": null
+            },
+            "date": "2024-04-01T13:50:03.000000Z"
+          }
+        ],
+        "totals": {
+          "d": 5775,
+          "p": 2576
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      },
+      {
+        "group_type": "multi",
+        "date": "2024-03-31T22:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": false,
+          "over_capacity_kwh": null,
+          "energy_delivered_sum": null,
+          "energy_produced_sum": null,
+          "delivery_costs_excl_tax": null,
+          "delivery_costs_incl_tax": null,
+          "production_costs_excl_tax": null,
+          "production_costs_incl_tax": null,
+          "delivery_price_per_unit_excl_tax": null,
+          "delivery_price_per_unit_incl_tax": null,
+          "production_price_per_unit_excl_tax": null,
+          "production_price_per_unit_incl_tax": null
+        },
+        "mutable": true,
+        "type": "hours",
+        "measurements": [
+          {
+            "values": {
+              "d": 839,
+              "p": 0
+            },
+            "date": "2024-03-31T22:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 577,
+              "p": 0
+            },
+            "date": "2024-03-31T23:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 275,
+              "p": 0
+            },
+            "date": "2024-04-01T00:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 271,
+              "p": 0
+            },
+            "date": "2024-04-01T01:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 268,
+              "p": 0
+            },
+            "date": "2024-04-01T02:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 259,
+              "p": 0
+            },
+            "date": "2024-04-01T03:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 293,
+              "p": 0
+            },
+            "date": "2024-04-01T04:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 260,
+              "p": 0
+            },
+            "date": "2024-04-01T05:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 247,
+              "p": 0
+            },
+            "date": "2024-04-01T06:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 154,
+              "p": -5
+            },
+            "date": "2024-04-01T07:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 37,
+              "p": -45
+            },
+            "date": "2024-04-01T08:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 861,
+              "p": -239
+            },
+            "date": "2024-04-01T09:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 460,
+              "p": -390
+            },
+            "date": "2024-04-01T10:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 104,
+              "p": -823
+            },
+            "date": "2024-04-01T11:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 16,
+              "p": -838
+            },
+            "date": "2024-04-01T12:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          },
+          {
+            "values": {
+              "d": 854,
+              "p": -236
+            },
+            "date": "2024-04-01T13:00:00.000000Z",
+            "meta": {
+              "tariff_group": "normal"
+            }
+          }
+        ],
+        "totals": {
+          "d": 5775,
+          "p": 2576
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      },
+      {
+        "group_type": "multi",
+        "date": "2024-03-31T22:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": false,
+          "over_capacity_kwh": 300000,
+          "energy_delivered_sum": null,
+          "energy_produced_sum": null,
+          "delivery_costs_excl_tax": null,
+          "delivery_costs_incl_tax": null,
+          "production_costs_excl_tax": null,
+          "production_costs_incl_tax": null,
+          "delivery_price_per_unit_excl_tax": null,
+          "delivery_price_per_unit_incl_tax": null,
+          "production_price_per_unit_excl_tax": null,
+          "production_price_per_unit_incl_tax": null
+        },
+        "mutable": true,
+        "type": "days",
+        "measurements": [
+          {
+            "values": {
+              "d": 5775,
+              "p": -2576
+            },
+            "date": "2024-03-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": false,
+              "low_tariff_group": 0,
+              "normal_tariff_group": 5775,
+              "high_tariff_group": 0
+            }
+          }
+        ],
+        "totals": {
+          "d": 5775,
+          "p": 2576
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      },
+      {
+        "group_type": "multi",
+        "date": "2023-12-31T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": false,
+          "over_capacity_kwh": 300000,
+          "energy_delivered_sum": null,
+          "energy_produced_sum": null,
+          "delivery_costs_excl_tax": null,
+          "delivery_costs_incl_tax": null,
+          "production_costs_excl_tax": null,
+          "production_costs_incl_tax": null,
+          "delivery_price_per_unit_excl_tax": null,
+          "delivery_price_per_unit_incl_tax": null,
+          "production_price_per_unit_excl_tax": null,
+          "production_price_per_unit_incl_tax": null
+        },
+        "mutable": true,
+        "type": "months",
+        "measurements": [
+          {
+            "values": {
+              "d": 348160,
+              "p": -19438
+            },
+            "date": "2023-12-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": false,
+              "low_tariff_group": 0,
+              "normal_tariff_group": 348160,
+              "high_tariff_group": 0
+            }
+          },
+          {
+            "values": {
+              "d": 304720,
+              "p": -36486
+            },
+            "date": "2024-01-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": false,
+              "low_tariff_group": 0,
+              "normal_tariff_group": 304720,
+              "high_tariff_group": 0
+            }
+          },
+          {
+            "values": {
+              "d": 276124,
+              "p": -162109
+            },
+            "date": "2024-02-29T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": false,
+              "low_tariff_group": 0,
+              "normal_tariff_group": 276124,
+              "high_tariff_group": 0
+            }
+          },
+          {
+            "values": {
+              "d": 5775,
+              "p": -2576
+            },
+            "date": "2024-03-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": false,
+              "low_tariff_group": 0,
+              "normal_tariff_group": 5775,
+              "high_tariff_group": 0
+            }
+          }
+        ],
+        "totals": {
+          "d": 934741,
+          "p": 220582
+        },
+        "labels": {
+          "d": "verbruik",
+          "p": "teruglevering"
+        }
+      }
+    ]
+  },
+  "gas_data": {
+    "contracts": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000005",
+        "label": "Connect energiemeter",
+        "type": "p1_installation",
+        "start_date": "2021-04-22T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "electricity_meter_code": "X0006",
+          "electricity_meter_identifier": "000000000007",
+          "electricity_first_measured_at": "2021-05-07T10:20:16.000000Z",
+          "electricity_last_measured_at": "2024-04-01T13:50:03.000000Z",
+          "electricity_last_measured_production_at": "2024-04-01T13:50:03.000000Z",
+          "electricity_last_measured_delivery_value": 1874,
+          "electricity_last_measured_production_value": 1030,
+          "electricity_last_measured_average_value": 82,
+          "gas_first_measured_at": "2021-05-07T12:00:00.000000Z",
+          "gas_last_measured_at": "2024-04-01T13:00:00.000000Z",
+          "gas_meter_code": "X0008",
+          "gas_meter_identifier": "000000000009",
+          "dsmr_version": "42",
+          "network": {
+            "name": "Vodafone",
+            "color": "poor",
+            "status": "Slecht"
+          },
+          "sgn_serial_number": "XX0000000000-0010",
+          "sgn_firmware": "1.2.5p",
+          "show_in_contract_screen": false
+        }
+      }
+    ],
+    "powerplay": null,
+    "measurement_groups": [
+      {
+        "group_type": "normal",
+        "date": "2024-03-31T22:00:00.000000Z",
+        "meta": {
+          "price": 11050104,
+          "has_supply_contract": false,
+          "energy_delivered_sum": 0,
+          "delivery_costs_excl_tax": 0,
+          "delivery_costs_incl_tax": 0,
+          "delivery_price_per_unit_excl_tax": 0,
+          "delivery_price_per_unit_incl_tax": 0
+        },
+        "mutable": true,
+        "type": "hours",
+        "measurements": [
+          {
+            "value": 0,
+            "measured_at": "2024-03-31T22:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-03-31T23:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T00:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T01:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T02:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T03:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T04:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T05:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T06:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T07:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2024-04-01T08:00:00.000000Z"
+          },
+          {
+            "value": 125,
+            "measured_at": "2024-04-01T09:00:00.000000Z"
+          },
+          {
+            "value": 788,
+            "measured_at": "2024-04-01T10:00:00.000000Z"
+          },
+          {
+            "value": 780,
+            "measured_at": "2024-04-01T11:00:00.000000Z"
+          },
+          {
+            "value": 779,
+            "measured_at": "2024-04-01T12:00:00.000000Z"
+          }
+        ],
+        "total": 2472
+      },
+      {
+        "group_type": "normal",
+        "date": "2024-03-31T22:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": false,
+          "energy_delivered_sum": 0,
+          "delivery_costs_excl_tax": 0,
+          "delivery_costs_incl_tax": 0,
+          "delivery_price_per_unit_excl_tax": 0,
+          "delivery_price_per_unit_incl_tax": 0
+        },
+        "mutable": true,
+        "type": "days",
+        "measurements": [
+          {
+            "value": 2472,
+            "measured_at": "2024-03-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 0
+            }
+          }
+        ],
+        "total": 2472
+      },
+      {
+        "group_type": "normal",
+        "date": "2023-12-31T23:00:00.000000Z",
+        "meta": {
+          "has_supply_contract": false,
+          "energy_delivered_sum": 0,
+          "delivery_costs_excl_tax": 0,
+          "delivery_costs_incl_tax": 0,
+          "delivery_price_per_unit_excl_tax": 0,
+          "delivery_price_per_unit_incl_tax": 0
+        },
+        "mutable": true,
+        "type": "months",
+        "measurements": [
+          {
+            "value": 231896,
+            "measured_at": "2023-12-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 0
+            }
+          },
+          {
+            "value": 145033,
+            "measured_at": "2024-01-31T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 0
+            }
+          },
+          {
+            "value": 110001,
+            "measured_at": "2024-02-29T23:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 0
+            }
+          },
+          {
+            "value": 2472,
+            "measured_at": "2024-03-31T22:00:00.000000Z",
+            "meta": {
+              "has_supply_contract": 0
+            }
+          }
+        ],
+        "total": 489402
+      }
+    ]
+  },
+  "summary_data": {},
+  "charge_point_data": {},
+  "battery_data": {},
+  "pv_installation": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000002",
+      "label": "PV Installatie",
+      "type": "pv_installation",
+      "start_date": "2021-01-21T23:00:00.000000Z",
+      "end_date": "2031-01-21T23:00:00.000000Z",
+      "meta": {
+        "identifier": "X0X0000X0000X00003",
+        "name": "Zonneplan One omvormer",
+        "panel_count": 16,
+        "panel_type": null,
+        "installation_wp": 5200,
+        "panel_wp": 325,
+        "first_measured_at": "2021-01-22T13:45:56.000000Z",
+        "last_measured_at": "2024-04-01T13:51:40.000000Z",
+        "last_measured_power_value": 1166,
+        "total_power_measured": 14000000,
+        "network": {
+          "name": "Onbekend",
+          "color": "unknown",
+          "status": "Onbekend"
+        },
+        "sgn_serial_number": "000000000000004",
+        "module_firmware_version": "v3.0.10",
+        "inverter_firmware_version": "v1.171",
+        "show_in_contract_screen": false,
+        "enable_pv_analysis": false
+      }
+    }
+  ],
+  "p1_installation": [
+    {
+      "uuid": "00000000-0000-4000-8000-000000000005",
+      "label": "Connect energiemeter",
+      "type": "p1_installation",
+      "start_date": "2021-04-22T22:00:00.000000Z",
+      "end_date": null,
+      "meta": {
+        "electricity_meter_code": "X0006",
+        "electricity_meter_identifier": "000000000007",
+        "electricity_first_measured_at": "2021-05-07T10:20:16.000000Z",
+        "electricity_last_measured_at": "2024-04-01T13:50:03.000000Z",
+        "electricity_last_measured_production_at": "2024-04-01T13:50:03.000000Z",
+        "electricity_last_measured_delivery_value": 1874,
+        "electricity_last_measured_production_value": 1030,
+        "electricity_last_measured_average_value": 82,
+        "gas_first_measured_at": "2021-05-07T12:00:00.000000Z",
+        "gas_last_measured_at": "2024-04-01T13:00:00.000000Z",
+        "gas_meter_code": "X0008",
+        "gas_meter_identifier": "000000000009",
+        "dsmr_version": "42",
+        "network": {
+          "name": "Vodafone",
+          "color": "poor",
+          "status": "Slecht"
+        },
+        "sgn_serial_number": "XX0000000000-0010",
+        "sgn_firmware": "1.2.5p",
+        "show_in_contract_screen": false
+      }
+    }
+  ]
+}

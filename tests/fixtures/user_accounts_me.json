@@ -1,0 +1,242 @@
+{
+  "data": {
+    "user_account": {
+      "initials": null,
+      "uuid": "00000000-0000-4000-8000-000000000016",
+      "email": "user17@example.com",
+      "first_name": "Test",
+      "full_name": "Test User",
+      "is_representative": false
+    },
+    "address_groups": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000018",
+        "connections": [
+          {
+            "uuid": "00000000-0000-4000-8000-000000000018",
+            "ean": null,
+            "market_segment": "gas",
+            "contracts": [],
+            "features": [],
+            "buttons": []
+          },
+          {
+            "uuid": "00000000-0000-4000-8000-000000000019",
+            "ean": "000000000000000020",
+            "market_segment": "electricity",
+            "contracts": [
+              {
+                "uuid": "00000000-0000-4000-8000-000000000021",
+                "label": "Connect energiemeter",
+                "type": "p1_installation",
+                "start_date": "2024-06-16T22:00:00.000000Z",
+                "end_date": null,
+                "meta": {
+                  "electricity_meter_code": "X0022",
+                  "electricity_meter_identifier": "000000000023",
+                  "electricity_first_measured_at": "2024-06-19T13:02:33.000000Z",
+                  "electricity_last_measured_at": "2025-12-22T12:25:00.000000Z",
+                  "electricity_last_measured_production_at": "2025-12-22T12:05:00.000000Z",
+                  "electricity_last_measured_delivery_value": 10365,
+                  "electricity_last_measured_production_value": 0,
+                  "electricity_last_measured_average_value": 10329,
+                  "gas_first_measured_at": null,
+                  "gas_last_measured_at": null,
+                  "gas_meter_code": null,
+                  "gas_meter_identifier": null,
+                  "dsmr_version": "50",
+                  "sgn_serial_number": "XX-X000000024",
+                  "sgn_firmware": "3.1.3+dsmr-meter-p1-hw0",
+                  "show_in_contract_screen": false
+                }
+              },
+              {
+                "uuid": "00000000-0000-4000-8000-000000000025",
+                "label": "Stroom tegen uurprijzen",
+                "type": "electricity",
+                "start_date": "2024-06-30T22:00:00.000000Z",
+                "end_date": null,
+                "meta": {
+                  "external_contract_id": "00000000-0000-4000-8000-000000000026",
+                  "agreement_date": "2024-03-31",
+                  "original_end_date": null,
+                  "contract_type": "smart",
+                  "proposition_reference": "marktprijs-e-2023-05",
+                  "start_reason": null,
+                  "end_reason": null,
+                  "show_in_contract_screen": true,
+                  "expected_delivery": 10000,
+                  "expected_production": 6000,
+                  "gas_price_ceiling_contract_start_date": null,
+                  "gas_price_ceiling_contract_end_date": null,
+                  "deposit_type": "dynamic",
+                  "monthly_advanced_deposit_amount": null
+                }
+              },
+              {
+                "uuid": "00000000-0000-4000-8000-000000000027",
+                "label": "Charge laadpaal",
+                "type": "charge_point_installation",
+                "start_date": "2025-05-27T22:00:00.000000Z",
+                "end_date": null,
+                "meta": {
+                  "serial_number": "XX00000000000028",
+                  "charge_point_model_name": "AC011K-AE-35Z-7,5M",
+                  "identifier": "XX00000000000028",
+                  "first_measured_at": "2025-05-28T08:00:17.000000Z",
+                  "last_measured_at": "2025-12-22T12:25:00.000000Z",
+                  "show_in_contract_screen": true,
+                  "charge_timeline": []
+                },
+                "charge_schedules": []
+              },
+              {
+                "uuid": "00000000-0000-4000-8000-000000000029",
+                "label": "Thuisbatterij",
+                "type": "home_battery_installation",
+                "start_date": "2024-06-30T22:00:00.000000Z",
+                "end_date": null,
+                "meta": {
+                  "identifier": "0000000000000030",
+                  "host_device_model_name": "S6-EA3P10K-H-ZP-V2",
+                  "first_measured_at": "2024-07-01T09:17:07.000000Z",
+                  "last_measured_at": "2025-12-22T12:25:03.000000Z",
+                  "state_of_charge": 440,
+                  "power_ac": 9790,
+                  "inverter_state": "Operative",
+                  "battery_state": "Charging",
+                  "dynamic_charging_enabled": true,
+                  "home_optimization_enabled": false,
+                  "home_optimization_active": false,
+                  "dynamic_load_balancing_enabled": true,
+                  "dynamic_load_balancing_overload_active": false,
+                  "grid_congestion_active": false,
+                  "manual_control_enabled": false,
+                  "manual_control_state": null,
+                  "self_consumption_enabled": false,
+                  "cycle_count": 760,
+                  "show_in_contract_screen": true,
+                  "reserve_discharge_cutoff_wh": null,
+                  "backup_power_capable": false
+                }
+              }
+            ],
+            "features": [
+              {
+                "code": "E004",
+                "start_date": "2024-03-31",
+                "label": "Verbruikshistorie"
+              },
+              {
+                "code": "B001",
+                "start_date": "2024-07-01",
+                "label": "Powerplay HB actief"
+              },
+              {
+                "code": "C007",
+                "start_date": "2024-07-01",
+                "label": "Dynamic Load Balancing"
+              },
+              {
+                "code": "S003",
+                "start_date": "2025-04-01",
+                "label": "Zonnebonus actief"
+              },
+              {
+                "code": "C001",
+                "start_date": "2025-05-28",
+                "label": "Powerplay EV voorwaarden geaccepteerd"
+              },
+              {
+                "code": "C003",
+                "start_date": "2025-05-28",
+                "label": "Powerplay EV actief"
+              }
+            ],
+            "buttons": []
+          }
+        ],
+        "address": {
+          "id": "1234AB1",
+          "zipcode": "1234 AB",
+          "street": "Teststraat",
+          "number": "1",
+          "addition": "",
+          "city": "Testdorp",
+          "sunrise": "2025-01-01T07:00:00.000000Z",
+          "sunset": "2025-01-01T17:00:00.000000Z"
+        },
+        "is_representative": false,
+        "organization_uuid": "00000000-0000-4000-8000-000000000031"
+      }
+    ],
+    "buttons": [],
+    "iar_enabled": false,
+    "unread_notification_count": 0,
+    "notification_setting_groups": [
+      {
+        "slug": "general",
+        "name": "Algemeen",
+        "description": "Algemene notificaties over Zonneplan van onderwerpen die relevant zijn voor jou",
+        "settings": [
+          {
+            "slug": "new-updates",
+            "name": "Algemeen",
+            "description": "Altijd als eerste op de hoogte",
+            "push_enabled": true
+          },
+          {
+            "slug": "conversation-updates",
+            "name": "Chat berichten",
+            "description": "Krijg een melding bij een ongelezen bericht",
+            "push_enabled": true
+          }
+        ]
+      },
+      {
+        "slug": "prices",
+        "name": "Prijsupdates",
+        "description": "Notificaties bij belangrijke prijsupdates wanneer je klant bent bij Zonneplan Energie",
+        "settings": [
+          {
+            "slug": "high-energy-price",
+            "name": "Hoge energieprijzen",
+            "description": "Bescherm jezelf tegen hoge prijzen",
+            "push_enabled": true
+          },
+          {
+            "slug": "low-energy-price",
+            "name": "Lage energieprijzen",
+            "description": "Profiteer van de beste prijzen",
+            "push_enabled": true
+          }
+        ]
+      },
+      {
+        "slug": "malfunctions",
+        "name": "Proactieve monitoring",
+        "description": "Notificaties bij storingen",
+        "settings": [
+          {
+            "slug": "battery-malfunction",
+            "name": "Batterij",
+            "description": "Belangrijke updates over je batterijsysteem",
+            "push_enabled": true
+          },
+          {
+            "slug": "chargepoint-malfunction",
+            "name": "Laadpaal",
+            "description": "Belangrijke updates over je laadpaal",
+            "push_enabled": true
+          },
+          {
+            "slug": "solar-malfunction",
+            "name": "Zonnepanelen",
+            "description": "Belangrijke updates over je zonnepanelensysteem",
+            "push_enabled": true
+          }
+        ]
+      }
+    ]
+  }
+}

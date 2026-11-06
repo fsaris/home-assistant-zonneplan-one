@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+
+permissions: {}
+
+jobs:
+  pytest:
+    name: "Pytest"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v7.1.0
+        with:
+          python-version: "3.14"
+          cache: "pip"
+          cache-dependency-path: "requirements_test.txt"
+
+      - name: Install requirements
+        run: python3 -m pip install -r requirements_test.txt
+
+      - name: Test
+        run: python3 -m pytest
