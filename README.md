@@ -876,7 +876,7 @@ fn: |
       vars.x.push(t)
       vars.y.push(p)
       vars.color.push(c)
-      vars.hover.push(String(new Date(t).getHours() + ":" + new Date(t).getMinutes()).padStart(2,"0") + ": " +
+      vars.hover.push(String(new Date(t).getHours()).padStart(2,"0") + ":" + String(new Date(t).getMinutes()).padEnd(2, "0") + ": " +
         p.toFixed(3) + "</b> " + vars.unit_of_measurement)
     })
     vars.min.h = "<b>" + vars.min.p.toFixed(3) + "</b> " + vars.unit_of_measurement + " @ " + new Date(vars.min.t).getHours() + ":" + new Date(vars.min.t).getMinutes();
@@ -925,6 +925,7 @@ entities:
     marker:
       color: $ex vars.color
     type: bar
+    offset: 20
     hovertemplate: $ex vars.hover
     texttemplate: "%{y:.3f}"
     textangle: 270
