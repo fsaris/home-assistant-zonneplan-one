@@ -1,0 +1,125 @@
+{
+  "data": {
+    "powerplay": [],
+    "measurement_groups": [
+      {
+        "group_type": "normal",
+        "date": "2026-11-06T23:00:00.000000Z",
+        "meta": {
+          "price": 18337613,
+          "has_supply_contract": true,
+          "energy_delivered_sum": 6209,
+          "delivery_costs_excl_tax": 69478922,
+          "delivery_costs_incl_tax": 114605847,
+          "delivery_price_per_unit_excl_tax": 11190034.100000001,
+          "delivery_price_per_unit_incl_tax": 18458020.1
+        },
+        "mutable": false,
+        "type": "hours",
+        "measurements": [
+          {
+            "value": 13,
+            "measured_at": "2026-11-06T23:00:00.000000Z"
+          },
+          {
+            "value": 831,
+            "measured_at": "2026-11-07T00:00:00.000000Z"
+          },
+          {
+            "value": 1087,
+            "measured_at": "2026-11-07T01:00:00.000000Z"
+          },
+          {
+            "value": 259,
+            "measured_at": "2026-11-07T02:00:00.000000Z"
+          },
+          {
+            "value": 15,
+            "measured_at": "2026-11-07T03:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T04:00:00.000000Z"
+          },
+          {
+            "value": 8,
+            "measured_at": "2026-11-07T05:00:00.000000Z"
+          },
+          {
+            "value": 897,
+            "measured_at": "2026-11-07T06:00:00.000000Z"
+          },
+          {
+            "value": 1057,
+            "measured_at": "2026-11-07T07:00:00.000000Z"
+          },
+          {
+            "value": 47,
+            "measured_at": "2026-11-07T08:00:00.000000Z"
+          },
+          {
+            "value": 334,
+            "measured_at": "2026-11-07T09:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T10:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T11:00:00.000000Z"
+          },
+          {
+            "value": 302,
+            "measured_at": "2026-11-07T12:00:00.000000Z"
+          },
+          {
+            "value": 450,
+            "measured_at": "2026-11-07T13:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T14:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T15:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T16:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T17:00:00.000000Z"
+          },
+          {
+            "value": 397,
+            "measured_at": "2026-11-07T18:00:00.000000Z"
+          },
+          {
+            "value": 496,
+            "measured_at": "2026-11-07T19:00:00.000000Z"
+          },
+          {
+            "value": 16,
+            "measured_at": "2026-11-07T20:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T21:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T22:00:00.000000Z"
+          },
+          {
+            "value": 0,
+            "measured_at": "2026-11-07T01:00:00.000000Z"
+          }
+        ],
+        "total": 6209
+      }
+    ]
+  }
+}
