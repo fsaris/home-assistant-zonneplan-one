@@ -3,8 +3,9 @@
 from collections.abc import Generator
 from datetime import UTC, datetime
 from typing import Any
-from unittest.mock import PropertyMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 
+import aiohttp
 import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
@@ -12,6 +13,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.zonneplan_one.const import DOMAIN
+from custom_components.zonneplan_one.zonneplan_api import api as zonneplan_api_module
 
 from .common import connections_from_fixture, mock_api
 
@@ -31,6 +33,31 @@ def auto_enable_custom_integrations(request: pytest.FixtureRequest) -> None:
     if "hass" in request.fixturenames:
         request.getfixturevalue("recorder_mock")
         request.getfixturevalue("enable_custom_integrations")
+
+
+class _AiohttpWithoutSessions:
+    """Stands in for `aiohttp` in the login API module: everything works except opening a session."""
+
+    def __init__(self) -> None:
+        self.ClientSession = MagicMock(side_effect=AssertionError("Real request to the Zonneplan login API: mock it"))
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(aiohttp, name)
+
+
+@pytest.fixture(autouse=True)
+def no_real_login_requests() -> Generator[None]:
+    """
+    Fail a test that makes a real login or token request.
+
+    The login requests use their own aiohttp session, which `aioclient_mock` doesn't intercept.
+    Only the name `aiohttp` in that module is replaced, so Home Assistant's own sessions are unaffected,
+    and tests of the login requests patch `ClientSession` on top of this.
+    """
+    guard = _AiohttpWithoutSessions()
+    with patch.object(zonneplan_api_module, "aiohttp", guard):
+        yield
+    assert not guard.ClientSession.called, "A test made a real request to the Zonneplan login API, for example a token refresh"
 
 
 @pytest.fixture
@@ -58,7 +85,8 @@ def config_entry() -> MockConfigEntry:
                 "access_token": "test-access-token",
                 "refresh_token": "test-refresh-token",
                 "token_type": "Bearer",
-                "expires_at": NOW.timestamp() + 3600,
+                # Valid for a day, so that tests moving the clock by hours don't refresh the token.
+                "expires_at": NOW.timestamp() + 24 * 3600,
             },
         },
     )

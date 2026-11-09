@@ -27,4 +27,4 @@ jobs:
         run: python3 -m pip install -r requirements_test.txt
 
       - name: Test
-        run: python3 -m pytest
+        run: python3 -m pytest -n auto

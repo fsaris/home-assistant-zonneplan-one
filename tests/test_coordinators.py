@@ -154,9 +154,9 @@ MID_QUARTER = NOW + timedelta(minutes=7, seconds=30)
 FIRST_BOUNDARY = {"electricity_prices": NOW + timedelta(minutes=15), "gas_prices": NOW + timedelta(hours=1)}
 
 
-def _price_requests(aioclient_mock: AiohttpClientMocker) -> int:
-    """Count price requests only: the coordinators of the other endpoints keep polling."""
-    return sum("consumer-prices" in str(url) for _, url, _, _ in aioclient_mock.mock_calls)
+def _requests_to(aioclient_mock: AiohttpClientMocker, name: str) -> int:
+    """Count the requests of one coordinator: the other coordinators keep polling."""
+    return sum(bool(re.search(ENDPOINTS[name], str(url))) for _, url, _, _ in aioclient_mock.mock_calls)
 
 
 def _move_to(hass: HomeAssistant, freezer: Any, moment: datetime) -> None:
@@ -176,7 +176,7 @@ async def test_sensors_update_on_every_price_boundary_without_an_api_call(
 ) -> None:
     freezer.move_to(MID_QUARTER)
     listener = _quiet_listener(getattr(coordinators, name), schedule)
-    requests_before = _price_requests(aioclient_mock)
+    requests_before = _requests_to(aioclient_mock, name)
     boundary = FIRST_BOUNDARY[name]
 
     _move_to(hass, freezer, boundary - timedelta(seconds=1))
@@ -195,7 +195,7 @@ async def test_sensors_update_on_every_price_boundary_without_an_api_call(
     _move_to(hass, freezer, boundary + step)
     await hass.async_block_till_done()
     assert listener.call_count == 2  # noqa: PLR2004
-    assert _price_requests(aioclient_mock) == requests_before
+    assert _requests_to(aioclient_mock, name) == requests_before
 
 
 @pytest.mark.parametrize(("name", "schedule", "step"), SCHEDULES)
