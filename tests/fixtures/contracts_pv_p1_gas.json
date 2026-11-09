@@ -1,0 +1,114 @@
+{
+  "00000000-0000-4000-8000-000000000001": {
+    "pv_installation": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000002",
+        "label": "PV Installatie",
+        "type": "pv_installation",
+        "start_date": "2021-01-21T23:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "identifier": "X0X0000X0000X00003",
+          "name": "Zonneplan One omvormer",
+          "panel_count": 16,
+          "panel_type": null,
+          "installation_wp": 5200,
+          "panel_wp": 325,
+          "first_measured_at": "2021-01-22T13:45:56.000000Z",
+          "last_measured_at": "2025-12-27T15:29:37.000000Z",
+          "last_measured_power_value": 0,
+          "total_power_measured": 20000000,
+          "sgn_serial_number": "000000000000004",
+          "module_firmware_version": "v3.2.2",
+          "inverter_firmware_version": "v1.171",
+          "inverter_model_name": "R5-4K-S2",
+          "show_in_contract_screen": false,
+          "enable_pv_analysis": false,
+          "dynamic_control_enabled": true,
+          "expected_surplus_kwh": 0,
+          "power_limit_active": false,
+          "current_scenario": null
+        }
+      }
+    ],
+    "p1_installation": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000005",
+        "label": "Connect energiemeter",
+        "type": "p1_installation",
+        "start_date": "2021-04-22T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "electricity_meter_code": "X0006",
+          "electricity_meter_identifier": "000000000007",
+          "electricity_first_measured_at": "2021-05-07T10:20:16.000000Z",
+          "electricity_last_measured_at": "2025-12-27T15:45:02.000000Z",
+          "electricity_last_measured_production_at": "2025-12-27T14:10:01.000000Z",
+          "electricity_last_measured_delivery_value": 711,
+          "electricity_last_measured_production_value": 0,
+          "electricity_last_measured_average_value": 656,
+          "gas_first_measured_at": "2021-05-07T12:00:00.000000Z",
+          "gas_last_measured_at": "2025-12-27T14:00:00.000000Z",
+          "gas_meter_code": "X0008",
+          "gas_meter_identifier": "000000000009",
+          "dsmr_version": "42",
+          "sgn_serial_number": "XX0000000000-0010",
+          "sgn_firmware": "3.1.2+dsmr-meter-p1-hw0",
+          "show_in_contract_screen": false
+        }
+      }
+    ],
+    "electricity": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000011",
+        "label": "Stroom tegen uurprijzen",
+        "type": "electricity",
+        "start_date": "2024-08-03T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "external_contract_id": "00000000-0000-4000-8000-000000000012",
+          "agreement_date": "2024-06-26",
+          "original_end_date": null,
+          "contract_type": "smart",
+          "proposition_reference": "marktprijs-e-2023-05",
+          "start_reason": null,
+          "end_reason": null,
+          "show_in_contract_screen": true,
+          "expected_delivery": 3300,
+          "expected_production": 2200,
+          "gas_price_ceiling_contract_start_date": null,
+          "gas_price_ceiling_contract_end_date": null,
+          "deposit_type": "dynamic",
+          "monthly_advanced_deposit_amount": null
+        }
+      }
+    ]
+  },
+  "00000000-0000-4000-8000-000000000013": {
+    "gas": [
+      {
+        "uuid": "00000000-0000-4000-8000-000000000014",
+        "label": "Gas tegen dagprijzen",
+        "type": "gas",
+        "start_date": "2024-08-03T22:00:00.000000Z",
+        "end_date": null,
+        "meta": {
+          "external_contract_id": "00000000-0000-4000-8000-000000000015",
+          "agreement_date": "2024-06-26",
+          "original_end_date": null,
+          "contract_type": "smart",
+          "proposition_reference": "marktprijs-g-2023-05",
+          "start_reason": null,
+          "end_reason": null,
+          "show_in_contract_screen": true,
+          "expected_delivery": 1300,
+          "expected_production": null,
+          "gas_price_ceiling_contract_start_date": null,
+          "gas_price_ceiling_contract_end_date": null,
+          "deposit_type": "dynamic",
+          "monthly_advanced_deposit_amount": null
+        }
+      }
+    ]
+  }
+}
