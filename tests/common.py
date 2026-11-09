@@ -3,7 +3,7 @@
 import json
 import re
 from dataclasses import fields
-from datetime import datetime, timedelta
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -12,7 +12,7 @@ from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
-from custom_components.zonneplan_one.const import DOMAIN, GAS_NEXT_PRICE_HOUR, ZONNEPLAN_API_TIME_ZONE
+from custom_components.zonneplan_one.const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 
 API = "https://app-api.zonneplan.nl"
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
@@ -61,34 +61,33 @@ def accounts_from_connections(connections: dict[str, dict[str, Any]]) -> dict[st
     }
 
 
-def price_chart(start: datetime, *, step: timedelta, count: int) -> dict[str, Any]:
-    """
-    Build a consumer price chart with the price rising 100 per step.
+# The price charts were captured on this day, in the API time zone.
+PRICE_CHART_DAY = date(2026, 11, 8)
 
-    Synthetic: no real response was captured for this endpoint. The shape follows what
-    `get_price_series_from_chart_data` and `prepare_legacy_prices` read.
+
+def price_chart(name: str, now: datetime) -> dict[str, Any]:
     """
-    return {
-        "chart": {
-            "series": {
-                "prices": [
-                    {
-                        "start_date": (start + step * index).isoformat(),
-                        "end_date": (start + step * (index + 1)).isoformat(),
-                        "price_tax_included": {"amount": 2000000 + index * 100},
-                        "price_tax_excluded": {"amount": 1000000 + index * 100},
-                        "sustainability_score": {"permille": 300},
-                        "tariff_group": "normal",
-                    }
-                    for index in range(count)
-                ]
-            }
-        }
-    }
+    Return a captured price chart, moved by whole days so that it holds the prices around `now`.
+
+    Moving by whole days keeps the hours of the captured prices, as long as both days have the
+    same UTC offset: the charts are from winter time, and so is the frozen test clock.
+    """
+    shift = now.astimezone(ZONNEPLAN_API_TIME_ZONE).date() - PRICE_CHART_DAY
+
+    def move(value: Any, key: str = "") -> Any:
+        if isinstance(value, dict):
+            return {k: move(v, k) for k, v in value.items()}
+        if isinstance(value, list):
+            return [move(item) for item in value]
+        if key in {"start_date", "end_date"}:
+            return (datetime.fromisoformat(value) + shift).isoformat()
+        return value
+
+    return move(load_fixture(name)["data"])
 
 
 def battery_chart(measured_at: datetime) -> list[dict[str, Any]]:
-    """Build a battery chart. Synthetic, see `price_chart`; values are in the API's raw units."""
+    """Build a battery chart. Synthetic: no real response was captured. Values are in the API's raw units."""
     return [
         {
             "measurements": [{"measured_at": measured_at.isoformat(), "value": 10000000, "meta": {"delivery": 1000, "production": 2000}}],
@@ -128,16 +127,13 @@ def mock_connection(aioclient_mock: AiohttpClientMocker, connection_uuid: str, c
 
 def mock_api(aioclient_mock: AiohttpClientMocker, connections: dict[str, dict[str, Any]], now: datetime, accounts: dict[str, Any] | None = None) -> None:
     """Register the account, price and per-connection endpoints."""
-    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    # Gas prices change daily at 06:00 in the API time zone, starting yesterday so "today" is the second price.
-    gas_start = (now.astimezone(ZONNEPLAN_API_TIME_ZONE) - timedelta(days=1)).replace(hour=GAS_NEXT_PRICE_HOUR, minute=0, second=0, microsecond=0)
     charts = f"{API}/api/consumer-prices/charts"
     aioclient_mock.put(f"{API}/user-accounts/locale", status=204)
     aioclient_mock.post(re.compile(rf"{API}/connections/.*/actions/"), status=204)
     aioclient_mock.get(f"{API}/user-accounts/me", json={"data": accounts or accounts_from_connections(connections)})
-    aioclient_mock.get(f"{charts}/electricity-hourly", json={"data": price_chart(start_of_day, step=timedelta(hours=1), count=48)})
-    aioclient_mock.get(f"{charts}/electricity-quarter-hourly", json={"data": price_chart(start_of_day, step=timedelta(minutes=15), count=192)})
-    aioclient_mock.get(f"{charts}/gas-daily", json={"data": price_chart(gas_start, step=timedelta(days=1), count=3)})
+    aioclient_mock.get(f"{charts}/electricity-hourly", json={"data": price_chart("prices_electricity_hourly.json", now)})
+    aioclient_mock.get(f"{charts}/electricity-quarter-hourly", json={"data": price_chart("prices_electricity_quarter_hourly.json", now)})
+    aioclient_mock.get(f"{charts}/gas-daily", json={"data": price_chart("prices_gas_daily.json", now)})
 
     for connection_uuid, connection in connections.items():
         mock_connection(aioclient_mock, connection_uuid, connection, now)

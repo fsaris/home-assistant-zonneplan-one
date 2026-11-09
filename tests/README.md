@@ -17,4 +17,8 @@ Files in `tests/fixtures` are public, so they may only hold anonymized data. Nev
 
 The script stops on a string field it doesn't know. Decide whether that field is personal, then add it to the matching list in the script. It also renumbers existing ids when a raw file is added, so a new fixture can change other fixtures and the ids used in `test_sensor.py`.
 
-The price and battery chart responses in `common.py` are made up, because no real ones were captured.
+The battery chart response in `common.py` is made up, because no real one was captured.
+
+The price charts were captured on 2026-11-08. `price_chart` in `common.py` moves them by whole days to the frozen test date, which keeps their hours because both dates are in winter time.
+
+A diagnostics download holds the latest response of each endpoint under `last_api_responses`. To use one, keep the download itself out of the raw directory (for example in a `diagnostics/` subdirectory) and save the responses you need from it as separate raw files.

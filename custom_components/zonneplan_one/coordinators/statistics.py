@@ -147,13 +147,19 @@ class BaseZonneplanStatisticsService(ABC):
         if not yesterday_payload:
             return False
 
+        measurements_yesterday = self._extract_measurements(yesterday_payload, "refetch-yesterday")
+        if not measurements_yesterday:
+            # Recalculating from the first hour of yesterday without its measurements would lower the totals,
+            # so wait until the API has the hours of yesterday.
+            _LOGGER.info("No measurements to refetch for %s on %s", [config.statistic_id for config in self.channel_configs], start_of_day)
+            return False
+
         try:
             states = await self._load_states_for_day(start_of_day)
         except InvalidStatsError as e:
             _LOGGER.info(e)
             return False
 
-        measurements_yesterday = self._extract_measurements(yesterday_payload or {}, "refetch-yesterday")
         measurements_today = self._extract_measurements(data_today or {}, "current-day")
         self._ingest_measurements(measurements_yesterday, states)
         self._ingest_measurements(measurements_today, states)

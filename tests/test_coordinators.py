@@ -2,18 +2,20 @@
 
 import copy
 import re
+from datetime import datetime, timedelta
 from typing import Any
+from unittest.mock import MagicMock
 
 import pytest
 from homeassistant.core import HomeAssistant
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.zonneplan_one.const import GAS_NEXT_PRICE_HOUR, get_gas_hour
 from custom_components.zonneplan_one.coordinators.account_data_coordinator import ConnectionCoordinators
 from custom_components.zonneplan_one.coordinators.battery_charts_data_coordinator import _parse_day_chart, _parse_month_chart
 
-from .common import API, BATTERY_UUID, CHARGE_POINT_UUID, CONNECTION_UUID, load_fixture, mock_api, refresh_coordinators
+from .common import API, BATTERY_UUID, CHARGE_POINT_UUID, CONNECTION_UUID, entity_id_for, load_fixture, mock_api, refresh_coordinators
 from .conftest import NOW
 
 GAS_UUID = "gas-contract"
@@ -133,11 +135,104 @@ async def test_not_modified_keeps_the_data(
     assert unchanged
 
 
+def _quiet_listener(coordinator: Any, schedule: str) -> MagicMock:
+    """Stop the coordinator's polling, which also updates listeners, and restart its price schedule 7.5 minutes into the quarter."""
+    coordinator.update_interval = None
+    coordinator._unschedule_refresh()
+    listener = MagicMock()
+    coordinator.async_add_listener(listener)
+    getattr(coordinator, schedule)()
+    return listener
+
+
+SCHEDULES = [
+    pytest.param("electricity_prices", "_schedule_quarter_hourly_listener_update", timedelta(minutes=15), id="electricity_every_quarter"),
+    pytest.param("gas_prices", "_schedule_hourly_listener_update", timedelta(hours=1), id="gas_every_hour"),
+]
+# Not on a boundary, to show that the schedule follows the clock and not the time of the last update.
+MID_QUARTER = NOW + timedelta(minutes=7, seconds=30)
+FIRST_BOUNDARY = {"electricity_prices": NOW + timedelta(minutes=15), "gas_prices": NOW + timedelta(hours=1)}
+
+
+def _price_requests(aioclient_mock: AiohttpClientMocker) -> int:
+    """Count price requests only: the coordinators of the other endpoints keep polling."""
+    return sum("consumer-prices" in str(url) for _, url, _, _ in aioclient_mock.mock_calls)
+
+
+def _move_to(hass: HomeAssistant, freezer: Any, moment: datetime) -> None:
+    freezer.move_to(moment)
+    async_fire_time_changed(hass, moment)
+
+
+@pytest.mark.parametrize(("name", "schedule", "step"), SCHEDULES)
+async def test_sensors_update_on_every_price_boundary_without_an_api_call(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    coordinators: ConnectionCoordinators,
+    freezer: Any,
+    name: str,
+    schedule: str,
+    step: timedelta,
+) -> None:
+    freezer.move_to(MID_QUARTER)
+    listener = _quiet_listener(getattr(coordinators, name), schedule)
+    requests_before = _price_requests(aioclient_mock)
+    boundary = FIRST_BOUNDARY[name]
+
+    _move_to(hass, freezer, boundary - timedelta(seconds=1))
+    await hass.async_block_till_done()
+    listener.assert_not_called()
+
+    _move_to(hass, freezer, boundary)
+    await hass.async_block_till_done()
+    assert listener.call_count == 1
+
+    # It schedules itself again, and only for the next boundary.
+    _move_to(hass, freezer, boundary + step - timedelta(seconds=1))
+    await hass.async_block_till_done()
+    assert listener.call_count == 1
+
+    _move_to(hass, freezer, boundary + step)
+    await hass.async_block_till_done()
+    assert listener.call_count == 2  # noqa: PLR2004
+    assert _price_requests(aioclient_mock) == requests_before
+
+
+@pytest.mark.parametrize(("name", "schedule", "step"), SCHEDULES)
+async def test_shutdown_stops_the_price_schedule(
+    hass: HomeAssistant,
+    coordinators: ConnectionCoordinators,
+    freezer: Any,
+    name: str,
+    schedule: str,
+    step: timedelta,
+) -> None:
+    coordinator = getattr(coordinators, name)
+    listener = _quiet_listener(coordinator, schedule)
+
+    await coordinator.async_shutdown()
+    _move_to(hass, freezer, NOW + step)
+    await hass.async_block_till_done()
+
+    listener.assert_not_called()
+
+
 async def test_gas_prices_are_indexed_per_hour(coordinators: ConnectionCoordinators) -> None:
     prices = coordinators.gas_prices.data["gas_prices"]
+    captured = load_fixture("prices_gas_daily.json")["data"]["chart"]["series"]["prices"]
 
-    assert prices[get_gas_hour("current")]["price_tax_included"]["amount"] == 2000100  # noqa: PLR2004
-    assert prices[get_gas_hour("next")]["price_tax_included"]["amount"] == 2000200  # noqa: PLR2004
+    assert prices[get_gas_hour("current")]["price_tax_included"]["amount"] == captured[0]["price_tax_included"]["amount"]
+    # The captured chart only holds today's price: tomorrow's isn't published yet.
+    assert get_gas_hour("next") not in prices
+
+
+@pytest.mark.usefixtures("entity_registry_enabled_by_default")
+async def test_gas_sensors_show_todays_price_and_no_next_price_yet(hass: HomeAssistant, coordinators: ConnectionCoordinators) -> None:  # noqa: ARG001
+    captured = load_fixture("prices_gas_daily.json")["data"]["chart"]["series"]["prices"]
+    current = hass.states.get(entity_id_for(hass, "sensor", f"{CONNECTION_UUID}_current_tariff_gas"))
+
+    assert float(current.state) == pytest.approx(captured[0]["price_tax_included"]["amount"] * 0.0000001)
+    assert hass.states.get(entity_id_for(hass, "sensor", f"{CONNECTION_UUID}_next_tariff_gas")).state == "unknown"
 
 
 async def test_battery_charts_are_parsed_per_period(coordinators: ConnectionCoordinators) -> None:

@@ -39,12 +39,17 @@ async def test_sensor_values(hass: HomeAssistant, unique_id: str, expected: str)
     assert _state(hass, unique_id).state == expected
 
 
+def _captured_price(name: str, start: str) -> int:
+    prices = load_fixture(name)["data"]["chart"]["series"]["prices"]
+    return next(price["price_tax_included"]["amount"] for price in prices if price["start_date"] == start)
+
+
 async def test_current_tariff_is_the_price_of_the_current_hour(hass: HomeAssistant) -> None:
-    # The frozen clock is 18:00 UTC, so the 19th hour of the synthetic chart that starts at 00:00 UTC.
+    # The captured chart is moved to the frozen day, so its 18:00 UTC price is the current one.
     state = _state(hass, f"{CONNECTION}_current_electricity_tariff")
 
-    assert float(state.state) == pytest.approx((2000000 + 18 * 100) * 0.0000001)
-    assert len(state.attributes["forecast"]) == 48  # noqa: PLR2004
+    assert float(state.state) == pytest.approx(_captured_price("prices_electricity_hourly.json", "2026-11-08T18:00:00+00:00") * 0.0000001)
+    assert len(state.attributes["forecast"]) == len(load_fixture("prices_electricity_hourly.json")["data"]["chart"]["series"]["prices"])
 
 
 @pytest.mark.parametrize(
@@ -70,3 +75,29 @@ async def test_usage_follows_the_summary_response(
     await hass.async_block_till_done()
 
     assert _state(hass, f"{CONNECTION}_usage").state == expected
+
+
+@pytest.mark.parametrize(
+    "measured_at",
+    [
+        pytest.param("2025-12-22T18:00:00.000000Z", id="iso_string"),
+        pytest.param(1766426400000, id="milliseconds"),
+        pytest.param(1766426400000000, id="microseconds"),
+    ],
+)
+async def test_timestamps_are_read_in_every_format(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    setup_integration: MockConfigEntry,
+    connections: dict[str, Any],
+    measured_at: str | int,
+) -> None:
+    summary = connections[CONNECTION]["summary_data"]
+    summary["usage"]["measured_at"] = measured_at
+    aioclient_mock.clear_requests()
+    mock_api(aioclient_mock, connections, NOW)
+
+    await setup_integration.runtime_data.coordinators[CONNECTION].electricity.async_refresh()
+    await hass.async_block_till_done()
+
+    assert _state(hass, f"{CONNECTION}_usage_measured_at").state == "2025-12-22T18:00:00+00:00"

@@ -22,7 +22,7 @@ from custom_components.zonneplan_one.coordinators.statistics import (
     StatisticChannelState,
 )
 
-from .common import API, CONNECTION_UUID, mock_api
+from .common import API, CONNECTION_UUID, load_fixture, mock_api
 from .conftest import NOW
 
 MODULE = "custom_components.zonneplan_one.coordinators.statistics"
@@ -360,6 +360,108 @@ async def test_manual_backfill_fails_on_a_missing_day(electricity: ElectricitySt
         await electricity.async_backfill_from(YESTERDAY)
 
     assert notifications.create.call_args.args[2] == "Statistics backfill failed"
+
+
+def _captured_day(service: Any, name: str, freezer: Any) -> tuple[dict[str, Any], dict[str, StatisticChannelState]]:
+    """Run a captured day through the service, the day after it was captured."""
+    payload = load_fixture(name)["data"]
+    group = payload["measurement_groups"][0]
+    day = datetime.fromisoformat(group["date"])
+    freezer.move_to(day + timedelta(days=1, hours=12))
+    states = _channel_states(service, day - timedelta(hours=1))
+    service._ingest_measurements(service._extract_measurements(payload, "captured"), states)
+    return group, states
+
+
+def test_a_captured_electricity_day_adds_up_to_the_day_totals(electricity: ElectricityStatisticsService, freezer: Any) -> None:
+    group, states = _captured_day(electricity, "statistics_electricity_hours.json", freezer)
+
+    assert len(states["delivered"].pending) == 24  # noqa: PLR2004
+    assert states["delivered"].total_sum == pytest.approx(group["totals"]["d"] * 0.001)
+    # Hourly production is negative in the API, the day total is positive.
+    assert states["produced"].total_sum == pytest.approx(group["totals"]["p"] * 0.001)
+
+
+def test_a_captured_gas_day_ignores_the_extra_entry_at_the_end(gas: GasStatisticsService, freezer: Any) -> None:
+    """The API ends the day with an extra 0 for 01:00 UTC, after the real value for that hour."""
+    group, states = _captured_day(gas, "statistics_gas_hours.json", freezer)
+    first_0100 = next(entry for entry in group["measurements"] if entry["measured_at"].endswith("T01:00:00.000000Z"))
+
+    rows = states["gas"].pending
+    assert len(rows) == 24  # noqa: PLR2004
+    assert states["gas"].total_sum == pytest.approx(group["total"] * 0.001)
+    assert [row["state"] for row in rows if row["start"] == datetime.fromisoformat(first_0100["measured_at"])] == [pytest.approx(first_0100["value"] * 0.001)]
+
+
+async def _stored_rows(hass: HomeAssistant, statistic_id: str, start: datetime) -> list[tuple[float, float]]:
+    await async_wait_recording_done(hass)
+    stats = await get_instance(hass).async_add_executor_job(statistics_during_period, hass, start, None, {statistic_id}, "hour", None, {"sum", "state"})
+    return [(pytest.approx(row["state"]), pytest.approx(row["sum"])) for row in stats[statistic_id]]
+
+
+async def _store(hass: HomeAssistant, service: ElectricityStatisticsService, *measurements: dict[str, Any]) -> None:
+    states = _channel_states(service, YESTERDAY - timedelta(hours=1))
+    service._ingest_measurements(list(measurements), states)
+    service._flush_pending(states)
+    await async_wait_recording_done(hass)
+
+
+async def test_restart_continues_the_totals_of_an_earlier_day(hass: HomeAssistant, api: MagicMock, freezer: Any) -> None:
+    await _store(
+        hass,
+        ElectricityStatisticsService(hass, api, "connection", DELIVERED, PRODUCED),
+        _electricity_entry(1, 1000, -500),
+        _electricity_entry(2, 2000, -250),
+    )
+    # Before the 00:20 cutoff, so this run isn't the once-a-day refetch of yesterday.
+    freezer.move_to(TODAY + timedelta(minutes=10))
+
+    restarted = ElectricityStatisticsService(hass, api, "connection", DELIVERED, PRODUCED)
+    await restarted.process_payload(_day(_electricity_entry(0, 500, -100, day=TODAY)))
+
+    # The gap since the last statistic is fetched from the day of that statistic.
+    assert _requested_dates(api) == ["2025-12-21"]
+    assert (await _stored_rows(hass, DELIVERED, YESTERDAY))[-1] == (0.5, 3.5)
+    assert (await _stored_rows(hass, PRODUCED, YESTERDAY))[-1] == (0.1, 0.85)
+
+
+async def test_restart_on_the_same_day_recalculates_today_from_the_first_hour(hass: HomeAssistant, api: MagicMock) -> None:
+    await _store(
+        hass,
+        ElectricityStatisticsService(hass, api, "connection", DELIVERED, PRODUCED),
+        _electricity_entry(23, 4000, 0),
+        _electricity_entry(0, 1000, 0, day=TODAY),
+        _electricity_entry(1, 2000, 0, day=TODAY),
+    )
+
+    restarted = ElectricityStatisticsService(hass, api, "connection", DELIVERED, PRODUCED)
+    # Keep this on the regular path: the refetch of yesterday has its own tests.
+    # The first hour of today changed, which only recalculating the whole day picks up.
+    restarted._refetched_statistics_yesterday = TODAY
+    await restarted.process_payload(
+        _day(_electricity_entry(0, 1500, 0, day=TODAY), _electricity_entry(1, 2000, 0, day=TODAY), _electricity_entry(2, 1000, 0, day=TODAY))
+    )
+
+    api.async_get.assert_not_called()
+    assert await _stored_rows(hass, DELIVERED, YESTERDAY) == [(4.0, 4.0), (1.5, 5.5), (2.0, 7.5), (1.0, 8.5)]
+
+
+async def test_refetch_with_an_empty_yesterday_keeps_the_total(hass: HomeAssistant, api: MagicMock, freezer: Any) -> None:
+    await _store(
+        hass,
+        ElectricityStatisticsService(hass, api, "connection", DELIVERED, PRODUCED),
+        _electricity_entry(1, 1000, -500),
+        _electricity_entry(2, 2000, -250),
+    )
+    freezer.move_to(TODAY + timedelta(hours=8))
+
+    service = ElectricityStatisticsService(hass, api, "connection", DELIVERED, PRODUCED)
+    await service.process_payload(_day(_electricity_entry(0, 500, -100, day=TODAY)))
+
+    assert (await _stored_rows(hass, DELIVERED, YESTERDAY))[-1] == (0.5, 3.5)
+    assert (await _stored_rows(hass, PRODUCED, YESTERDAY))[-1] == (0.1, 0.85)
+    # Tried again on the next update, in case the hours of yesterday arrive later.
+    assert service._refetched_statistics_yesterday is None
 
 
 async def test_service_stores_statistics_in_the_recorder(
