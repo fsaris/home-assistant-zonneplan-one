@@ -2,8 +2,10 @@
 
 ```bash
 python3 -m pip install -r requirements_test.txt
-scripts/test
+scripts/test -n auto
 ```
+
+`-n auto` runs the tests in parallel, one process per CPU core. Leave it out to run a single test.
 
 `requirements_test.txt` pins the Home Assistant release the tests run against, and needs Python 3.14.
 
