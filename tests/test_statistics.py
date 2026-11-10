@@ -220,6 +220,44 @@ async def test_empty_days_are_not_fetched_again_on_the_next_run(electricity: Ele
     assert _requested_dates(api) == ["2025-12-21"]
 
 
+@pytest.mark.usefixtures("added_statistics")
+async def test_recent_empty_days_are_fetched_again_after_an_hour(electricity: ElectricityStatisticsService, api: MagicMock, freezer: Any) -> None:
+    await electricity.process_payload(EMPTY_DAY)
+    api.async_get.reset_mock()
+
+    freezer.tick(timedelta(minutes=59))
+    await electricity.process_payload(EMPTY_DAY)
+
+    assert _requested_dates(api) == ["2025-12-21"]
+
+    api.async_get.reset_mock()
+    freezer.tick(timedelta(minutes=1))
+    await electricity.process_payload(EMPTY_DAY)
+
+    # The first request is the attempt to refetch yesterday; then the last three days, whose hours may still arrive.
+    assert _requested_dates(api) == ["2025-12-21", "2025-12-19", "2025-12-20", "2025-12-21"]
+
+
+async def test_hours_that_arrive_late_are_still_stored(
+    electricity: ElectricityStatisticsService, api: MagicMock, added_statistics: MagicMock, freezer: Any
+) -> None:
+    """The API adds the hours of a day up to a few days late, so a day fetched before they arrived is fetched again."""
+    await electricity.process_payload(EMPTY_DAY)
+    added_statistics.assert_not_called()
+
+    async def get(_connection: str, path: str, **_: Any) -> dict[str, Any]:
+        if path.endswith("date=2025-12-20"):
+            return _day(_electricity_entry(5, delivered=2000, day=TODAY - timedelta(days=2)))
+        return EMPTY_DAY
+
+    api.async_get.side_effect = get
+    freezer.tick(timedelta(hours=1))
+    await electricity.process_payload(EMPTY_DAY)
+
+    rows = {call.args[1]["statistic_id"]: call.args[2] for call in added_statistics.call_args_list}
+    assert [row["sum"] for row in rows[DELIVERED]] == [pytest.approx(2.0)]
+
+
 async def test_rate_limit_during_backfill_resumes_on_the_next_run(
     electricity: ElectricityStatisticsService, api: MagicMock, added_statistics: MagicMock
 ) -> None:

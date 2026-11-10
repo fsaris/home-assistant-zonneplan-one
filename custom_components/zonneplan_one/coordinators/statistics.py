@@ -30,6 +30,11 @@ from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
 _LOGGER = logging.getLogger(__name__)
 
 _BACKFILL_MAX_RETRIES = 3
+# The API adds the hourly measurements of a day with a delay of up to a few days. Days this
+# recent are never marked as fetched, so they are fetched again until their hours have arrived.
+_BACKFILL_SETTLE_DAYS = 3
+# How often those recent days are fetched again, so a connection without data stays cheap.
+_BACKFILL_RECENT_INTERVAL = timedelta(hours=1)
 
 
 @dataclass(frozen=True)
@@ -71,8 +76,11 @@ class BaseZonneplanStatisticsService(ABC):
         self._refetched_statistics_yesterday: datetime | None = None
         # Day up to which history was already fetched. Days without hourly measurements
         # do not move the last statistic forward, so without this every run would fetch
-        # the same empty days again and hit the API rate limit.
+        # the same empty days again and hit the API rate limit. It never passes the last
+        # _BACKFILL_SETTLE_DAYS days, whose hours may still arrive.
         self._backfilled_until: datetime | None = None
+        # When the automatic backfill last ran, to fetch the recent days at most once per interval.
+        self._backfill_ran_at: datetime | None = None
 
     @abstractmethod
     async def _fetch_day_payload(self, day: datetime, *, ignore_etag: bool = False) -> dict[str, Any] | None:
@@ -90,7 +98,8 @@ class BaseZonneplanStatisticsService(ABC):
         states = await self._load_current_states()
         start_of_today = dt_util.now(ZONNEPLAN_API_TIME_ZONE).replace(hour=0, minute=0, second=0, microsecond=0)
         backfill_failed = False
-        if any(state.last_time < start_of_today for state in states.values()):
+        if self._backfill_due(states, start_of_today):
+            self._backfill_ran_at = dt_util.utcnow()
             try:
                 await self._backfill_history(
                     states,
@@ -115,6 +124,23 @@ class BaseZonneplanStatisticsService(ABC):
             measurements = self._extract_measurements(data, "current-day")
             self._ingest_measurements(measurements, states)
         self._flush_pending(states)
+
+    def _backfill_due(self, states: dict[str, StatisticChannelState], start_of_today: datetime) -> bool:
+        """Whether the automatic backfill has days to fetch now."""
+        first_day = min(state.last_time for state in states.values())
+        if self._backfilled_until and self._backfilled_until > first_day:
+            first_day = self._backfilled_until
+        if first_day >= start_of_today:
+            return False
+        if first_day < self._settled_before(start_of_today):
+            return True
+        # Only recent days are left, and their hours may still be on the way: don't ask every run.
+        return self._backfill_ran_at is None or dt_util.utcnow() - self._backfill_ran_at >= _BACKFILL_RECENT_INTERVAL
+
+    @staticmethod
+    def _settled_before(start_of_today: datetime) -> datetime:
+        """Return the start of the first day whose hours may still be added by the API."""
+        return start_of_today - timedelta(days=_BACKFILL_SETTLE_DAYS)
 
     async def _refetch_and_process_yesterday(self, data_today: dict[str, Any]) -> bool:
         """Refetch yesterday once per day when the configured cutoff has passed."""
@@ -317,7 +343,7 @@ class BaseZonneplanStatisticsService(ABC):
             self._ingest_measurements(measurements, states)
             self._flush_pending(states)
             current_day += timedelta(days=1)
-            self._backfilled_until = current_day
+            self._backfilled_until = min(current_day, self._settled_before(start_of_today))
 
     def _extract_measurements(self, payload: dict[str, Any], context: str) -> list[dict[str, Any]]:
         if not payload:
