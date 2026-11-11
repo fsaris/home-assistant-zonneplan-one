@@ -373,7 +373,9 @@ class BaseZonneplanStatisticsService(ABC):
 
                 _LOGGER.debug("Process for %s value %s from %s", config.key, value, entry)
 
-                if entry_time > state.last_time:
+                # Without an earlier statistic there is nothing to correct, so an entry at the
+                # fallback start time is new as well. Else that whole day/hour would get lost.
+                if entry_time > state.last_time or (entry_time == state.last_time and state.last_state_value is None):
                     state.total_sum += value
                     state.pending.append(StatisticData(start=entry_time, state=value, sum=state.total_sum))
                     state.last_time = entry_time
@@ -579,3 +581,82 @@ class GasStatisticsService(BaseZonneplanStatisticsService):
         day_payload = await self.api.async_get(self.connection_uuid, f"/gas/charts/hours?date={date_str}", ignore_etag=ignore_etag)
         _LOGGER.debug("Fetched Gas day payload for %s: has_data=%s", date_str, bool(day_payload))
         return day_payload
+
+
+class EnergySupplyCostsStatisticsService(BaseZonneplanStatisticsService):
+    """
+    Handles external statistics ingestion for the daily energy supply costs.
+
+    The endpoint only returns a total per requested day, so each day is one statistic
+    at the start of that day that gets corrected until the day is final. The base class
+    takes care of fetching the final values of yesterday and of any gaps.
+    """
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        api: AsyncConfigEntryAuth,
+        organization_uuid: str,
+        address_id: str,
+        connection_uuid: str,
+    ) -> None:
+        super().__init__(
+            hass=hass,
+        )
+
+        self.api = api
+        self.organization_uuid = organization_uuid
+        self.address_id = address_id
+        statistic_suffix = connection_uuid.replace("-", "_")
+
+        def channel(key: str, name: str, value_key: str, value_factor: float) -> StatisticChannelConfig:
+            return StatisticChannelConfig(
+                key=key,
+                statistic_id=f"{DOMAIN}:energy_supply_{key}_{statistic_suffix}",
+                name=name,
+                date_key="date",
+                value_key=value_key,
+                value_factor=value_factor,
+                unit_class=None,
+                unit_of_measurement="EUR",
+            )
+
+        # The API reports production as negative costs. Like the produced kWh statistic
+        # these are stored positive, as that is what a compensation statistic should be.
+        self.channel_configs: tuple[StatisticChannelConfig, ...] = (
+            channel("delivery_costs", "Netto afname kosten", "delivery_costs", 0.0000001),
+            channel("delivery_costs_excl_tax", "Netto afname kosten (excl. btw)", "delivery_costs_tax_excluded", 0.0000001),
+            channel("production_compensation", "Netto teruglevering vergoeding", "production_costs", -0.0000001),
+            channel("production_compensation_excl_tax", "Netto teruglevering vergoeding (excl. btw)", "production_costs_tax_excluded", -0.0000001),
+        )
+
+    async def async_fetch_today(self) -> dict[str, Any] | None:
+        """Fetch the costs of today, None when they did not change since the last fetch."""
+        return await self._fetch_day_payload(dt_util.now(ZONNEPLAN_API_TIME_ZONE))
+
+    async def _fetch_day_payload(self, day: datetime, *, ignore_etag: bool = False) -> dict[str, Any] | None:
+        start_of_day = day.astimezone(ZONNEPLAN_API_TIME_ZONE).replace(hour=0, minute=0, second=0, microsecond=0)
+        costs = await self.api.async_get_energy_supply_costs(
+            self.organization_uuid,
+            self.address_id,
+            start_of_day.date(),
+            start_of_day.date(),
+            ignore_etag=ignore_etag,
+        )
+        _LOGGER.debug("Fetched energy supply costs for %s: has_data=%s", self._zonneplan_api_date_param(day), bool(costs))
+
+        # The response carries no date of its own, so stamp the day it covers.
+        return {"date": start_of_day.isoformat(), **costs} if costs else None
+
+    def _extract_measurements(self, payload: dict[str, Any], context: str) -> list[dict[str, Any]]:
+        costs = (payload or {}).get("usage_costs", {}).get("electricity_costs")
+        if not costs:
+            _LOGGER.warning("No energy supply costs found for %s", context)
+            return []
+
+        return [
+            {
+                "date": payload["date"],
+                "values": {config.value_key: (costs.get(config.value_key) or {}).get("amount") for config in self.channel_configs},
+            }
+        ]

@@ -57,6 +57,21 @@ _Some generic/summary sensors_
    - Gas delivery costs today (excl. tax): `€` _(when there is a Zonneplan gas contract and a gas meter registered in the P1 reader, default disabled)_
 
 
+- Daily energy supply costs _(available when there is a Zonneplan Energy contract)_
+
+   These match the daily costs shown in the app, so they exclude battery trading.
+   Note that production costs are **negative** here (revenue), while the month/year sensors below
+   report the same revenue as a positive number; each mirrors the sign of the API it comes from.
+
+   These sensors only show the running value of today, they miss the last update of the day and do not build history.
+   For the history use the [daily energy supply costs statistics](#daily-energy-supply-costs).
+
+   - Net delivery costs today `€` _(default disabled)_
+   - Net delivery costs today (excl. tax) `€` _(default disabled)_
+   - Net production costs today `€` _(default disabled)_
+   - Net production costs today (excl. tax) `€` _(default disabled)_
+
+
 - Net values _(available when there is a Zonneplan Battery)_
 
    - Net delivery costs this month `€` _(default disabled)_
@@ -277,6 +292,16 @@ Ensure you have [HACS](https://hacs.xyz/) installed.
 `Gas verbruik` is what you used from the gas grid (`statistic_id` => `zonneplan_one:gas_{connections_uuid}`)
 
 _See [Fetching historical data for Electricity and Gas usage](#fetching-historical-data-for-electricity-and-gas-usage) how to fetch more historical data for these sensors._
+
+#### Daily energy supply costs
+When there is a Zonneplan Energy contract the costs shown in the app are available as statistics, with the final values of each day:
+
+- `Netto afname kosten` (`statistic_id` => `zonneplan_one:energy_supply_delivery_costs_{connections_uuid}`)
+- `Netto afname kosten (excl. btw)` (`statistic_id` => `zonneplan_one:energy_supply_delivery_costs_excl_tax_{connections_uuid}`)
+- `Netto teruglevering vergoeding` (`statistic_id` => `zonneplan_one:energy_supply_production_compensation_{connections_uuid}`)
+- `Netto teruglevering vergoeding (excl. btw)` (`statistic_id` => `zonneplan_one:energy_supply_production_compensation_excl_tax_{connections_uuid}`)
+
+The compensation is positive here, unlike the `Net production costs today` sensors. Zonneplan only provides these costs per day, so the total of a day is stored at 00:00 of that day and they are only meaningful per day or longer, not per hour.
 
 ## Using full forecast in graphs, tables and/or automations
 
@@ -991,7 +1016,7 @@ With this action you can fetch the P1 Electricity and Gas data history that's al
 Go to [Developer Tools -> Actions](https://my.home-assistant.io/redirect/developer_services/) and search for `zonneplan_one.fetch_historical_data` and fill the required fields.
 
 Fields of the action are:
-- Endpoint: `electricity`/`gas`
+- Endpoint: `electricity`/`gas`/`energy_supply_costs`
 - Start date: fill this with the start date of your contract
 
 

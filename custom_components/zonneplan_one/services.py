@@ -17,6 +17,7 @@ from homeassistant.exceptions import ServiceValidationError
 from .const import (
     DOMAIN,
     ELECTRICITY,
+    ENERGY_SUPPLY_COSTS,
     GAS,
     ZONNEPLAN_API_TIME_ZONE,
 )
@@ -29,7 +30,7 @@ _DATE_FORMATS = ("%Y%m%d", "%Y-%m-%d")
 
 SERVICE_FETCH_STATISTICS_SCHEMA = vol.Schema(
     {
-        vol.Required(_ATTR_ENDPOINT): vol.In([ELECTRICITY, GAS]),
+        vol.Required(_ATTR_ENDPOINT): vol.In([ELECTRICITY, GAS, ENERGY_SUPPLY_COSTS]),
         vol.Required(_ATTR_START_DATE): str,
         vol.Optional(_ATTR_CONNECTION_UUID): str,
     }
@@ -83,6 +84,8 @@ def async_setup_fetch_statistics_service(hass: HomeAssistant) -> None:
                     hass.async_create_task(conn_coordinators.p1_electricity.async_backfill_statistics(start_date))
                 elif endpoint == GAS and conn_coordinators.p1_gas is not None:
                     hass.async_create_task(conn_coordinators.p1_gas.async_backfill_statistics(start_date))
+                elif endpoint == ENERGY_SUPPLY_COSTS and conn_coordinators.energy_supply_costs is not None:
+                    hass.async_create_task(conn_coordinators.energy_supply_costs.async_backfill_statistics(start_date))
 
         return {"result": "Check notifications for progress."}
 

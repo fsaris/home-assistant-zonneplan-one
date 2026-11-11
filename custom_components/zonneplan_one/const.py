@@ -45,6 +45,7 @@ P1_INSTALL = "p1_installation"
 P1_ELECTRICITY = "p1_electricity"
 P1_GAS = "p1_gas"
 ELECTRICITY_HOME_CONSUMPTION = "electricity_home_consumption"
+ENERGY_SUPPLY_COSTS = "energy_supply_costs"
 CHARGE_POINT = "charge_point_installation"
 BATTERY = "home_battery_installation"
 BATTERY_CONTROL = "battery_control"
@@ -1240,6 +1241,50 @@ SENSOR_TYPES: dict[
                     label="days",
                 ),
             ],
+        ),
+    },
+    ENERGY_SUPPLY_COSTS: {
+        # `usage_costs.electricity_costs` holds the contracted (battery filtered) costs,
+        # matching the daily figure the Zonneplan app shows. Note production costs come
+        # back negative here (revenue), unlike the measurement_groups meta used by the
+        # month/year sensors, which reports the same revenue positive.
+        # No state_class: these miss the last update of the day, so they should not build
+        # long-term statistics. EnergySupplyCostsStatisticsService keeps the correct history.
+        "delivery_costs_today": ZonneplanSensorEntityDescription(
+            key="usage_costs.electricity_costs.delivery_costs.amount",
+            name="Net delivery costs today",
+            translation_key="delivery_costs_today",
+            native_unit_of_measurement=CURRENCY_EURO,
+            device_class=SensorDeviceClass.MONETARY,
+            value_factor=0.0000001,
+            none_value_behaviour=NONE_IS_ZERO,
+        ),
+        "delivery_costs_excl_tax_today": ZonneplanSensorEntityDescription(
+            key="usage_costs.electricity_costs.delivery_costs_tax_excluded.amount",
+            name="Net delivery costs today (excl. tax)",
+            translation_key="delivery_costs_today_excl_tax",
+            native_unit_of_measurement=CURRENCY_EURO,
+            device_class=SensorDeviceClass.MONETARY,
+            value_factor=0.0000001,
+            none_value_behaviour=NONE_IS_ZERO,
+        ),
+        "production_costs_today": ZonneplanSensorEntityDescription(
+            key="usage_costs.electricity_costs.production_costs.amount",
+            name="Net production costs today",
+            translation_key="production_costs_today",
+            native_unit_of_measurement=CURRENCY_EURO,
+            device_class=SensorDeviceClass.MONETARY,
+            value_factor=0.0000001,
+            none_value_behaviour=NONE_IS_ZERO,
+        ),
+        "production_costs_excl_tax_today": ZonneplanSensorEntityDescription(
+            key="usage_costs.electricity_costs.production_costs_tax_excluded.amount",
+            name="Net production costs today (excl. tax)",
+            translation_key="production_costs_today_excl_tax",
+            native_unit_of_measurement=CURRENCY_EURO,
+            device_class=SensorDeviceClass.MONETARY,
+            value_factor=0.0000001,
+            none_value_behaviour=NONE_IS_ZERO,
         ),
     },
     ELECTRICITY_HOME_CONSUMPTION: {
