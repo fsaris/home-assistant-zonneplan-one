@@ -98,6 +98,8 @@ _Sensors available if you have a Zonneplan Electricity contract._
     - The full hourly electricity tariff forecast is available as a forecast attribute of this sensor
 - Current quarter hourly electricity tariff: `€/kWh`
     - The full quarter hourly electricity tariff forecast is available as a forecast attribute of this sensor
+- Current return price: `€/kWh` _(feed-in compensation for the current quarter, incl. zonnebonus when applicable; attributes `bonus_active`, `next_quarter`)_
+- Current EPEX price: `€/kWh` _(excl. VAT market price for the current quarter; attribute `next_quarter`)_
 - Forecast electricity tariff hour 1-8: `€/kWh` _(**deprecated**, default disabled)_
 - Forecast tariff group hour 1-8 _(**deprecated**, default disabled)_
 - Current usage: `W` _(default disabled)_

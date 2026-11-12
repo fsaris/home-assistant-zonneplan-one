@@ -228,6 +228,26 @@ SENSOR_TYPES: dict[
                 )
             ],
         ),
+        "current_return_price": ZonneplanSensorEntityDescription(
+            key="current_return_price",
+            name="Current return price",
+            translation_key="current_return_price",
+            icon="mdi:cash-refund",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+        ),
+        "current_epex_price": ZonneplanSensorEntityDescription(
+            key="current_epex_price",
+            name="Current EPEX price",
+            translation_key="current_epex_price",
+            icon="mdi:chart-line",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+        ),
         "current_hourly_electricity_tariff": ZonneplanSensorEntityDescription(
             key="hourly_electricity_price",
             key_lambda=lambda: f"price_per_date_and_hour.{datetime.now(ZONNEPLAN_API_TIME_ZONE).strftime('%Y-%m-%d %H')}.electricity_price",
