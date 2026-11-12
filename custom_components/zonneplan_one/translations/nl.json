@@ -66,6 +66,12 @@
       "current_quarter_hourly_electricity_tariff": {
         "name": "Huidig kwartier elektriciteitstarief"
       },
+      "current_return_price": {
+        "name": "Huidige terugleververgoeding"
+      },
+      "current_epex_price": {
+        "name": "Huidige EPEX-prijs"
+      },
       "current_hourly_electricity_tariff": {
         "name": "Huidig uur elektriciteitstarief"
       },

@@ -16,6 +16,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
 )
@@ -62,6 +63,13 @@ from .coordinators.pv_data_coordinator import PvDataUpdateCoordinator
 from .coordinators.summary_data_coordinator import SummaryDataUpdateCoordinator
 from .coordinators.zonneplan_data_update_coordinator import (
     ZonneplanDataUpdateCoordinator,
+)
+from .electricity_market_prices import (
+    current_quarter_start,
+    epex_price_from_tax_excluded_amount,
+    next_quarter_start,
+    quarter_price_key,
+    return_price_from_tax_excluded_amount,
 )
 from .entity import (
     BatteryEntity,
@@ -182,16 +190,33 @@ async def add_electricity_sensors(
         for sensor_key in SENSOR_TYPES[ELECTRICITY]
     )
 
-    entities.extend(
-        ZonneplanElectricitySensor(
-            uuid,
-            sensor_key,
-            connection.electricity_prices,
-            -1,
-            SENSOR_TYPES[ELECTRICITY_PRICES][sensor_key],
-        )
-        for sensor_key in SENSOR_TYPES[ELECTRICITY_PRICES]
-    )
+    for sensor_key in SENSOR_TYPES[ELECTRICITY_PRICES]:
+        description = SENSOR_TYPES[ELECTRICITY_PRICES][sensor_key]
+        if sensor_key == "current_return_price":
+            entity: ZonneplanElectricitySensor = ZonneplanElectricityReturnPriceSensor(
+                uuid,
+                sensor_key,
+                connection.electricity_prices,
+                -1,
+                description,
+            )
+        elif sensor_key == "current_epex_price":
+            entity = ZonneplanElectricityEpexPriceSensor(
+                uuid,
+                sensor_key,
+                connection.electricity_prices,
+                -1,
+                description,
+            )
+        else:
+            entity = ZonneplanElectricitySensor(
+                uuid,
+                sensor_key,
+                connection.electricity_prices,
+                -1,
+                description,
+            )
+        entities.append(entity)
 
     """Migrate typo in forecast_ sensor keys."""
     for sensor_key in SENSOR_TYPES[ELECTRICITY_PRICES]:
@@ -454,6 +479,14 @@ class ZonneplanElectricitySensor(ZonneplanSensor):
     coordinator: SummaryDataUpdateCoordinator | ElectricityPricesDataUpdateCoordinator
     _unrecorded_attributes = frozenset({"forecast"})
 
+    def _quarter_price_amount(self, quarter_start: datetime) -> float | None:
+        price_data = self.coordinator.get_data_value(
+            f"price_per_date_and_quarter_hour.{quarter_price_key(quarter_start)}",
+        )
+        if not price_data:
+            return None
+        return (price_data.get("price_tax_excluded") or {}).get("amount")
+
     def __init__(
         self,
         connection_uuid: str,
@@ -480,6 +513,87 @@ class ZonneplanElectricitySensor(ZonneplanSensor):
             "manufacturer": "Zonneplan",
             "name": self.coordinator.contract["label"],
         }
+
+
+class ZonneplanElectricityReturnPriceSensor(ZonneplanElectricitySensor):
+    """Return (feed-in) compensation for the current quarter-hour."""
+
+    _unrecorded_attributes = frozenset({"bonus_active", "next_quarter"})
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._bonus_active = False
+        self._next_quarter: float | None = None
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            async_track_state_change_event(
+                self.hass,
+                ["sun.sun"],
+                self._handle_sun_change,
+            )
+        )
+
+    @callback
+    def _handle_sun_change(self, _event: Any) -> None:
+        self._refresh_computed_state()
+
+    def _refresh_computed_state(self) -> None:
+        value = self._value_from_coordinator()
+        if value is None and self.entity_description.none_value_behaviour == NONE_USE_PREVIOUS:
+            return
+        self._attr_native_value = value
+        self.async_write_ha_state()
+
+    def _value_from_coordinator(self) -> datetime | str | float | int | None:
+        current_start = current_quarter_start()
+        current_amount = self._quarter_price_amount(current_start)
+        current_price, self._bonus_active = return_price_from_tax_excluded_amount(
+            current_amount,
+            self.hass,
+            current_start,
+        )
+
+        next_start = next_quarter_start()
+        next_amount = self._quarter_price_amount(next_start)
+        next_price, _ = return_price_from_tax_excluded_amount(next_amount, self.hass, next_start)
+        self._next_quarter = next_price
+
+        return current_price
+
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        attrs: dict[str, Any] = {"bonus_active": self._bonus_active}
+        if self._next_quarter is not None:
+            attrs["next_quarter"] = self._next_quarter
+        return attrs
+
+
+class ZonneplanElectricityEpexPriceSensor(ZonneplanElectricitySensor):
+    """EPEX spot price (excl. VAT) for the current quarter-hour."""
+
+    _unrecorded_attributes = frozenset({"next_quarter"})
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._next_quarter: float | None = None
+
+    def _value_from_coordinator(self) -> datetime | str | float | int | None:
+        current_amount = self._quarter_price_amount(current_quarter_start())
+        if current_amount is None:
+            self._next_quarter = None
+            return None
+
+        next_amount = self._quarter_price_amount(next_quarter_start())
+        self._next_quarter = epex_price_from_tax_excluded_amount(next_amount) if next_amount is not None else None
+        return epex_price_from_tax_excluded_amount(current_amount)
+
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        if self._next_quarter is None:
+            return None
+        return {"next_quarter": self._next_quarter}
 
 
 class ZonneplanGasSensor(ZonneplanSensor):

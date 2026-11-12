@@ -1,5 +1,6 @@
 """Tests that sensors show the values from the API responses."""
 
+from datetime import datetime
 from typing import Any
 
 import pytest
@@ -7,7 +8,14 @@ from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
-from .common import BATTERY_UUID, CHARGE_POINT_UUID, CONNECTION_UUID, entity_id_for, load_fixture, mock_api, refresh_coordinators
+from custom_components.zonneplan_one.electricity_market_prices import (
+    current_quarter_start,
+    epex_price_from_tax_excluded_amount,
+    next_quarter_start,
+    return_price_from_tax_excluded_amount,
+)
+
+from .common import BATTERY_UUID, CHARGE_POINT_UUID, CONNECTION_UUID, entity_id_for, load_fixture, mock_api, price_chart, refresh_coordinators
 from .conftest import NOW
 
 CONNECTION = CONNECTION_UUID
@@ -42,6 +50,28 @@ async def test_sensor_values(hass: HomeAssistant, unique_id: str, expected: str)
 def _captured_price(name: str, start: str) -> int:
     prices = load_fixture(name)["data"]["chart"]["series"]["prices"]
     return next(price["price_tax_included"]["amount"] for price in prices if price["start_date"] == start)
+
+
+async def test_current_return_and_epex_prices(hass: HomeAssistant) -> None:
+    chart = price_chart("prices_electricity_quarter_hourly.json", NOW)
+    prices = chart["chart"]["series"]["prices"]
+    current = next(price for price in prices if datetime.fromisoformat(price["start_date"]) <= NOW < datetime.fromisoformat(price["end_date"]))
+    current_index = prices.index(current)
+    next_quarter = prices[current_index + 1] if current_index + 1 < len(prices) else None
+
+    return_state = _state(hass, f"{CONNECTION}_current_return_price")
+    epex_state = _state(hass, f"{CONNECTION}_current_epex_price")
+
+    amount = current["price_tax_excluded"]["amount"]
+    expected_return, expected_bonus = return_price_from_tax_excluded_amount(amount, hass, current_quarter_start())
+    assert float(return_state.state) == pytest.approx(expected_return)
+    assert return_state.attributes["bonus_active"] is expected_bonus
+    assert float(epex_state.state) == pytest.approx(epex_price_from_tax_excluded_amount(amount))
+    if next_quarter:
+        next_amount = next_quarter["price_tax_excluded"]["amount"]
+        next_return, _ = return_price_from_tax_excluded_amount(next_amount, hass, next_quarter_start())
+        assert return_state.attributes["next_quarter"] == pytest.approx(next_return)
+        assert epex_state.attributes["next_quarter"] == pytest.approx(epex_price_from_tax_excluded_amount(next_quarter["price_tax_excluded"]["amount"]))
 
 
 async def test_current_tariff_is_the_price_of_the_current_hour(hass: HomeAssistant) -> None:
