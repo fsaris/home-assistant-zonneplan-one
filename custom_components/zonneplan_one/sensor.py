@@ -412,9 +412,8 @@ class ZonneplanSensor(CoordinatorEntity, RestoreSensor, ABC):
 
         attrs = {}
         for attribute in self.entity_description.attributes:
-            value = self.coordinator.get_data_value(
-                attribute.key.format(install_index=self._install_index),
-            )
+            key = attribute.key_lambda() if attribute.key_lambda else attribute.key.format(install_index=self._install_index)
+            value = self.coordinator.get_data_value(key)
             _LOGGER.debug("Update %s.attribute[%s]: %s", self.unique_id, attribute.label, value)
             attrs[attribute.label] = value
 
@@ -452,7 +451,7 @@ class ZonneplanSensor(CoordinatorEntity, RestoreSensor, ABC):
 
 class ZonneplanElectricitySensor(ZonneplanSensor):
     coordinator: SummaryDataUpdateCoordinator | ElectricityPricesDataUpdateCoordinator
-    _unrecorded_attributes = frozenset({"forecast"})
+    _unrecorded_attributes = frozenset({"forecast", "bonus_active", "next_quarter"})
 
     def __init__(
         self,

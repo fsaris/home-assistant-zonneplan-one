@@ -58,10 +58,22 @@ VERSION = "2026.10.0"
 ZONNEPLAN_API_TIME_ZONE = dt_util.get_time_zone("Europe/Amsterdam")
 
 
+def _current_quarter_lookup_key() -> str:
+    now = datetime.now(ZONNEPLAN_API_TIME_ZONE)
+    return now.replace(minute=(now.minute // 15) * 15, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
+
+
+def _next_quarter_lookup_key() -> str:
+    now = datetime.now(ZONNEPLAN_API_TIME_ZONE)
+    current = now.replace(minute=(now.minute // 15) * 15, second=0, microsecond=0)
+    return (current + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M")
+
+
 @dataclass
 class Attribute:
-    key: str
     label: str
+    key: str = ""
+    key_lambda: Callable[[], str] | None = None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -226,6 +238,44 @@ SENSOR_TYPES: dict[
                     key="price_per_quarter_hour",
                     label="forecast",
                 )
+            ],
+        ),
+        "current_return_price": ZonneplanSensorEntityDescription(
+            key="current_return_price",
+            key_lambda=lambda: f"price_per_date_and_quarter_hour.{_current_quarter_lookup_key()}.return_price",
+            name="Current return price",
+            translation_key="current_return_price",
+            icon="mdi:cash-refund",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    label="bonus_active",
+                    key_lambda=lambda: f"price_per_date_and_quarter_hour.{_current_quarter_lookup_key()}.bonus_active",
+                ),
+                Attribute(
+                    label="next_quarter",
+                    key_lambda=lambda: f"price_per_date_and_quarter_hour.{_next_quarter_lookup_key()}.return_price",
+                ),
+            ],
+        ),
+        "current_epex_price": ZonneplanSensorEntityDescription(
+            key="current_epex_price",
+            key_lambda=lambda: f"price_per_date_and_quarter_hour.{_current_quarter_lookup_key()}.epex_price",
+            name="Current EPEX price",
+            translation_key="current_epex_price",
+            icon="mdi:chart-line",
+            native_unit_of_measurement=f"{CURRENCY_EURO}/{UnitOfEnergy.KILO_WATT_HOUR}",
+            suggested_display_precision=4,
+            state_class=SensorStateClass.MEASUREMENT,
+            entity_registry_enabled_default=True,
+            attributes=[
+                Attribute(
+                    label="next_quarter",
+                    key_lambda=lambda: f"price_per_date_and_quarter_hour.{_next_quarter_lookup_key()}.epex_price",
+                ),
             ],
         ),
         "current_hourly_electricity_tariff": ZonneplanSensorEntityDescription(

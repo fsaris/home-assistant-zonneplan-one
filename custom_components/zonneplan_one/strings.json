@@ -54,6 +54,12 @@
       "current_quarter_hourly_electricity_tariff": {
         "name": "Current quarter hourly electricity tariff"
       },
+      "current_return_price": {
+        "name": "Current return price"
+      },
+      "current_epex_price": {
+        "name": "Current EPEX price"
+      },
       "current_hourly_electricity_tariff": {
         "name": "Current hourly electricity tariff"
       },
