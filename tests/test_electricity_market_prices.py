@@ -9,6 +9,7 @@ from homeassistant.helpers.sun import is_up
 from homeassistant.setup import async_setup_component
 
 from custom_components.zonneplan_one.const import ZONNEPLAN_API_TIME_ZONE
+from custom_components.zonneplan_one.coordinators.electricity_prices_data_coordinator import enrich_quarter_hourly_market_prices
 from custom_components.zonneplan_one.electricity_market_prices import (
     VAT_FACTOR,
     ZONNEPLAN_RETURN_MARKUP_EUR,
@@ -62,6 +63,27 @@ async def test_return_price_applies_bonus_when_sun_is_up(hass: HomeAssistant) ->
     assert bonus_active is True
     base = return_compensation_base_from_tax_excluded_amount(amount)
     assert value == pytest.approx(base * 1.1)
+
+
+async def test_enrich_quarter_hourly_market_prices(hass: HomeAssistant) -> None:
+    await async_setup_component(hass, "sun", {"sun": {}})
+    await hass.async_block_till_done()
+
+    summer_noon = datetime(2026, 6, 21, 12, 0, tzinfo=ZONNEPLAN_API_TIME_ZONE)
+    amount = 10_000_000
+    price_series = [
+        {
+            "start_date": summer_noon,
+            "price_tax_excluded": {"amount": amount},
+        }
+    ]
+    with freeze_time(summer_noon):
+        enriched = enrich_quarter_hourly_market_prices(hass, price_series)[0]
+
+    expected_return, expected_bonus = return_price_from_tax_excluded_amount(amount, hass, summer_noon)
+    assert enriched["epex_price"] == pytest.approx(epex_price_from_tax_excluded_amount(amount))
+    assert enriched["return_price"] == pytest.approx(expected_return)
+    assert enriched["bonus_active"] is expected_bonus
 
 
 async def test_return_price_skips_bonus_when_sun_is_down(hass: HomeAssistant) -> None:

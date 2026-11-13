@@ -11,6 +11,10 @@ from homeassistant.helpers.event import async_track_point_in_utc_time
 
 from ..api import AsyncConfigEntryAuth
 from ..const import DOMAIN, ZONNEPLAN_API_TIME_ZONE
+from ..electricity_market_prices import (
+    epex_price_from_tax_excluded_amount,
+    return_price_from_tax_excluded_amount,
+)
 from ..zonneplan_api.types import ZonneplanContract
 from .zonneplan_data_update_coordinator import ZonneplanDataUpdateCoordinator
 
@@ -52,6 +56,25 @@ def filter_and_sort_today(data: list[dict]) -> list[dict]:
     todays_items = [item for item in data if item["start_date"].date() == today]
 
     return sorted(todays_items, key=lambda item: item["price_tax_included"]["amount"])
+
+
+def enrich_quarter_hourly_market_prices(hass: HomeAssistant, price_series: list[dict]) -> list[dict]:
+    """Add derived EPEX and return prices for each quarter-hour entry."""
+    prices = []
+    for price_data in price_series:
+        start_date = price_data["start_date"]
+        amount = (price_data.get("price_tax_excluded") or {}).get("amount")
+        epex_price = epex_price_from_tax_excluded_amount(amount) if amount is not None else None
+        return_price, bonus_active = return_price_from_tax_excluded_amount(amount, hass, start_date)
+        prices.append(
+            {
+                **price_data,
+                "epex_price": epex_price,
+                "return_price": return_price,
+                "bonus_active": bonus_active,
+            }
+        )
+    return prices
 
 
 def prepare_legacy_prices(price_series: list[dict]) -> list[dict]:
@@ -127,7 +150,10 @@ class ElectricityPricesDataUpdateCoordinator(ZonneplanDataUpdateCoordinator):
                 price_data["todays_prices_per_hour_ordered"] = filter_and_sort_today(price_series)
             if quarter_hourly:
                 price_data["quarter_hourly"] = quarter_hourly
-                price_series = get_price_series_from_chart_data(quarter_hourly)
+                price_series = enrich_quarter_hourly_market_prices(
+                    self.hass,
+                    get_price_series_from_chart_data(quarter_hourly),
+                )
                 price_data["price_per_date_and_quarter_hour"] = get_price_per_quarter_hour(price_series)
                 price_data["price_per_quarter_hour"] = price_series
                 price_data["todays_prices_per_quarter_hour_ordered"] = filter_and_sort_today(price_series)
